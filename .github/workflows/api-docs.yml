@@ -29,17 +29,31 @@ jobs:
       
       - name: 安装依赖
         run: |
-          npm install -g @redocly/cli
           npm install -g @apidevtools/swagger-cli
+          npm install -g redoc-cli
       
       - name: 验证 OpenAPI 规范
         run: |
           swagger-cli validate openapi.yaml
       
+      - name: 打包 OpenAPI 规范
+        run: |
+          swagger-cli bundle openapi.yaml -o openapi-bundled.yaml
+      
       - name: 生成 Redoc HTML 文档
         run: |
-          npx @redocly/cli bundle openapi.yaml -o openapi-bundled.yaml
-          npx @redocly/cli build-docs openapi.yaml -o ./docs
+          mkdir -p docs
+          redoc-cli bundle openapi-bundled.yaml -o docs/index.html
+          ls -la docs/
+      
+      - name: 检查文档是否生成
+        run: |
+          if [ ! -d "docs" ] || [ ! -f "docs/index.html" ]; then
+            echo "❌ 文档生成失败"
+            exit 1
+          fi
+          echo "✅ 文档生成成功"
+          echo "文档大小: $(du -sh docs | cut -f1)"
       
       - name: 设置 GitHub Pages
         uses: actions/configure-pages@v4
