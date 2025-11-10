@@ -8,7 +8,7 @@ services:
       args:
         - VITE_API_BASE_URL=https://api.reforum.space/api
     ports:
-      - "80:80"
+      - "127.0.0.1:8080:80"  # 只监听本地，通过系统 Nginx 反向代理
     depends_on:
       - backend
     restart: unless-stopped
@@ -18,7 +18,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"  # 只监听本地，通过系统 Nginx 反向代理
     environment:
       - NODE_ENV=production
       - PORT=3000
