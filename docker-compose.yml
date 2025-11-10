@@ -38,8 +38,9 @@ services:
 
   db:
     image: postgres:15-alpine
-    ports:
-      - "5432:5432"
+    # 移除端口映射，数据库仅在 Docker 网络内部访问（更安全）
+    # ports:
+    #   - "5432:5432"
     environment:
       - POSTGRES_DB=forum_db
       - POSTGRES_USER=HuangWeiLong
