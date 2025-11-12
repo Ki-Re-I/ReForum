@@ -1,13 +1,13 @@
 .sidebar {
   width: 260px;
-  background-color: var(--card-background);
-  padding: 1.25rem;
+  background-color: transparent;
+  padding: 0;
   position: sticky;
   top: 70px;
   height: calc(100vh - 70px);
   overflow-y: auto;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border-radius: 0;
+  box-shadow: none;
   margin-bottom: 1rem;
 }
 
@@ -19,30 +19,44 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.375rem;
-  border-radius: var(--radius-md);
-  color: var(--text-primary);
+  padding: 0.75rem 0;
+  margin-bottom: 0.5rem;
+  border-radius: 0;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.2s;
   font-weight: 500;
   font-size: 0.9375rem;
+  position: relative;
 }
 
 .nav-item:hover {
-  background-color: var(--hover-background);
-  transform: translateX(4px);
+  background-color: transparent;
+  color: var(--primary-color);
+  transform: none;
 }
 
 .nav-item.active {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-  color: white;
+  background: transparent;
+  color: var(--primary-color);
   font-weight: 600;
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background-color: var(--primary-color);
+  border-radius: 0 2px 2px 0;
 }
 
 .nav-item.active .nav-icon {
-  color: white;
+  color: var(--primary-color);
 }
 
 .nav-icon {
