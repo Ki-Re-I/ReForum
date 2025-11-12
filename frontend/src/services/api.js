@@ -55,6 +55,7 @@ api.interceptors.response.use(
 
 // 认证 API
 export const authAPI = {
+  sendVerificationCode: (email) => api.post('/auth/send-verification-code', { email }),
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
   logout: () => api.post('/auth/logout'),
@@ -73,6 +74,9 @@ export const postAPI = {
   getPost: (postId) => api.get(`/posts/${postId}`),
   createPost: (data) => api.post('/posts', data),
   updatePost: (postId, data) => api.put(`/posts/${postId}`, data),
+  deletePost: (postId) => api.delete(`/posts/${postId}`),
+  toggleLike: (postId) => api.post(`/posts/${postId}/like`),
+  checkLikeStatus: (postId) => api.get(`/posts/${postId}/like`),
 }
 
 // 评论 API
