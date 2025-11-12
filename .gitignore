@@ -39,5 +39,9 @@ docker-compose.override.yml
 *.db
 *.sqlite
 
+# Uploads
+backend/uploads/
+uploads/
+
 
 
