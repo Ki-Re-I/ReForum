@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { FaComments, FaSearch, FaPlus, FaUserCircle } from 'react-icons/fa'
+import { FaSearch, FaPlus, FaUserCircle } from 'react-icons/fa'
 import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal'
 import './Header.css'
@@ -16,12 +16,8 @@ const Header = () => {
 
   const handleSearch = (e) => {
     e.preventDefault()
-    // 搜索功能待后端实现
     if (searchQuery.trim()) {
-      // navigate(`/search?q=${encodeURIComponent(searchQuery)}`)
-      console.log('搜索功能待实现:', searchQuery)
-      // 可以显示提示信息
-      alert('搜索功能正在开发中，敬请期待！')
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
     }
   }
 
@@ -34,8 +30,10 @@ const Header = () => {
     <header className="header">
       <div className="header-container">
         <Link to="/" className="header-logo">
-          <FaComments className="logo-icon" />
-          <span className="logo-text">REForum</span>
+          <span className="logo-text">
+            <span className="logo-re">RE</span>
+            <span className="logo-forum">Forum</span>
+          </span>
         </Link>
 
         <form className="header-search" onSubmit={handleSearch}>
@@ -55,9 +53,9 @@ const Header = () => {
               <button 
                 className="header-button create-button"
                 onClick={() => navigate('/create-post')}
-                title="创建新帖子"
+                title="发布新帖子"
               >
-                <FaPlus /> 创建
+                <FaPlus /> 发布
               </button>
               <div className="user-menu">
                 <button 
@@ -77,6 +75,7 @@ const Header = () => {
                     >
                       我的资料
                     </Link>
+                    <div className="dropdown-divider"></div>
                     <button 
                       onClick={() => {
                         setShowUserMenu(false)
