@@ -86,6 +86,44 @@ class EmailService {
     }
   }
 
+  // 发送注册验证码邮件
+  static async sendVerificationCodeEmail(email, code) {
+    try {
+      const { data, error } = await resend.emails.send({
+        from: 'REForum <onboarding@resend.dev>', // 需要替换为您的域名
+        to: email,
+        subject: 'REForum 注册验证码',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #2563eb;">REForum 注册验证码</h1>
+            <p>您好，</p>
+            <p>您正在注册 REForum 论坛账号，验证码为：</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <div style="display: inline-block; padding: 15px 30px; background-color: #f3f4f6; border-radius: 8px; font-size: 32px; font-weight: bold; color: #2563eb; letter-spacing: 5px;">
+                ${code}
+              </div>
+            </div>
+            <p>验证码有效期为 <strong>5分钟</strong>，请尽快使用。</p>
+            <p style="color: #ef4444;">如果您没有注册 REForum 账号，请忽略此邮件。</p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+            <p style="color: #9ca3af; font-size: 12px;">此邮件由 REForum 系统自动发送，请勿回复。</p>
+          </div>
+        `,
+      });
+
+      if (error) {
+        console.error('发送验证码邮件失败:', error);
+        return false;
+      }
+
+      console.log('验证码邮件发送成功:', data);
+      return true;
+    } catch (error) {
+      console.error('邮件服务错误:', error);
+      return false;
+    }
+  }
+
   // 发送密码重置邮件（如果需要）
   static async sendPasswordResetEmail(email, username, resetToken) {
     try {
