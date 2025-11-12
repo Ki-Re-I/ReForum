@@ -10,7 +10,7 @@ class EmailService {
   static async sendWelcomeEmail(email, username) {
     try {
       const { data, error } = await resend.emails.send({
-        from: 'REForum <onboarding@resend.dev>', // 需要替换为您的域名
+        from: 'REForum <noreply@reforum.space>',
         to: email,
         subject: '欢迎加入 REForum 论坛',
         html: `
@@ -50,7 +50,7 @@ class EmailService {
       const verificationUrl = `${process.env.APP_URL}/verify-email?token=${verificationToken}`;
       
       const { data, error } = await resend.emails.send({
-        from: 'REForum <onboarding@resend.dev>',
+        from: 'REForum <noreply@reforum.space>',
         to: email,
         subject: '验证您的 REForum 邮箱',
         html: `
@@ -96,7 +96,7 @@ class EmailService {
       }
 
       const { data, error } = await resend.emails.send({
-        from: 'REForum <onboarding@resend.dev>', // 需要替换为您的域名
+        from: 'REForum <noreply@reforum.space>',
         to: email,
         subject: 'REForum 注册验证码',
         html: `
@@ -142,7 +142,7 @@ class EmailService {
       const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
       
       const { data, error } = await resend.emails.send({
-        from: 'REForum <onboarding@resend.dev>',
+        from: 'REForum <noreply@reforum.space>',
         to: email,
         subject: '重置您的 REForum 密码',
         html: `
