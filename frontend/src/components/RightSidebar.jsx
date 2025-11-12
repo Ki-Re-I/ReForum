@@ -1,30 +1,45 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { categoryAPI } from '../services/api'
 import './RightSidebar.css'
 
 const RightSidebar = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
   const [categories, setCategories] = useState([])
   const [tags, setTags] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [categoriesRes, tagsRes] = await Promise.all([
-          categoryAPI.getCategories(),
-          categoryAPI.getTags({ limit: 10 }),
-        ])
-        setCategories(categoriesRes.data.slice(0, 5))
-        setTags(tagsRes.data)
-      } catch (error) {
-        console.error('Failed to fetch sidebar data:', error)
-      } finally {
-        setLoading(false)
-      }
+  const fetchData = async () => {
+    try {
+      const [categoriesRes, tagsRes] = await Promise.all([
+        categoryAPI.getCategories(),
+        categoryAPI.getTags({ limit: 10 }),
+      ])
+      setCategories(categoriesRes.data.slice(0, 5))
+      // 过滤掉postCount为0的标签
+      setTags(tagsRes.data.filter(tag => tag.postCount > 0))
+    } catch (error) {
+      console.error('Failed to fetch sidebar data:', error)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchData()
-  }, [])
+    
+    // 监听自定义事件，当帖子被删除时刷新标签
+    const handlePostDeleted = () => {
+      fetchData()
+    }
+    
+    window.addEventListener('postDeleted', handlePostDeleted)
+    
+    return () => {
+      window.removeEventListener('postDeleted', handlePostDeleted)
+    }
+  }, [location.pathname])
 
   return (
     <aside className="right-sidebar">
@@ -34,30 +49,48 @@ const RightSidebar = () => {
           <p style={{ color: '#666', fontSize: '0.9rem' }}>加载中...</p>
         ) : categories.length === 0 ? (
           <p style={{ color: '#666', fontSize: '0.9rem' }}>
-            暂无数据
-            <br />
-            <span style={{ fontSize: '0.8rem' }}>后端服务可能未运行</span>
+            暂无版块
           </p>
         ) : (
           <div className="category-list">
-            {categories.map((category) => (
-              <div
-                key={category.id}
-                className="category-item"
-                style={{ cursor: 'default' }}
-              >
+            {categories.map((category) => {
+              const isActive = location.pathname === '/' && 
+                new URLSearchParams(location.search).get('category') === String(category.id)
+              
+              return (
                 <div
-                  className="category-color"
-                  style={{ backgroundColor: category.color || '#6366f1' }}
-                />
-                <div className="category-info">
-                  <span className="category-name">{category.name}</span>
-                  <span className="category-count">
-                    {category.postCount || 0} 帖子
-                  </span>
+                  key={category.id}
+                  className={`category-item ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    if (location.pathname === '/') {
+                      // 如果已经在首页，检查是否点击的是已选中的分类
+                      const currentCategory = new URLSearchParams(location.search).get('category')
+                      if (currentCategory === String(category.id)) {
+                        // 如果点击的是已选中的分类，清除筛选
+                        navigate('/', { replace: true })
+                      } else {
+                        // 更新 URL 参数
+                        navigate(`/?category=${category.id}`, { replace: true })
+                      }
+                    } else {
+                      // 如果不在首页，跳转到首页并带上分类参数
+                      navigate(`/?category=${category.id}`)
+                    }
+                  }}
+                >
+                  <div
+                    className="category-color"
+                    style={{ backgroundColor: category.color || '#6366f1' }}
+                  />
+                  <div className="category-info">
+                    <span className="category-name">{category.name}</span>
+                    <span className="category-count">
+                      {category.postCount || 0} 帖子
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
@@ -68,9 +101,7 @@ const RightSidebar = () => {
           <p style={{ color: '#666', fontSize: '0.9rem' }}>加载中...</p>
         ) : tags.length === 0 ? (
           <p style={{ color: '#666', fontSize: '0.9rem' }}>
-            暂无数据
-            <br />
-            <span style={{ fontSize: '0.8rem' }}>后端服务可能未运行</span>
+            暂无标签
           </p>
         ) : (
           <div className="tag-list">
