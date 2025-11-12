@@ -89,6 +89,12 @@ class EmailService {
   // 发送注册验证码邮件
   static async sendVerificationCodeEmail(email, code) {
     try {
+      // 检查 API Key 是否配置
+      if (!process.env.RESEND_API_KEY) {
+        console.error('RESEND_API_KEY 未配置');
+        return false;
+      }
+
       const { data, error } = await resend.emails.send({
         from: 'REForum <onboarding@resend.dev>', // 需要替换为您的域名
         to: email,
@@ -113,6 +119,9 @@ class EmailService {
 
       if (error) {
         console.error('发送验证码邮件失败:', error);
+        console.error('Resend API 错误详情:', JSON.stringify(error, null, 2));
+        console.error('错误类型:', error.name);
+        console.error('错误消息:', error.message);
         return false;
       }
 
@@ -120,6 +129,9 @@ class EmailService {
       return true;
     } catch (error) {
       console.error('邮件服务错误:', error);
+      console.error('错误堆栈:', error.stack);
+      console.error('错误类型:', error.name);
+      console.error('错误消息:', error.message);
       return false;
     }
   }
