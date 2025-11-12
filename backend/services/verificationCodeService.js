@@ -1,5 +1,6 @@
 // 验证码存储（内存存储，生产环境建议使用 Redis）
 const verificationCodes = new Map();
+const lastSentTimes = new Map(); // 记录每个邮箱最后发送时间
 
 // 验证码有效期（5分钟）
 const CODE_EXPIRY = 5 * 60 * 1000; // 5分钟
@@ -18,6 +19,9 @@ class VerificationCodeService {
       expiryTime,
       attempts: 0, // 验证尝试次数
     });
+    
+    // 记录发送时间
+    lastSentTimes.set(email, Date.now());
     
     // 清理过期验证码（每10分钟清理一次）
     setTimeout(() => {
@@ -99,6 +103,17 @@ class VerificationCodeService {
     
     const remaining = Math.max(0, Math.floor((stored.expiryTime - Date.now()) / 1000));
     return remaining;
+  }
+
+  // 获取最后发送时间（毫秒时间戳）
+  static getLastSentTime(email) {
+    return lastSentTimes.get(email) || null;
+  }
+
+  // 删除验证码（发送失败时使用）
+  static deleteCode(email) {
+    verificationCodes.delete(email);
+    lastSentTimes.delete(email);
   }
 }
 
