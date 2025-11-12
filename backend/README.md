@@ -42,7 +42,8 @@ backend/
 │   ├── auth.js             # JWT 认证
 │   └── validation.js       # 请求验证
 ├── services/                # 服务层
-│   └── emailService.js     # 邮件服务（Resend）
+│   ├── emailService.js     # 邮件服务（Resend）
+│   └── verificationCodeService.js  # 验证码服务
 ├── app.js                   # 应用入口
 ├── package.json
 └── .env                     # 环境变量（需要创建）
@@ -82,8 +83,9 @@ DB_PASSWORD=your_password
 JWT_SECRET=your_jwt_secret_key_change_in_production
 JWT_EXPIRES_IN=7d
 
-# Resend 邮件配置
+# Resend 邮件配置（用于发送验证码）
 RESEND_API_KEY=re_your_resend_api_key
+# 注意：需要在 Resend 控制台配置发件域名，或使用默认的 onboarding@resend.dev
 
 # 应用配置
 APP_URL=http://localhost:3000
