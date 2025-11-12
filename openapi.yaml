@@ -22,13 +22,78 @@ tags:
     description: 评论和回复功能
   - name: 版块分类
     description: 版块和标签管理
+  - name: 文件上传
+    description: 图片上传功能
 
 paths:
   # ==================== 用户认证 ====================
+  /auth/send-verification-code:
+    post:
+      tags: [用户认证]
+      summary: 发送注册验证码
+      description: 向指定邮箱发送6位数字验证码，用于注册验证。验证码有效期5分钟，60秒内只能发送一次。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+      responses:
+        '200':
+          description: 验证码发送成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "验证码已发送到您的邮箱"
+                  expiresIn:
+                    type: integer
+                    description: 验证码有效期（秒）
+                    example: 300
+        '400':
+          description: 参数错误或邮箱已注册
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: 发送过于频繁
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "TOO_MANY_REQUESTS"
+                  message:
+                    type: string
+                    example: "验证码发送过于频繁，请稍后再试"
+                  retryAfter:
+                    type: integer
+                    description: 可重试时间（秒）
+                    example: 45
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /auth/register:
     post:
       tags: [用户认证]
       summary: 用户注册
+      description: 用户注册需要提供验证码。请先调用 /auth/send-verification-code 获取验证码。
       requestBody:
         required: true
         content:
@@ -43,11 +108,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthResponse'
         '400':
-          description: 参数错误或用户已存在
+          description: 参数错误、验证码错误或用户已存在
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+                  - type: object
+                    properties:
+                      error:
+                        type: string
+                        enum: [MISSING_VERIFICATION_CODE, INVALID_VERIFICATION_CODE, USER_EXISTS, EMAIL_EXISTS]
+                        example: "INVALID_VERIFICATION_CODE"
+                      message:
+                        type: string
+                        example: "验证码错误"
 
   /auth/login:
     post:
@@ -145,7 +220,7 @@ paths:
         - $ref: '#/components/parameters/LimitParam'
         - name: sort
           in: query
-          description: 排序方式
+          description: 排序方式。time-按时间排序（最新），hot-按点赞数排序（热门，点赞数高的在前）
           schema:
             type: string
             enum: [time, hot]
@@ -160,6 +235,16 @@ paths:
           description: 按标签筛选
           schema:
             type: string
+        - name: search
+          in: query
+          description: 搜索关键词，会在帖子标题、内容和作者用户名中搜索
+          schema:
+            type: string
+        - name: author
+          in: query
+          description: 按作者ID筛选
+          schema:
+            type: integer
       responses:
         '200':
           description: 成功获取帖子列表
@@ -238,6 +323,113 @@ paths:
                 $ref: '#/components/schemas/PostDetail'
         '403':
           description: 无权限编辑此帖子
+
+    delete:
+      tags: [帖子管理]
+      summary: 删除帖子（仅限作者）
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "帖子删除成功"
+        '401':
+          description: 未登录
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: 无权限删除此帖子（只有作者可以删除）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 帖子不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /posts/{postId}/like:
+    post:
+      tags: [帖子管理]
+      summary: 点赞/取消点赞帖子
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 操作成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "点赞成功"
+                  liked:
+                    type: boolean
+                    description: 当前点赞状态
+                    example: true
+                  likeCount:
+                    type: integer
+                    description: 当前点赞数
+                    example: 5
+        '401':
+          description: 未授权访问
+        '404':
+          description: 帖子不存在
+
+    get:
+      tags: [帖子管理]
+      summary: 检查用户是否已点赞
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 成功获取点赞状态
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  liked:
+                    type: boolean
+                    description: 是否已点赞
+                    example: true
 
   # ==================== 评论管理 ====================
   /posts/{postId}/comments:
@@ -347,6 +539,124 @@ paths:
                 items:
                   $ref: '#/components/schemas/Tag'
 
+  # ==================== 文件上传 ====================
+  /upload/image:
+    post:
+      tags: [文件上传]
+      summary: 上传单个图片
+      description: 上传图片文件，支持 JPEG、PNG、GIF、WebP 格式，单张不超过 5MB
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: 图片文件
+      responses:
+        '200':
+          description: 上传成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "图片上传成功"
+                  url:
+                    type: string
+                    description: 图片访问URL
+                    example: "/uploads/post-1234567890-123456789.jpg"
+                  filename:
+                    type: string
+                    example: "post-1234567890-123456789.jpg"
+                  size:
+                    type: integer
+                    description: 文件大小（字节）
+                    example: 102400
+        '400':
+          description: 参数错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: 未授权访问
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /upload/images:
+    post:
+      tags: [文件上传]
+      summary: 上传多个图片
+      description: 批量上传图片文件，最多10张，支持 JPEG、PNG、GIF、WebP 格式，单张不超过 5MB
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [images]
+              properties:
+                images:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: 图片文件数组
+      responses:
+        '200':
+          description: 上传成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "图片上传成功"
+                  files:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        url:
+                          type: string
+                          example: "/uploads/post-1234567890-123456789.jpg"
+                        filename:
+                          type: string
+                          example: "post-1234567890-123456789.jpg"
+                        size:
+                          type: integer
+                          example: 102400
+        '400':
+          description: 参数错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: 未授权访问
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   securitySchemes:
     BearerAuth:
@@ -374,7 +684,7 @@ components:
     # ==================== 认证相关 ====================
     RegisterRequest:
       type: object
-      required: [username, email, password]
+      required: [username, email, password, verificationCode]
       properties:
         username:
           type: string
@@ -390,6 +700,11 @@ components:
           type: string
           format: password
           minLength: 6
+          example: "123456"
+        verificationCode:
+          type: string
+          pattern: '^\d{6}$'
+          description: 6位数字验证码
           example: "123456"
 
     LoginRequest:
