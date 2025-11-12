@@ -1,0 +1,143 @@
+.changelog-page {
+  flex: 1;
+  max-width: 800px;
+  padding: 2rem 0;
+}
+
+.changelog-header {
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 2rem;
+}
+
+.changelog-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+}
+
+.changelog-intro {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.changelog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.changelog-item {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.changelog-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.changelog-item-title-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.changelog-item-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.changelog-item-version {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  background-color: var(--hover-background);
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-sm);
+}
+
+.changelog-item-date {
+  font-size: 0.9375rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.changelog-item-description {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 1.25rem 0;
+}
+
+.changelog-item-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.changelog-item-features li {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+  padding-left: 0;
+  position: relative;
+}
+
+.changelog-footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.changelog-footer p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .changelog-page {
+    padding: 1.5rem 0;
+  }
+
+  .changelog-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .changelog-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .changelog-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .changelog-item-title {
+    font-size: 1.25rem;
+  }
+
+  .changelog-list {
+    gap: 2rem;
+  }
+}
+
