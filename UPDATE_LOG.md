@@ -6,30 +6,23 @@
 
 ---
 
-## 最新更新：更新日志页面
+## 最新更新：问题修复板块与图片地址修复
 
 ### 新增内容
-- ✅ **更新日志页面**：在侧边栏添加"更新日志"链接，用户可以查看所有功能更新
-- ✅ **用户友好的展示**：将技术性更新日志转换为用户易懂的格式
-- ✅ **版本信息**：每个更新都标注了版本号和日期
-- ✅ **功能列表**：清晰列出每个版本的新功能和改进
+- ✅ **问题修复板块**：在侧边栏新增“问题修复”，集中展示面向用户的缺陷修复说明
+- ✅ **图片地址修复**：修复线上图片地址可能变成 `https://uploads/...` 导致无法加载的问题
+- ✅ **用户友好的说明**：每个修复包含修复内容、细节与“对你的影响”
 
 ### 修改文件
-- `frontend/src/pages/Changelog.jsx` - 新建更新日志页面
-- `frontend/src/pages/Changelog.css` - 更新日志页面样式
-- `frontend/src/components/Sidebar.jsx` - 添加"更新日志"导航链接
-- `frontend/src/App.jsx` - 添加更新日志路由
+- `frontend/src/components/Sidebar.jsx` - 新增“问题修复”导航项
+- `frontend/src/pages/Fixes.jsx` - 新建问题修复页面
+- `frontend/src/pages/Fixes.css` - 问题修复页面样式
+- `frontend/src/App.jsx` - 新增“问题修复”路由
+- `frontend/src/components/ImageUpload.jsx`、`frontend/src/components/PostCard.jsx`、`frontend/src/pages/PostDetail.jsx` - 统一修复图片 URL 构造逻辑
 
-### 展示内容
-更新日志页面展示了以下主要功能更新：
-1. 搜索功能上线
-2. 图片上传功能
-3. 帖子点赞功能
-4. 帖子管理功能
-5. 邮箱验证注册
-6. 界面优化
-7. 浏览统计优化
-8. 用户协议和隐私政策
+### 修复说明（对用户）
+- 现在发帖或浏览帖子时，图片能稳定显示；不会再出现图片地址以 `https://uploads/` 开头的情况
+- “问题修复”页面会持续更新，便于了解近期修复的缺陷与影响范围
 
 ---
 

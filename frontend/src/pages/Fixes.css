@@ -1,0 +1,64 @@
+ .fixes-page {
+  padding: 24px;
+}
+
+.fixes-title {
+  font-size: 22px;
+  margin: 0 0 8px;
+}
+
+.fixes-subtitle {
+  color: #6b7280;
+  margin: 0 0 16px;
+}
+
+.fixes-list {
+  display: grid;
+  gap: 16px;
+}
+
+.fix-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.fix-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.fix-date {
+  font-size: 12px;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.fix-name {
+  font-size: 18px;
+  margin: 0;
+}
+
+.fix-desc {
+  margin: 8px 0;
+}
+
+.fix-details {
+  margin: 8px 0;
+  padding-left: 18px;
+}
+
+.fix-impact {
+  background: #f9fafb;
+  border: 1px dashed #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { FaHome, FaInfoCircle, FaEnvelope, FaHistory } from 'react-icons/fa'
+import { FaBug } from 'react-icons/fa'
 import './Sidebar.css'
 
 const Sidebar = () => {
@@ -36,6 +37,13 @@ const Sidebar = () => {
         >
           <FaHistory className="nav-icon" />
           <span>更新日志</span>
+        </Link>
+        <Link
+          to="/fixes"
+          className={`nav-item ${location.pathname === '/fixes' ? 'active' : ''}`}
+        >
+          <FaBug className="nav-icon" />
+          <span>问题修复</span>
         </Link>
       </nav>
     </aside>

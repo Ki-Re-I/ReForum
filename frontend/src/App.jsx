@@ -12,6 +12,7 @@ import CreatePost from './pages/CreatePost'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Changelog from './pages/Changelog'
+import Fixes from './pages/Fixes'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
 import './App.css'
@@ -42,6 +43,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/changelog" element={<Changelog />} />
+            <Route path="/fixes" element={<Fixes />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
           </Routes>
