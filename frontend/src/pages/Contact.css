@@ -126,6 +126,13 @@
   font-weight: 500;
 }
 
+.contributor-bio {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
 .contributor-contacts {
   display: flex;
   flex-direction: column;
