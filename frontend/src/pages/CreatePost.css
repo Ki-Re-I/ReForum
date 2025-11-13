@@ -66,6 +66,7 @@
 
 .form-select {
   color: var(--text-primary);
+  background-color: transparent;
   background-image: none;
 }
 
@@ -80,6 +81,16 @@
 .form-textarea {
   resize: vertical;
   min-height: 200px;
+}
+
+.form-select option {
+  background-color: var(--card-background);
+  color: var(--text-primary);
+}
+
+[data-theme='dark'] .form-select option {
+  background-color: var(--background);
+  color: var(--text-primary);
 }
 
 .form-hint {
