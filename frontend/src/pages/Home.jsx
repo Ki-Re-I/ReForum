@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { postAPI } from '../services/api'
 import PostCard from '../components/PostCard'
 import { useLanguage } from '../context/LanguageContext'
+import { debounce } from '../utils/debounce'
 import './Home.css'
 
 const Home = () => {
@@ -18,6 +19,8 @@ const Home = () => {
   })
   const [sort, setSort] = useState('time')
   const [selectedCategory, setSelectedCategory] = useState(null)
+  const lastRequestTimeRef = useRef(0)
+  const MIN_REQUEST_INTERVAL = 500 // 最小请求间隔：500毫秒
 
   // 当 URL 参数变化时，更新选中的分类
   useEffect(() => {
@@ -30,32 +33,59 @@ const Home = () => {
     setPagination(prev => ({ ...prev, page: 1 }))
   }, [searchParams])
 
+  const fetchPosts = useCallback(async () => {
+    // 节流：确保请求间隔至少为 MIN_REQUEST_INTERVAL 毫秒
+    const now = Date.now()
+    const timeSinceLastRequest = now - lastRequestTimeRef.current
+    
+    // 创建一个实际的请求函数
+    const performRequest = async () => {
+      lastRequestTimeRef.current = Date.now()
+      setLoading(true)
+      try {
+        const params = {
+          page: pagination.page,
+          limit: pagination.limit,
+          sort,
+        }
+        if (selectedCategory) {
+          params.category = selectedCategory
+        }
+
+        const response = await postAPI.getPosts(params)
+        setPosts(response.data.data || [])
+        setPagination(response.data.pagination || pagination)
+      } catch (error) {
+        console.error('Failed to fetch posts:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    // 如果距离上次请求太近，延迟执行
+    if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
+      setTimeout(() => {
+        performRequest()
+      }, MIN_REQUEST_INTERVAL - timeSinceLastRequest)
+      return
+    }
+
+    // 否则立即执行
+    performRequest()
+  }, [pagination.page, pagination.limit, sort, selectedCategory])
+
+  // 使用防抖，避免频繁请求
+  const debouncedFetchPosts = useCallback(
+    debounce(() => {
+      fetchPosts()
+    }, 300),
+    [fetchPosts]
+  )
+
   useEffect(() => {
-    fetchPosts()
+    debouncedFetchPosts()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination.page, sort, selectedCategory])
-
-  const fetchPosts = async () => {
-    setLoading(true)
-    try {
-      const params = {
-        page: pagination.page,
-        limit: pagination.limit,
-        sort,
-      }
-      if (selectedCategory) {
-        params.category = selectedCategory
-      }
-
-      const response = await postAPI.getPosts(params)
-      setPosts(response.data.data || [])
-      setPagination(response.data.pagination || pagination)
-    } catch (error) {
-      console.error('Failed to fetch posts:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleSortChange = (newSort) => {
     setSort(newSort)

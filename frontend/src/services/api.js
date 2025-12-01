@@ -8,7 +8,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 5000, // 5秒超时，避免长时间等待
+  timeout: 10000, // 增加到10秒超时，给后端更多处理时间
 })
 
 // 请求拦截器 - 添加 token
@@ -33,8 +33,23 @@ api.interceptors.response.use(
     if (!error.response) {
       // 网络错误，可能是后端未运行
       console.warn('API request failed (backend may be unavailable):', error.message)
-      // 不 reject，而是返回一个模拟的错误响应，让组件能够处理
       return Promise.reject(error)
+    }
+    
+    // 处理速率限制错误（429）
+    if (error.response?.status === 429) {
+      const retryAfter = error.response?.data?.retryAfter || 60
+      const message = error.response?.data?.message || `请求过于频繁，请 ${retryAfter} 秒后再试`
+      console.warn('Rate limit exceeded:', message)
+      
+      // 可以在这里显示全局提示
+      if (typeof window !== 'undefined' && window.alert) {
+        // 只在开发环境或特定情况下显示alert
+        // 生产环境可以使用toast通知
+        console.error(message)
+      }
+      
+      return Promise.reject(new Error(message))
     }
     
     if (error.response?.status === 401) {

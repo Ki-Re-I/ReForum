@@ -28,6 +28,44 @@ const changelogCopy = {
 const updates = [
   {
     date: '2025-12-01',
+    version: '1.3.1',
+    translations: {
+      zh: {
+        title: '请求间隔优化与速率限制调整',
+        description: '放宽后端速率限制，添加前端防抖与节流机制，解决频繁请求导致的数据加载失败问题。',
+        features: [
+          '后端速率限制从 15 分钟内 100 个请求提升到 500 个请求',
+          '首页和搜索页面添加防抖（300ms）和节流（500ms最小间隔）机制',
+          'API 请求超时时间从 5 秒增加到 10 秒，给后端更多处理时间',
+          '优化 429 速率限制错误的处理，提供更友好的错误提示',
+        ],
+      },
+      en: {
+        title: 'Request Throttling & Rate Limit Adjustments',
+        description:
+          'Relaxed backend rate limits and added frontend debouncing/throttling to prevent data loading failures from rapid requests.',
+        features: [
+          'Backend rate limit increased from 100 to 500 requests per 15 minutes',
+          'Added debounce (300ms) and throttle (500ms min interval) on Home and Search pages',
+          'API timeout extended from 5 to 10 seconds for better backend processing',
+          'Improved 429 rate limit error handling with clearer user feedback',
+        ],
+      },
+      ja: {
+        title: 'リクエスト間隔の最適化とレート制限の調整',
+        description:
+          'バックエンドのレート制限を緩和し、フロントエンドにデバウンス/スロットルを追加して、頻繁なリクエストによるデータ読み込み失敗を解決しました。',
+        features: [
+          'バックエンドのレート制限を15分間100リクエストから500リクエストに引き上げ',
+          'ホームと検索ページにデバウンス（300ms）とスロットル（最小間隔500ms）を実装',
+          'API リクエストのタイムアウトを5秒から10秒に延長し、バックエンドの処理時間を確保',
+          '429 レート制限エラーの処理を改善し、より分かりやすいエラーメッセージを提供',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-01',
     version: '1.3.0',
     translations: {
       zh: {

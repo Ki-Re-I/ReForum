@@ -45,14 +45,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 速率限制
+// 速率限制 - 放宽限制以避免正常使用时的误拦截
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 分钟
-  max: 100, // 限制每个 IP 15 分钟内最多 100 个请求
+  max: 500, // 限制每个 IP 15 分钟内最多 500 个请求（从100增加到500）
   message: {
     error: 'TOO_MANY_REQUESTS',
     message: '请求过于频繁，请稍后再试',
   },
+  standardHeaders: true, // 返回速率限制信息到 `RateLimit-*` 头
+  legacyHeaders: false, // 禁用 `X-RateLimit-*` 头
 });
 app.use('/api/', limiter);
 

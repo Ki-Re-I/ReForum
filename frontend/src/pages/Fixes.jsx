@@ -4,6 +4,41 @@ import './Fixes.css'
 
 const fixes = [
   {
+    date: '2025-12-01',
+    translations: {
+      zh: {
+        title: '频繁请求导致后端数据加载失败',
+        description: '修复用户快速操作（切换排序、搜索、切换分类等）时，请求过于频繁导致后端数据加载不出来的问题。',
+        details: [
+          '放宽后端速率限制，从 15 分钟内 100 个请求增加到 500 个请求',
+          '首页和搜索页面添加防抖（300ms）和节流（500ms最小间隔）机制',
+          'API 请求超时时间从 5 秒增加到 10 秒，给后端更多处理时间',
+          '优化 429 速率限制错误的处理，提供更友好的错误提示',
+        ],
+      },
+      en: {
+        title: 'Rapid Requests Causing Data Loading Failures',
+        description: 'Fixed an issue where rapid user actions (sorting, searching, category switching) caused backend data loading failures due to too many requests.',
+        details: [
+          'Relaxed backend rate limit from 100 to 500 requests per 15 minutes',
+          'Added debounce (300ms) and throttle (500ms min interval) on Home and Search pages',
+          'Extended API timeout from 5 to 10 seconds for better backend processing',
+          'Improved 429 rate limit error handling with clearer user feedback',
+        ],
+      },
+      ja: {
+        title: '頻繁なリクエストによるデータ読み込み失敗',
+        description: 'ユーザーが素早く操作（並び替え、検索、カテゴリー切替など）した際、リクエストが多すぎてデータが読み込めなくなる問題を修正しました。',
+        details: [
+          'バックエンドのレート制限を15分間100リクエストから500リクエストに緩和',
+          'ホームと検索ページにデバウンス（300ms）とスロットル（最小間隔500ms）を実装',
+          'API リクエストのタイムアウトを5秒から10秒に延長し、バックエンドの処理時間を確保',
+          '429 レート制限エラーの処理を改善し、より分かりやすいエラーメッセージを提供',
+        ],
+      },
+    },
+  },
+  {
     date: '2025-11-13',
     translations: {
       zh: {
