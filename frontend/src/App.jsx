@@ -1,6 +1,7 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import { useLanguage } from './context/LanguageContext'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import RightSidebar from './components/RightSidebar'
@@ -16,14 +17,16 @@ import Fixes from './pages/Fixes'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
 import './App.css'
+import LanguageSwitcher from './components/LanguageSwitcher'
 
 function App() {
   const { loading } = useAuth()
+  const { t } = useLanguage()
 
   if (loading) {
     return (
       <div className="app-loading">
-        <div>加载中...</div>
+        <div>{t('common.loading')}</div>
       </div>
     )
   }
@@ -50,6 +53,7 @@ function App() {
         </main>
         <RightSidebar />
       </div>
+      <LanguageSwitcher />
     </div>
   )
 }

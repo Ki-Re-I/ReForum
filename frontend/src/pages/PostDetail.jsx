@@ -6,11 +6,13 @@ import { useAuth } from '../context/AuthContext'
 import { postAPI, commentAPI } from '../services/api'
 import { FaComment, FaHeart, FaRegHeart } from 'react-icons/fa'
 import CommentList from '../components/CommentList'
+import { useLanguage } from '../context/LanguageContext'
 import './PostDetail.css'
 
 const PostDetail = () => {
   const { postId } = useParams()
   const { isAuthenticated, user } = useAuth()
+  const { t } = useLanguage()
   const [post, setPost] = useState(null)
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(true)
@@ -56,7 +58,7 @@ const PostDetail = () => {
 
   const handleLike = async () => {
     if (!isAuthenticated) {
-      alert('请先登录')
+      alert(t('post.needLogin'))
       return
     }
     if (liking) return
@@ -72,9 +74,9 @@ const PostDetail = () => {
     } catch (error) {
       console.error('Failed to toggle like:', error)
       if (error.response?.status === 401) {
-        alert('请先登录')
+        alert(t('post.needLogin'))
       } else {
-        alert('操作失败，请重试')
+        alert(t('post.actionFailed'))
       }
     } finally {
       setLiking(false)
@@ -190,7 +192,7 @@ const PostDetail = () => {
                     <div key={index} className="post-image-container">
                       <img 
                         src={imageUrl} 
-                        alt={alt || '帖子图片'} 
+                        alt={alt || t('post.imageAlt')} 
                         className="post-image"
                         loading="lazy"
                       />
@@ -212,18 +214,28 @@ const PostDetail = () => {
                 className={`post-action like-button ${liked ? 'liked' : ''}`}
                 onClick={handleLike}
                 disabled={liking || !isAuthenticated}
-                title={isAuthenticated ? (liked ? '取消点赞' : '点赞') : '请先登录'}
+                title={
+                  isAuthenticated
+                    ? liked
+                      ? t('post.actionUnlike')
+                      : t('post.actionLike')
+                    : t('post.needLogin')
+                }
               >
                 {liked ? <FaHeart /> : <FaRegHeart />}
                 <span>{post.likeCount || 0}</span>
               </button>
               <div className="post-action">
                 <FaComment />
-                <span>{post.commentCount || 0} 条评论</span>
+                <span>
+                  {post.commentCount || 0} {t('post.commentCountSuffix')}
+                </span>
               </div>
             </div>
             <div className="post-stats">
-              <span>{post.viewCount || 0} 次浏览</span>
+              <span>
+                {post.viewCount || 0} {t('post.viewSuffix')}
+              </span>
             </div>
           </div>
 
@@ -249,7 +261,7 @@ const PostDetail = () => {
             <textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder="写下你的评论..."
+              placeholder={t('post.commentPlaceholder')}
               rows={4}
               className="comment-textarea"
             />
@@ -259,19 +271,25 @@ const PostDetail = () => {
                 disabled={!commentText.trim() || submitting}
                 className="comment-submit-button"
               >
-                {submitting ? '发布中...' : '发布评论'}
+                {submitting ? t('post.commentSubmitting') : t('post.commentSubmit')}
               </button>
             </div>
           </form>
         </div>
       ) : (
         <div className="comment-login-prompt">
-          <p>请<a href="/login">登录</a>后发表评论</p>
+          <p>
+            {t('post.loginToComment')}
+            <a href="/login">{t('post.loginLink')}</a>
+            {t('post.loginSuffix')}
+          </p>
         </div>
       )}
 
       <div className="comments-section">
-        <h2 className="comments-title">评论 ({post.commentCount || 0})</h2>
+        <h2 className="comments-title">
+          {t('post.commentsTitle')} ({post.commentCount || 0})
+        </h2>
         <CommentList comments={comments} onUpdate={fetchComments} postId={postId} />
       </div>
     </div>

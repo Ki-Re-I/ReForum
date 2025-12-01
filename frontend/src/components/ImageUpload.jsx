@@ -1,30 +1,39 @@
 import React, { useRef, useState } from 'react'
-import { FaImage, FaTimes, FaUpload } from 'react-icons/fa'
+import { FaTimes, FaUpload } from 'react-icons/fa'
+import { useLanguage } from '../context/LanguageContext'
 import './ImageUpload.css'
+
+const formatWithParams = (template, params = {}) => {
+  if (!template) return ''
+  return template.replace(/\{(\w+)\}/g, (_, key) =>
+    Object.prototype.hasOwnProperty.call(params, key) ? params[key] : `{${key}}`
+  )
+}
 
 const ImageUpload = ({ images = [], onChange, maxImages = 10 }) => {
   const fileInputRef = useRef(null)
   const [isDragging, setIsDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const { t } = useLanguage()
 
   const handleFileSelect = async (files) => {
     const fileArray = Array.from(files)
     const imageFiles = fileArray.filter(file => file.type.startsWith('image/'))
 
     if (imageFiles.length === 0) {
-      alert('请选择图片文件')
+      alert(t('image.alertSelect'))
       return
     }
 
     if (images.length + imageFiles.length > maxImages) {
-      alert(`最多只能上传 ${maxImages} 张图片`)
+      alert(formatWithParams(t('image.alertMax'), { max: maxImages }))
       return
     }
 
     // 检查文件大小（5MB）
     const oversizedFiles = imageFiles.filter(file => file.size > 5 * 1024 * 1024)
     if (oversizedFiles.length > 0) {
-      alert('图片大小不能超过 5MB')
+      alert(t('image.alertSize'))
       return
     }
 
@@ -97,7 +106,7 @@ const ImageUpload = ({ images = [], onChange, maxImages = 10 }) => {
           // 实时更新状态
           onChange([...updatedImagesList])
         } catch (error) {
-          console.error('图片上传失败:', error)
+          console.error('Image upload failed:', error)
           // 标记为上传失败，但保留预览
           const imageIndex = images.length + i
           updatedImagesList[imageIndex] = {
@@ -106,12 +115,17 @@ const ImageUpload = ({ images = [], onChange, maxImages = 10 }) => {
             error: true,
           }
           onChange([...updatedImagesList])
-          alert(`图片 ${newImages[i].file.name} 上传失败: ${error.message}`)
+          alert(
+            formatWithParams(t('image.uploadFail'), {
+              name: newImages[i].file.name,
+              message: error.message,
+            })
+          )
         }
       }
     } catch (error) {
-      console.error('处理图片失败:', error)
-      alert('处理图片失败，请重试')
+      console.error('Failed to process images:', error)
+      alert(t('image.processFail'))
     } finally {
       setUploading(false)
     }
@@ -158,7 +172,7 @@ const ImageUpload = ({ images = [], onChange, maxImages = 10 }) => {
 
   return (
     <div className="image-upload">
-      <label className="image-upload-label">图片（可选）</label>
+      <label className="image-upload-label">{t('image.label')}</label>
       
       {/* 上传区域 */}
       {images.length < maxImages && (
@@ -179,10 +193,10 @@ const ImageUpload = ({ images = [], onChange, maxImages = 10 }) => {
           />
           <FaUpload className="upload-icon" />
           <p className="upload-text">
-            {uploading ? '上传中...' : '点击或拖拽图片到这里上传'}
+            {uploading ? t('image.uploading') : t('image.cta')}
           </p>
           <p className="upload-hint">
-            支持 JPEG、PNG、GIF、WebP，单张不超过 5MB，最多 {maxImages} 张
+            {formatWithParams(t('image.hint'), { max: maxImages })}
           </p>
         </div>
       )}
@@ -195,16 +209,16 @@ const ImageUpload = ({ images = [], onChange, maxImages = 10 }) => {
               {image.uploading ? (
                 <div className="image-preview-loading">
                   <div className="loading-spinner"></div>
-                  <span>上传中...</span>
+                  <span>{t('image.previewUploading')}</span>
                 </div>
               ) : image.error ? (
                 <div className="image-preview-error">
-                  <span>上传失败</span>
+                  <span>{t('image.previewError')}</span>
                   <button
                     type="button"
                     className="image-remove-button"
                     onClick={() => handleRemove(index)}
-                    title="删除"
+                    title={t('image.delete')}
                   >
                     <FaTimes />
                   </button>
@@ -213,10 +227,10 @@ const ImageUpload = ({ images = [], onChange, maxImages = 10 }) => {
                 <>
                   <img
                     src={image.url || image.preview}
-                    alt={`预览 ${index + 1}`}
+                    alt={formatWithParams(t('image.alt'), { index: index + 1 })}
                     className="image-preview"
                     onError={(e) => {
-                      console.error('图片加载失败:', image.url || image.preview)
+                      console.error('Preview image failed to load:', image.url || image.preview)
                       e.target.style.display = 'none'
                     }}
                   />
@@ -224,7 +238,7 @@ const ImageUpload = ({ images = [], onChange, maxImages = 10 }) => {
                     type="button"
                     className="image-remove-button"
                     onClick={() => handleRemove(index)}
-                    title="删除"
+                    title={t('image.delete')}
                   >
                     <FaTimes />
                   </button>

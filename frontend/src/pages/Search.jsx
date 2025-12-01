@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { postAPI } from '../services/api'
 import PostCard from '../components/PostCard'
+import { useLanguage } from '../context/LanguageContext'
 import './Home.css'
 
 const Search = () => {
@@ -16,6 +17,7 @@ const Search = () => {
   })
   const [sort, setSort] = useState('time')
   const [searchQuery, setSearchQuery] = useState('')
+  const { t } = useLanguage()
 
   // 从 URL 参数获取搜索关键词
   useEffect(() => {
@@ -68,9 +70,12 @@ const Search = () => {
     <div className="home-page">
       <div className="posts-header">
         <div className="search-results-header">
-          <h2>搜索结果</h2>
+          <h2>{t('search.title')}</h2>
           {searchQuery && (
-            <p className="search-query">关键词: "{searchQuery}"</p>
+            <p className="search-query">
+              {t('search.keywordPrefix')}
+              "{searchQuery}"
+            </p>
           )}
         </div>
         <div className="sort-buttons">
@@ -78,35 +83,37 @@ const Search = () => {
             className={`sort-button ${sort === 'time' ? 'active' : ''}`}
             onClick={() => handleSortChange('time')}
           >
-            最新
+            {t('home.latest')}
           </button>
           <button
             className={`sort-button ${sort === 'hot' ? 'active' : ''}`}
             onClick={() => handleSortChange('hot')}
           >
-            热门
+            {t('home.hot')}
           </button>
         </div>
       </div>
 
       <div className="posts-container">
         {loading ? (
-          <div className="loading">搜索中...</div>
+          <div className="loading">{t('search.loading')}</div>
         ) : !searchQuery ? (
           <div className="empty-state">
-            <p>请输入搜索关键词</p>
+            <p>{t('search.enterKeyword')}</p>
           </div>
         ) : posts.length === 0 ? (
           <div className="empty-state">
-            <p>未找到相关帖子</p>
+            <p>{t('search.noResultsTitle')}</p>
             <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}>
-              没有找到包含 "{searchQuery}" 的帖子，请尝试其他关键词
+              {t('search.noResultsDesc')}
             </p>
           </div>
         ) : (
           <>
             <div className="search-results-count">
-              找到 {pagination.total} 个结果
+              {t('search.resultsPrefix')}
+              {pagination.total}
+              {t('search.resultsSuffix')}
             </div>
             {posts.map((post) => (
               <PostCard key={post.id} post={post} />
@@ -119,7 +126,7 @@ const Search = () => {
                     setPagination({ ...pagination, page: pagination.page + 1 })
                   }
                 >
-                  加载更多
+                  {t('home.loadMore')}
                 </button>
               </div>
             )}

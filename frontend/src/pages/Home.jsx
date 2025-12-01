@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { postAPI } from '../services/api'
 import PostCard from '../components/PostCard'
+import { useLanguage } from '../context/LanguageContext'
 import './Home.css'
 
 const Home = () => {
+  const { t } = useLanguage()
   const [searchParams] = useSearchParams()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -68,25 +70,25 @@ const Home = () => {
             className={`sort-button ${sort === 'time' ? 'active' : ''}`}
             onClick={() => handleSortChange('time')}
           >
-            最新
+            {t('home.latest')}
           </button>
           <button
             className={`sort-button ${sort === 'hot' ? 'active' : ''}`}
             onClick={() => handleSortChange('hot')}
           >
-            热门
+            {t('home.hot')}
           </button>
         </div>
       </div>
 
       <div className="posts-container">
         {loading ? (
-          <div className="loading">加载中...</div>
+          <div className="loading">{t('home.loading')}</div>
         ) : posts.length === 0 ? (
           <div className="empty-state">
-            <p>暂无帖子</p>
+            <p>{t('home.emptyTitle')}</p>
             <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}>
-              暂时没有找到相关帖子，请稍后再试
+              {t('home.emptyDesc')}
             </p>
           </div>
         ) : (
@@ -102,7 +104,7 @@ const Home = () => {
                     setPagination({ ...pagination, page: pagination.page + 1 })
                   }
                 >
-                  加载更多
+                  {t('home.loadMore')}
                 </button>
               </div>
             )}

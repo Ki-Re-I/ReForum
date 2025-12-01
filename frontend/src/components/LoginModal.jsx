@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { useLanguage } from '../context/LanguageContext'
 import './Modal.css'
 
 const LoginModal = ({ onClose, onSwitchToRegister }) => {
@@ -11,6 +12,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -44,19 +46,20 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
           ×
         </button>
         
-        <h2 className="modal-title">登录</h2>
+        <h2 className="modal-title">{t('auth.loginTitle')}</h2>
         
         <p className="modal-agreement">
-          继续操作即表示您同意我们的
-          <a href="#">用户协议</a>并确认您了解
-          <a href="#">隐私政策</a>。
+          {t('auth.agreementPrefix')}
+          <a href="#">{t('auth.agreementUser')}</a>
+          {t('auth.agreementPrivacyPrefix')}
+          <a href="#">{t('auth.agreementPrivacy')}</a>
         </p>
 
         {error && <div className="modal-error">{error}</div>}
 
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
-            <label htmlFor="login">邮箱或用户名 *</label>
+            <label htmlFor="login">{t('auth.emailOrUsername')}</label>
             <input
               type="text"
               id="login"
@@ -64,12 +67,12 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
               value={formData.login}
               onChange={handleChange}
               required
-              placeholder="邮箱或用户名"
+              placeholder={t('auth.emailOrUsernamePlaceholder')}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">密码 *</label>
+            <label htmlFor="password">{t('auth.password')}</label>
             <input
               type="password"
               id="password"
@@ -77,12 +80,12 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
               value={formData.password}
               onChange={handleChange}
               required
-              placeholder="密码"
+              placeholder={t('auth.passwordPlaceholder')}
             />
           </div>
 
           <div className="form-actions">
-            <a href="#" className="forgot-password">忘记密码？</a>
+            <a href="#" className="forgot-password">{t('auth.forgotPassword')}</a>
           </div>
 
           <button
@@ -90,19 +93,19 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
             className="modal-submit-button"
             disabled={loading}
           >
-            {loading ? '登录中...' : '登录'}
+            {loading ? t('auth.loggingIn') : t('auth.login')}
           </button>
         </form>
 
         <div className="modal-switch">
           <p>
-            新用户？{' '}
+            {t('auth.newUser')}{' '}
             <button
               type="button"
               onClick={onSwitchToRegister}
               className="switch-link"
             >
-              注册
+              {t('auth.register')}
             </button>
           </p>
         </div>

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { categoryAPI } from '../services/api'
+import { useLanguage } from '../context/LanguageContext'
 import './RightSidebar.css'
 
 const RightSidebar = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { t } = useLanguage()
   const [categories, setCategories] = useState([])
   const [tags, setTags] = useState([])
   const [loading, setLoading] = useState(true)
@@ -44,12 +46,12 @@ const RightSidebar = () => {
   return (
     <aside className="right-sidebar">
       <div className="sidebar-card">
-        <h3 className="card-title">版块分类</h3>
+        <h3 className="card-title">{t('right.categoriesTitle')}</h3>
         {loading ? (
-          <p style={{ color: '#666', fontSize: '0.9rem' }}>加载中...</p>
+          <p style={{ color: '#666', fontSize: '0.9rem' }}>{t('right.loading')}</p>
         ) : categories.length === 0 ? (
           <p style={{ color: '#666', fontSize: '0.9rem' }}>
-            暂无版块
+            {t('right.emptyCategories')}
           </p>
         ) : (
           <div className="category-list">
@@ -85,7 +87,7 @@ const RightSidebar = () => {
                   <div className="category-info">
                     <span className="category-name">{category.name}</span>
                     <span className="category-count">
-                      {category.postCount || 0} 帖子
+                      {category.postCount || 0} {t('right.postsSuffix')}
                     </span>
                   </div>
                 </div>
@@ -96,12 +98,12 @@ const RightSidebar = () => {
       </div>
 
       <div className="sidebar-card">
-        <h3 className="card-title">标签</h3>
+        <h3 className="card-title">{t('right.tagsTitle')}</h3>
         {loading ? (
-          <p style={{ color: '#666', fontSize: '0.9rem' }}>加载中...</p>
+          <p style={{ color: '#666', fontSize: '0.9rem' }}>{t('right.loading')}</p>
         ) : tags.length === 0 ? (
           <p style={{ color: '#666', fontSize: '0.9rem' }}>
-            暂无标签
+            {t('right.emptyTags')}
           </p>
         ) : (
           <div className="tag-list">

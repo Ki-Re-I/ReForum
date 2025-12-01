@@ -6,6 +6,26 @@
 
 ---
 
+## 最新更新：多语言界面与语言切换器
+
+### 新增内容
+- ✅ **三语界面**：除用户发布的帖子正文外，导航、侧栏、搜索、发帖、弹窗以及各静态页面均支持中文/英文/日文三种语言
+- ✅ **悬浮语言按钮**：左下角新增圆形语言切换器，支持悬停/点击展开动画，并记住最近一次的语言偏好
+- ✅ **法务与信息页翻译**：用户协议、隐私政策、关于我们、联系我们、更新日志、问题修复等页面提供独立的多语言内容
+
+### 修改文件（节选）
+- `frontend/src/context/LanguageContext.jsx` - 扩展翻译字典，覆盖导航、右侧栏、搜索、发帖、评论等文案
+- `frontend/src/components/Sidebar.jsx`、`RightSidebar.jsx`、`CommentList.jsx`、`LanguageSwitcher.jsx` 等 - 接入语言上下文
+- `frontend/src/pages/Home.jsx`、`Search.jsx`、`CreatePost.jsx`、`PostDetail.jsx` - 动态切换按钮、提示与表单文案
+- `frontend/src/pages/About.jsx`、`Contact.jsx`、`Changelog.jsx`、`Fixes.jsx`、`Terms.jsx`、`Privacy.jsx` - 重构为多语言内容
+- `UPDATE_LOG.md` - 记录本次多语言改造
+
+### 对用户的影响
+- 访客可直接在页面底部切换语言，界面文本实时更新，阅读体验更连贯
+- 多语言版本的法务与帮助内容降低了国际用户的理解成本
+
+---
+
 ## 最新更新：问题修复页排版优化
 
 ### 修复内容
@@ -536,5 +556,5 @@ DELETE /api/posts/:postId - 删除帖子（需要认证，仅限作者）
 
 ## 更新日期
 
-2025/11/13
+2025/12/01
 

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { FaSearch, FaPlus, FaUserCircle, FaMoon, FaSun } from 'react-icons/fa'
+import { useLanguage } from '../context/LanguageContext'
 import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal'
 import './Header.css'
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth()
+  const { t } = useLanguage()
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -58,7 +60,7 @@ const Header = () => {
           <FaSearch className="search-icon" />
           <input
             type="text"
-            placeholder="搜索帖子、用户..."
+            placeholder={t('header.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="search-input"
@@ -71,24 +73,24 @@ const Header = () => {
             className="header-button theme-toggle-button"
             onClick={toggleTheme}
             aria-pressed={theme === 'dark'}
-            title={theme === 'dark' ? '切换到日间模式' : '切换到夜间模式'}
+            title={theme === 'dark' ? t('header.toLight') : t('header.toDark')}
           >
             {theme === 'dark' ? <FaSun /> : <FaMoon />}
-            <span>{theme === 'dark' ? '日间模式' : '夜间模式'}</span>
+            <span>{theme === 'dark' ? t('header.lightLabel') : t('header.darkLabel')}</span>
           </button>
           {isAuthenticated ? (
             <>
               <button 
                 className="header-button create-button"
                 onClick={() => navigate('/create-post')}
-                title="发布新帖子"
+                title={t('header.createTitle')}
               >
-                <FaPlus /> 发布
+                <FaPlus /> {t('header.create')}
               </button>
               <div className="user-menu">
                 <button 
                   className="user-avatar-button" 
-                  title="用户菜单"
+                  title={t('header.userMenu')}
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   onBlur={() => setTimeout(() => setShowUserMenu(false), 200)}
                 >
@@ -101,7 +103,7 @@ const Header = () => {
                       className="dropdown-item"
                       onClick={() => setShowUserMenu(false)}
                     >
-                      我的资料
+                      {t('header.profile')}
                     </Link>
                     <div className="dropdown-divider"></div>
                     <button 
@@ -111,7 +113,7 @@ const Header = () => {
                       }} 
                       className="dropdown-item"
                     >
-                      登出
+                      {t('header.logout')}
                     </button>
                   </div>
                 )}
@@ -123,13 +125,13 @@ const Header = () => {
                 className="header-button login-button"
                 onClick={() => setShowLoginModal(true)}
               >
-                登录
+                  {t('header.login')}
               </button>
               <button
                 className="header-button register-button"
                 onClick={() => setShowRegisterModal(true)}
               >
-                注册
+                  {t('header.register')}
               </button>
             </>
           )}
