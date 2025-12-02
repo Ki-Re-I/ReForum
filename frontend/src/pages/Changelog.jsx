@@ -27,6 +27,45 @@ const changelogCopy = {
 
 const updates = [
   {
+    date: '2025-12-02',
+    version: '1.4.0',
+    translations: {
+      zh: {
+        title: 'Inbox 通知功能',
+        description: '新增右上角通知系统，实时接收新帖子通知。',
+        features: [
+          '右上角添加通知图标，显示未读数量徽章',
+          '点击查看通知列表，包含发帖人和帖子标题',
+          '支持标记单个或全部通知为已读',
+          '自动轮询更新未读数量（每30秒）',
+          '点击通知可直接跳转到对应帖子',
+        ],
+      },
+      en: {
+        title: 'Inbox Notifications',
+        description: 'Added notification system in the top-right corner to receive real-time new post notifications.',
+        features: [
+          'Notification icon in top-right corner with unread badge',
+          'Click to view notification list with author and post title',
+          'Support marking individual or all notifications as read',
+          'Auto-polling updates unread count every 30 seconds',
+          'Click notification to jump directly to the related post',
+        ],
+      },
+      ja: {
+        title: 'Inbox 通知機能',
+        description: '右上に通知システムを追加し、新しい投稿の通知をリアルタイムで受信できます。',
+        features: [
+          '右上に通知アイコンを追加、未読数のバッジを表示',
+          'クリックで通知一覧を表示、投稿者と投稿タイトルを含む',
+          '個別またはすべての通知を既読にする機能',
+          '未読数を30秒ごとに自動更新',
+          '通知をクリックして関連投稿に直接ジャンプ',
+        ],
+      },
+    },
+  },
+  {
     date: '2025-12-01',
     version: '1.3.2',
     translations: {

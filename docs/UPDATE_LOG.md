@@ -6,6 +6,58 @@
 
 ---
 
+## 最新更新：Inbox 通知功能
+
+### 新增内容
+- ✅ **Inbox 通知系统**：右上角新增通知图标，实时接收新帖子通知
+- ✅ **通知列表**：点击图标显示通知列表，包含发帖人和帖子标题
+- ✅ **未读徽章**：显示未读通知数量，超过99显示"99+"
+- ✅ **标记已读**：支持标记单个或全部通知为已读
+- ✅ **自动轮询**：每30秒自动更新未读通知数量
+- ✅ **跳转功能**：点击通知可直接跳转到对应帖子
+
+### 修改文件
+- `backend/migrations/add_notifications_table.sql` - 创建通知数据表
+- `backend/models/Notification.js` - 通知模型，包含创建、查询、标记已读等功能
+- `backend/controllers/notificationController.js` - 通知控制器
+- `backend/routes/notifications.js` - 通知路由
+- `backend/controllers/postController.js` - 创建帖子时自动生成通知
+- `backend/app.js` - 注册通知路由
+- `frontend/src/components/Inbox.jsx` - Inbox 组件
+- `frontend/src/components/Inbox.css` - Inbox 样式
+- `frontend/src/components/Header.jsx` - 集成 Inbox 组件
+- `frontend/src/services/api.js` - 添加通知 API
+- `frontend/src/context/LanguageContext.jsx` - 添加通知相关多语言支持
+- `openapi.yaml` - 添加通知 API 文档
+
+### 技术实现
+- **数据库设计**：创建 `notifications` 表，支持通知类型、关联帖子、关联用户等字段
+- **通知生成**：创建帖子时异步为所有其他用户生成通知，不阻塞响应
+- **实时更新**：前端使用轮询机制（30秒间隔）自动更新未读数量
+- **响应式设计**：通知下拉列表支持移动端显示
+- **多语言支持**：通知界面支持中文、英文、日文
+
+### API 端点
+- `GET /api/notifications` - 获取通知列表（支持分页和筛选）
+- `GET /api/notifications/unread-count` - 获取未读通知数量
+- `PUT /api/notifications/:notificationId/read` - 标记单个通知为已读
+- `PUT /api/notifications/read-all` - 标记所有通知为已读
+- `DELETE /api/notifications/:notificationId` - 删除通知
+
+### 数据库迁移
+运行以下 SQL 脚本创建通知表：
+```bash
+psql -U your_username -d reforum -f backend/migrations/add_notifications_table.sql
+```
+
+### 对用户的影响
+- 登录用户可以在右上角看到通知图标
+- 当有新帖子发布时，所有其他用户会收到通知
+- 用户可以方便地查看和管理通知
+- 点击通知可直接跳转到相关帖子，提升用户体验
+
+---
+
 ## 最新更新：响应式布局优化
 
 ### 优化内容
