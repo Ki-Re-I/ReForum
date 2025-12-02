@@ -48,43 +48,43 @@ const Sidebar = () => {
     <aside className="sidebar">
       <div className="sidebar-content">
         {/* 左侧：功能按钮 */}
-        <nav className="sidebar-nav">
-          <Link
-            to="/"
-            className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}
-          >
-            <FaHome className="nav-icon" />
-            <span>{t('sidebar.home')}</span>
-          </Link>
-          <Link
-            to="/about"
-            className={`nav-item ${location.pathname === '/about' ? 'active' : ''}`}
-          >
-            <FaInfoCircle className="nav-icon" />
-            <span>{t('sidebar.about')}</span>
-          </Link>
-          <Link
-            to="/contact"
-            className={`nav-item ${location.pathname === '/contact' ? 'active' : ''}`}
-          >
-            <FaEnvelope className="nav-icon" />
-            <span>{t('sidebar.contact')}</span>
-          </Link>
-          <Link
-            to="/changelog"
-            className={`nav-item ${location.pathname === '/changelog' ? 'active' : ''}`}
-          >
-            <FaHistory className="nav-icon" />
-            <span>{t('sidebar.changelog')}</span>
-          </Link>
-          <Link
-            to="/fixes"
-            className={`nav-item ${location.pathname === '/fixes' ? 'active' : ''}`}
-          >
-            <FaBug className="nav-icon" />
-            <span>{t('sidebar.fixes')}</span>
-          </Link>
-        </nav>
+      <nav className="sidebar-nav">
+        <Link
+          to="/"
+          className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}
+        >
+          <FaHome className="nav-icon" />
+          <span>{t('sidebar.home')}</span>
+        </Link>
+        <Link
+          to="/about"
+          className={`nav-item ${location.pathname === '/about' ? 'active' : ''}`}
+        >
+          <FaInfoCircle className="nav-icon" />
+          <span>{t('sidebar.about')}</span>
+        </Link>
+        <Link
+          to="/contact"
+          className={`nav-item ${location.pathname === '/contact' ? 'active' : ''}`}
+        >
+          <FaEnvelope className="nav-icon" />
+          <span>{t('sidebar.contact')}</span>
+        </Link>
+        <Link
+          to="/changelog"
+          className={`nav-item ${location.pathname === '/changelog' ? 'active' : ''}`}
+        >
+          <FaHistory className="nav-icon" />
+          <span>{t('sidebar.changelog')}</span>
+        </Link>
+        <Link
+          to="/fixes"
+          className={`nav-item ${location.pathname === '/fixes' ? 'active' : ''}`}
+        >
+          <FaBug className="nav-icon" />
+          <span>{t('sidebar.fixes')}</span>
+        </Link>
+      </nav>
 
         {/* 右侧：板块分类 */}
         <div className="sidebar-categories">

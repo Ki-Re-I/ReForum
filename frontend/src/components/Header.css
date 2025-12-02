@@ -220,7 +220,7 @@
 
 .language-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
+  top: calc(100% + 0.25rem);
   right: 0;
   background: var(--dropdown-background);
   backdrop-filter: blur(20px);
@@ -231,6 +231,7 @@
   padding: 0.5rem;
   z-index: 1000;
   animation: fadeIn 0.2s ease-out;
+  pointer-events: auto;
 }
 
 @keyframes fadeIn {

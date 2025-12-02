@@ -106,8 +106,6 @@ const Header = () => {
           <div 
             className="language-switcher-header"
             ref={languageMenuRef}
-            onMouseEnter={() => setShowLanguageMenu(true)}
-            onMouseLeave={() => setShowLanguageMenu(false)}
           >
             <button
               type="button"

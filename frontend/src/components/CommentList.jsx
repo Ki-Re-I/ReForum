@@ -82,9 +82,6 @@ const CommentList = ({ comments, onUpdate, depth = 0, maxDepth = 1, postId }) =>
                   <FaReply /> {t('comment.reply')}
                 </button>
               )}
-              {isAuthenticated && !canReply && (
-                <span className="comment-depth-limit">{t('comment.depthLimit')}</span>
-              )}
               {comment.likeCount > 0 && (
                 <span className="comment-like-count">
                   {comment.likeCount} {t('comment.likesSuffix')}

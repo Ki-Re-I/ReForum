@@ -647,7 +647,7 @@ psql -U your_username -d reforum -f backend/migrations/add_notifications_table.s
 
 ### 修改内容
 - ✅ 最大回复层级从 3 层改为 1 层
-- ✅ 提示信息改为"别套娃了"
+- ✅ 达到层级上限时不显示提示信息
 
 ### 修改文件
 - `frontend/src/components/CommentList.jsx` - maxDepth 改为 1
