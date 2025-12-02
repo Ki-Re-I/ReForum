@@ -163,9 +163,10 @@
   background-color: transparent;
   color: var(--text-primary);
   border: 1px solid var(--border-color);
-  padding: 0.625rem 1rem;
+  padding: 0.625rem;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 
 .theme-toggle-button:hover {
@@ -318,10 +319,6 @@
     flex: 0 1 auto;
     padding: 0.5rem 0.875rem;
     font-size: 0.875rem;
-  }
-
-  .theme-toggle-button span {
-    display: none;
   }
 
   .theme-toggle-button {

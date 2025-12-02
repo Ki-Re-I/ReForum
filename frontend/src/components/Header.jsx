@@ -77,7 +77,6 @@ const Header = () => {
             title={theme === 'dark' ? t('header.toLight') : t('header.toDark')}
           >
             {theme === 'dark' ? <FaSun /> : <FaMoon />}
-            <span>{theme === 'dark' ? t('header.lightLabel') : t('header.darkLabel')}</span>
           </button>
           {isAuthenticated && <Inbox />}
           {isAuthenticated ? (
