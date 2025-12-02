@@ -91,6 +91,12 @@ const CreatePost = () => {
       }
 
       const response = await postAPI.createPost(postData)
+      
+      // 触发自定义事件，通知标签组件有新帖子创建
+      window.dispatchEvent(new CustomEvent('postCreated', { 
+        detail: { postId: response.data.id, tags: postData.tags } 
+      }))
+      
       navigate(`/post/${response.data.id}`)
     } catch (error) {
       console.error('Failed to create post:', error)

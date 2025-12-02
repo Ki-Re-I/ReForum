@@ -6,11 +6,13 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background: var(--background);
+  border-left: 1px solid var(--border-color);
+  border-radius: var(--radius-lg, 8px);
 }
 
-/* 隐藏 Webkit 浏览器的滚动条 */
 .right-sidebar::-webkit-scrollbar {
   display: none;
 }
@@ -31,134 +33,186 @@
   text-align: center;
 }
 
-/* 随机布局容器 */
-.tag-random-container {
+/* 容器头部提示 */
+.tag-container-header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--background);
+}
+
+.tag-container-hint {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* 物理容器 */
+.tag-container {
   position: relative;
   width: 100%;
-  height: 100%;
+  flex: 1;
   overflow: hidden;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  background: var(--background);
 }
 
-/* 隐藏 Webkit 浏览器的滚动条 */
-.tag-random-container::-webkit-scrollbar {
-  display: none;
-}
-
-/* 随机位置的标签项 */
-.tag-random-item {
+.tricks-canvas {
   position: absolute;
-  display: inline-block;
-  white-space: nowrap;
-  animation: floatRandom var(--animation-duration, 20s) ease-in-out infinite;
-  animation-delay: var(--animation-delay, 0s);
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  cursor: grab;
+  pointer-events: all;
+}
+
+.tricks-elements {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+/* 物理标签项 - 简单样式 */
+.tag-physics-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.3rem;
+  background: transparent;
+  border: none;
   will-change: transform;
-  z-index: 1;
+  transform-origin: center center;
 }
 
-/* 随机浮动动画 */
-@keyframes floatRandom {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.7;
-  }
-  25% {
-    transform: translate(
-      calc(var(--direction, 1) * 20px),
-      calc(var(--direction, 1) * -15px)
-    ) scale(1.1);
-    opacity: 1;
-  }
-  50% {
-    transform: translate(
-      calc(var(--direction, 1) * -15px),
-      calc(var(--direction, 1) * 20px)
-    ) scale(0.9);
-    opacity: 0.8;
-  }
-  75% {
-    transform: translate(
-      calc(var(--direction, 1) * 10px),
-      calc(var(--direction, 1) * 10px)
-    ) scale(1.05);
-    opacity: 0.9;
-  }
+
+/* 标签日期显示 */
+.tag-date {
+  font-size: 0.35rem;
+  color: var(--text-tertiary);
+  opacity: 0.6;
+  line-height: 1;
+  margin-bottom: 0.05rem;
+  user-select: none;
+  pointer-events: none;
 }
 
-/* 标签文字样式 - 纯文字，无边框，无数字 */
+/* 标签文字样式 - 简单文字 */
 .tag-item-text {
   display: inline-block;
   color: var(--text-primary);
-  font-size: 0.875rem;
+  font-size: 0.55rem;
   font-weight: 500;
   white-space: nowrap;
-  transition: all 0.3s ease;
   user-select: none;
-  cursor: default;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-sm);
-  background: transparent;
+  text-align: center;
+  pointer-events: none;
 }
-
-.tag-item-text:hover {
-  color: var(--primary-color);
-  background: var(--hover-background);
-  transform: scale(1.1);
-}
-
-/* 不同大小的标签，增加视觉层次 */
-.tag-random-item:nth-child(3n) .tag-item-text {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  opacity: 0.8;
-}
-
-.tag-random-item:nth-child(3n+1) .tag-item-text {
-  font-size: 0.875rem;
-  color: var(--text-primary);
-}
-
-.tag-random-item:nth-child(3n+2) .tag-item-text {
-  font-size: 0.9375rem;
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
 
 /* 响应式设计 */
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
+  .right-sidebar {
+    width: 100%;
+    height: 400px;
+    position: static;
+    top: auto;
+    margin-top: 1rem;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    border-radius: var(--radius-lg, 8px);
+    /* 确保不影响其他内容 */
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .tag-container {
+    height: calc(100% - 60px); /* 减去头部高度 */
+    min-height: 340px;
+  }
+
+  .tag-container-header {
+    padding: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .tag-container-hint {
+    font-size: 0.75rem;
+  }
+
+  .tag-date {
+    font-size: 0.4rem;
+  }
+
   .tag-item-text {
-    font-size: 0.8125rem;
-  }
-  
-  .tag-random-item:nth-child(3n) .tag-item-text {
-    font-size: 0.6875rem;
-  }
-  
-  .tag-random-item:nth-child(3n+1) .tag-item-text {
-    font-size: 0.8125rem;
-  }
-  
-  .tag-random-item:nth-child(3n+2) .tag-item-text {
-    font-size: 0.875rem;
+    font-size: 0.6rem;
   }
 }
 
 @media (max-width: 768px) {
-  .tag-item-text {
-    font-size: 0.75rem;
+  .right-sidebar {
+    height: 350px;
+    margin-top: 0.75rem;
+    /* 确保不影响其他内容 */
+    flex-shrink: 0;
   }
-  
-  .tag-random-item:nth-child(3n) .tag-item-text {
+
+  .tag-container {
+    height: calc(100% - 55px); /* 减去头部高度 */
+    min-height: 295px;
+  }
+
+  .tag-container-header {
+    padding: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .tag-container-hint {
+    font-size: 0.6875rem;
+  }
+
+  .tag-date {
+    font-size: 0.35rem;
+  }
+
+  .tag-item-text {
+    font-size: 0.55rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .right-sidebar {
+    height: 300px;
+    margin-top: 0.5rem;
+    /* 确保不影响其他内容 */
+    flex-shrink: 0;
+  }
+
+  .tag-container {
+    height: calc(100% - 50px); /* 减去头部高度 */
+    min-height: 250px;
+  }
+
+  .tag-container-header {
+    padding: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .tag-container-hint {
     font-size: 0.625rem;
   }
-  
-  .tag-random-item:nth-child(3n+1) .tag-item-text {
-    font-size: 0.75rem;
+
+  .tag-date {
+    font-size: 0.3rem;
   }
-  
-  .tag-random-item:nth-child(3n+2) .tag-item-text {
-    font-size: 0.8125rem;
+
+  .tag-item-text {
+    font-size: 0.5rem;
   }
 }

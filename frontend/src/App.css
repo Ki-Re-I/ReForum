@@ -56,8 +56,9 @@
     order: 3;
     width: 100%;
     position: static;
-    height: auto;
+    height: 400px;
     top: auto;
+    margin-top: 1rem;
   }
 }
 

@@ -5,6 +5,132 @@ import './Fixes.css'
 const fixes = [
   {
     date: '2025-12-02',
+    version: '1.5.5',
+    translations: {
+      zh: {
+        title: '标签系统物理效果和交互性增强',
+        description: '集成Matter.js物理引擎，实现标签的真实物理效果和拖拽交互功能。',
+        details: [
+          '使用Matter.js物理引擎实现真实的物理模拟（重力、碰撞、摩擦、弹性）',
+          '标签从容器上方掉落，受重力影响自然下落并堆叠',
+          '支持鼠标和触摸拖拽标签，标签之间会发生真实碰撞',
+          '简化标签样式，移除色块和装饰，改为简洁的纯文字样式',
+          '减小标签占地面积，提高标签密度',
+          '优化响应式布局，确保在移动端正常显示且不影响其他内容',
+          '容器样式与整体页面样式统一，使用主题变量',
+        ],
+      },
+      en: {
+        title: 'Tag System Physics Effects and Interactivity Enhancement',
+        description: 'Integrated Matter.js physics engine to implement real physics effects and drag interaction for tags.',
+        details: [
+          'Used Matter.js physics engine for real physics simulation (gravity, collision, friction, restitution)',
+          'Tags fall from top of container, naturally drop and stack under gravity',
+          'Support mouse and touch drag for tags with real collision detection',
+          'Simplified tag styles, removed color blocks and decorations, using clean text-only style',
+          'Reduced tag footprint, increased tag density',
+          'Optimized responsive layout to ensure proper display on mobile devices without affecting other content',
+          'Container styles unified with overall page styles using theme variables',
+        ],
+      },
+      ja: {
+        title: 'タグシステムの物理効果とインタラクティブ性の強化',
+        description: 'Matter.js物理エンジンを統合し、タグのリアルな物理効果とドラッグインタラクション機能を実装しました。',
+        details: [
+          'Matter.js物理エンジンを使用してリアルな物理シミュレーション（重力、衝突、摩擦、弾性）を実現',
+          'タグがコンテナの上から落下し、重力の影響で自然に落下して積み重なる',
+          'マウスとタッチでタグをドラッグ可能で、タグ間でリアルな衝突が発生',
+          'タグスタイルを簡素化し、色ブロックと装飾を削除し、シンプルなテキストのみのスタイルに変更',
+          'タグの占有面積を削減し、タグ密度を向上',
+          'レスポンシブレイアウトを最適化し、モバイルデバイスで正常に表示され、他のコンテンツに影響しないことを確認',
+          'コンテナスタイルを全体ページスタイルと統一し、テーマ変数を使用',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-02',
+    version: '1.5.4',
+    translations: {
+      zh: {
+        title: 'Header左右边距不对称问题',
+        description: '修复Header中左侧Logo与左侧边缘的距离和右侧按钮组合与右侧边缘的距离不一致的历史遗留问题。',
+        details: [
+          '使用 minmax(0, 1fr) 确保Grid布局中左右列严格等宽',
+          '移除Logo和按钮组合的额外margin和padding，确保紧贴边缘',
+          '添加 width: fit-content 确保元素紧贴各自列的边缘',
+          '在所有响应式断点下保持左右对称',
+          '这是一个历史遗留问题，多个版本更新迭代都未修复',
+        ],
+      },
+      en: {
+        title: 'Header Left-Right Margin Asymmetry',
+        description: 'Fixed historical issue where the distance from left logo to left edge and right button group to right edge were inconsistent.',
+        details: [
+          'Used minmax(0, 1fr) to ensure strict equal width for left and right columns in Grid layout',
+          'Removed extra margin and padding from logo and button group to ensure they align to edges',
+          'Added width: fit-content to ensure elements align to their column edges',
+          'Maintained left-right symmetry at all responsive breakpoints',
+          'This was a historical issue that persisted through multiple version updates',
+        ],
+      },
+      ja: {
+        title: 'ヘッダーの左右マージンの非対称性',
+        description: '左側のロゴと左端の距離、右側のボタングループと右端の距離が一致しない歴史的な問題を修正しました。',
+        details: [
+          'minmax(0, 1fr) を使用してGridレイアウトで左右の列の幅を厳密に等しく設定',
+          'ロゴとボタングループの余分なマージンとパディングを削除し、端に揃えるように調整',
+          'width: fit-content を追加して要素が各列の端に揃うように設定',
+          'すべてのレスポンシブブレークポイントで左右対称を維持',
+          'これは複数のバージョン更新を経ても修正されなかった歴史的な問題でした',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-02',
+    version: '1.5.3',
+    translations: {
+      zh: {
+        title: '响应式设备上Header按钮排版错乱',
+        description: '修复语言切换按钮移到右上角后，在响应式设备上出现的按钮排版错乱问题。',
+        details: [
+          '优化992px、768px、576px、480px断点的按钮布局',
+          '确保按钮在所有断点下都能正确换行和排列，不会重叠或溢出',
+          '调整按钮padding和font-size，确保在小屏幕上可读且协调',
+          '优化语言菜单在小屏幕上的定位，确保不会超出视口',
+          '统一图标按钮和文字按钮的尺寸，保持视觉一致性',
+          '改进搜索框在超小屏幕上的显示效果',
+        ],
+      },
+      en: {
+        title: 'Header Button Layout Issues on Responsive Devices',
+        description: 'Fixed button layout issues on responsive devices after moving language switcher to top-right corner.',
+        details: [
+          'Optimized button layout for 992px, 768px, 576px, and 480px breakpoints',
+          'Ensured buttons wrap correctly and align properly at all breakpoints without overlapping or overflow',
+          'Adjusted button padding and font-size for readability and consistency on small screens',
+          'Optimized language menu positioning on small screens to prevent viewport overflow',
+          'Unified icon button and text button sizes for visual consistency',
+          'Improved search box display on extra small screens',
+        ],
+      },
+      ja: {
+        title: 'レスポンシブデバイスでのヘッダーボタンのレイアウト問題',
+        description: '言語切替ボタンを右上に移動した後、レスポンシブデバイスで発生したボタンのレイアウト問題を修正しました。',
+        details: [
+          '992px、768px、576px、480pxのブレークポイントでボタンレイアウトを最適化',
+          'すべてのブレークポイントでボタンが正しく折り返し、整列し、重なりやオーバーフローが発生しないように調整',
+          '小画面での可読性と一貫性のため、ボタンのパディングとフォントサイズを調整',
+          '小画面での言語メニューの位置を最適化し、ビューポートを超えないように調整',
+          '視覚的一貫性のため、アイコンボタンとテキストボタンのサイズを統一',
+          '超小画面での検索ボックスの表示を改善',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-02',
     version: '1.5.2',
     translations: {
       zh: {

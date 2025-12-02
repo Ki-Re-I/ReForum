@@ -40,82 +40,105 @@ export const mockCategories = [
   },
 ]
 
+// 生成随机日期（最近30天内）
+const getRandomDate = () => {
+  const now = new Date()
+  const daysAgo = Math.floor(Math.random() * 30)
+  const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000)
+  return date.toISOString()
+}
+
 // 假标签数据（带不同的postCount用于3D滚动效果）
 export const mockTags = [
   {
     id: 1,
     name: 'React',
     postCount: 5,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 2,
     name: 'Vue',
     postCount: 3,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 3,
     name: 'JavaScript',
     postCount: 8,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 4,
     name: 'TypeScript',
     postCount: 4,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 5,
     name: 'Node.js',
     postCount: 6,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 6,
     name: 'Python',
     postCount: 7,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 7,
     name: 'Java',
     postCount: 2,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 8,
     name: 'Go',
     postCount: 3,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 9,
     name: 'Rust',
     postCount: 2,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 10,
     name: 'Docker',
     postCount: 4,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 11,
     name: 'Kubernetes',
     postCount: 2,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 12,
     name: 'AWS',
     postCount: 3,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 13,
     name: 'Git',
     postCount: 5,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 14,
     name: 'Linux',
     postCount: 4,
+    latestPostDate: getRandomDate(),
   },
   {
     id: 15,
     name: 'Database',
     postCount: 6,
+    latestPostDate: getRandomDate(),
   },
 ]
 
