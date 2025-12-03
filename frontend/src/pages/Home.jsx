@@ -426,14 +426,30 @@ const Home = () => {
 
   // 获取当前选中的日期
   const selectedDate = searchParams.get('date')
-
-  // 获取日期分组
+  
+  // 获取日期分组（用于日历上的总量分布）
   const postsByDate = groupPostsByDate(allPosts)
   
-  // 生成日历数据
-  const calendarData = calendarView === 'week' 
+  // 生成日历数据（基础数据，未考虑“当前选中日期”的覆盖）
+  const rawCalendarData = calendarView === 'week' 
     ? generateWeekView(calendarYear, calendarMonth, calendarDay, postsByDate)
     : generateMonthView(calendarYear, calendarMonth, postsByDate)
+
+  // 当前选中日期对应的帖子数量（直接使用当前列表里的帖子数，保证与页面显示一致）
+  const selectedDatePostCount = selectedDate ? posts.length : 0
+
+  // 对日历数据进行增强：如果某一天正好是当前选中的日期，
+  // 则优先使用 selectedDatePostCount 来显示数量，确保和下方列表同步。
+  const calendarData = rawCalendarData.map((item) => {
+    if (!item || !selectedDate) return item
+    if (item.date !== selectedDate) return item
+
+    return {
+      ...item,
+      hasPosts: selectedDatePostCount > 0,
+      postCount: selectedDatePostCount,
+    }
+  })
   
   // 月份名称 - 简化版本
   const monthNames = {
