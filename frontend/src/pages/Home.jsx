@@ -258,7 +258,9 @@ const Home = () => {
     try {
       const params = {
         page: 1,
-        limit: 200, // 获取足够多的帖子用于日期分组，同时控制请求体积
+        // 注意：后端分页验证限制 limit 最大为 100（见 validatePagination）
+        // 如果超过该值会返回 400，所以这里保持在 100 以内
+        limit: 100, // 获取足够多的帖子用于日期分组，同时符合后端限制
         sort: 'time',
       }
       if (selectedCategory) {
