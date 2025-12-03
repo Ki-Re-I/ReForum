@@ -17,7 +17,7 @@ const formatLocale = {
   ja,
 }
 
-const Inbox = () => {
+const Inbox = ({ showLabel = false }) => {
   const { isAuthenticated } = useAuth()
   const { t, language } = useLanguage()
   const [showDropdown, setShowDropdown] = useState(false)
@@ -122,8 +122,8 @@ const Inbox = () => {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
-    fetchNotifications()
+      document.addEventListener('mousedown', handleClickOutside)
+      fetchNotifications()
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
@@ -195,85 +195,88 @@ const Inbox = () => {
 
   const dropdownPanel = (
     <div className="inbox-dropdown" ref={!isMobile ? dropdownRef : null}>
-      <div className="inbox-header">
-        <h3>{t('header.inbox') || '通知'}</h3>
+          <div className="inbox-header">
+            <h3>{t('header.inbox') || '通知'}</h3>
         <div className="inbox-header-actions">
-          {unreadCount > 0 && (
-            <button
-              className="inbox-mark-all-read"
-              onClick={handleMarkAllAsRead}
-            >
-              {t('header.markAllRead') || '全部已读'}
-            </button>
-          )}
+            {unreadCount > 0 && (
+              <button
+                className="inbox-mark-all-read"
+                onClick={handleMarkAllAsRead}
+              >
+                {t('header.markAllRead') || '全部已读'}
+              </button>
+            )}
           {isMobile && (
             <button className="inbox-close" onClick={() => setShowDropdown(false)} aria-label="关闭">
               <FaTimes />
             </button>
           )}
         </div>
-      </div>
+          </div>
 
-      <div className="inbox-list">
-        {loading ? (
-          <div className="inbox-loading">
-            {t('header.loading') || '加载中...'}
-          </div>
-        ) : notifications.length === 0 ? (
-          <div className="inbox-empty">
-            {t('header.noNotifications') || '暂无通知'}
-          </div>
-        ) : (
-          notifications.map((notification) => (
-            <Link
-              key={notification.id}
-              to={notification.related_post_id ? `/post/${notification.related_post_id}` : '#'}
-              className={`inbox-item ${!notification.is_read ? 'unread' : ''}`}
-              onClick={() => {
-                if (!notification.is_read) {
-                  handleMarkAsRead(notification.id, { preventDefault: () => {}, stopPropagation: () => {} })
-                }
-                setShowDropdown(false)
-              }}
-            >
-              <div className="inbox-item-content">
-                <div className="inbox-item-title">{formatNotificationTitle(notification)}</div>
-                {notification.content && (
-                  <div className="inbox-item-text">{notification.content}</div>
-                )}
-                <div className="inbox-item-time">
-                  {formatTime(notification.created_at)}
-                </div>
+          <div className="inbox-list">
+            {loading ? (
+              <div className="inbox-loading">
+                {t('header.loading') || '加载中...'}
               </div>
-              <div className="inbox-item-actions">
-                {!notification.is_read && (
-                  <button
-                    className="inbox-item-mark-read"
-                    onClick={(e) => handleMarkAsRead(notification.id, e)}
-                    title={t('header.markAsRead') || '标记为已读'}
-                  >
-                    <FaTimes />
-                  </button>
-                )}
+            ) : notifications.length === 0 ? (
+              <div className="inbox-empty">
+                {t('header.noNotifications') || '暂无通知'}
               </div>
-            </Link>
-          ))
-        )}
-      </div>
-    </div>
+            ) : (
+              notifications.map((notification) => (
+                <Link
+                  key={notification.id}
+                  to={notification.related_post_id ? `/post/${notification.related_post_id}` : '#'}
+                  className={`inbox-item ${!notification.is_read ? 'unread' : ''}`}
+                  onClick={() => {
+                    if (!notification.is_read) {
+                      handleMarkAsRead(notification.id, { preventDefault: () => {}, stopPropagation: () => {} })
+                    }
+                    setShowDropdown(false)
+                  }}
+                >
+                  <div className="inbox-item-content">
+                    <div className="inbox-item-title">{formatNotificationTitle(notification)}</div>
+                    {notification.content && (
+                      <div className="inbox-item-text">{notification.content}</div>
+                    )}
+                    <div className="inbox-item-time">
+                      {formatTime(notification.created_at)}
+                    </div>
+                  </div>
+                  <div className="inbox-item-actions">
+                    {!notification.is_read && (
+                      <button
+                        className="inbox-item-mark-read"
+                        onClick={(e) => handleMarkAsRead(notification.id, e)}
+                        title={t('header.markAsRead') || '标记为已读'}
+                      >
+                        <FaTimes />
+                      </button>
+                    )}
+                  </div>
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
   )
 
   return (
-    <div className="inbox-container">
+    <div className={`inbox-container ${showLabel ? 'with-label' : ''}`}>
       <button
-        className="inbox-button"
+        className={`inbox-button ${showLabel ? 'with-label' : ''}`}
         onClick={() => setShowDropdown(!showDropdown)}
         title={t('header.inbox') || '通知'}
         aria-label={t('header.inbox') || '通知'}
       >
+        {showLabel && <span className="inbox-button-label">{t('header.inbox')}</span>}
         <FaBell />
         {unreadCount > 0 && (
-          <span className="inbox-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
+          <span className={`inbox-badge ${showLabel ? 'inline' : ''}`}>
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
         )}
       </button>
 

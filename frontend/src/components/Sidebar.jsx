@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { FaHome, FaInfoCircle, FaEnvelope, FaHistory, FaShieldAlt } from 'react-icons/fa'
-import { FaBug } from 'react-icons/fa'
+import {
+  FaHome,
+  FaInfoCircle,
+  FaEnvelope,
+  FaHistory,
+  FaShieldAlt,
+  FaBug,
+  FaChevronDown,
+  FaThList,
+  FaLayerGroup,
+} from 'react-icons/fa'
 import { useLanguage } from '../context/LanguageContext'
 import { categoryAPI } from '../services/api'
 import { mockCategoryAPI, mockCategories } from '../data/mockData'
@@ -17,6 +26,12 @@ const Sidebar = () => {
   const { t, getCategoryName } = useLanguage()
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.innerWidth <= 768
+  })
+  const [navExpanded, setNavExpanded] = useState(!isMobile)
+  const [categoryExpanded, setCategoryExpanded] = useState(!isMobile)
 
   const fetchCategories = async () => {
     try {
@@ -44,100 +59,159 @@ const Sidebar = () => {
     fetchCategories()
   }, [location.pathname])
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window === 'undefined') return
+      setIsMobile(window.innerWidth <= 768)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    if (isMobile) {
+      setNavExpanded(false)
+      setCategoryExpanded(false)
+    } else {
+      setNavExpanded(true)
+      setCategoryExpanded(true)
+    }
+  }, [isMobile])
+
   return (
     <aside className="sidebar">
       <div className="sidebar-content">
-        {/* 左侧：功能按钮 */}
-      <nav className="sidebar-nav">
-        <Link
-          to="/"
-          className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}
-        >
-          <FaHome className="nav-icon" />
-          <span>{t('sidebar.home')}</span>
-        </Link>
-        <Link
-          to="/about"
-          className={`nav-item ${location.pathname === '/about' ? 'active' : ''}`}
-        >
-          <FaInfoCircle className="nav-icon" />
-          <span>{t('sidebar.about')}</span>
-        </Link>
-        <Link
-          to="/contact"
-          className={`nav-item ${location.pathname === '/contact' ? 'active' : ''}`}
-        >
-          <FaEnvelope className="nav-icon" />
-          <span>{t('sidebar.contact')}</span>
-        </Link>
-        <Link
-          to="/privacy"
-          className={`nav-item ${location.pathname === '/privacy' ? 'active' : ''}`}
-        >
-          <FaShieldAlt className="nav-icon" />
-          <span>{t('sidebar.privacy')}</span>
-        </Link>
-        <Link
-          to="/changelog"
-          className={`nav-item ${location.pathname === '/changelog' ? 'active' : ''}`}
-        >
-          <FaHistory className="nav-icon" />
-          <span>{t('sidebar.changelog')}</span>
-        </Link>
-        <Link
-          to="/fixes"
-          className={`nav-item ${location.pathname === '/fixes' ? 'active' : ''}`}
-        >
-          <FaBug className="nav-icon" />
-          <span>{t('sidebar.fixes')}</span>
-        </Link>
-      </nav>
-
-        {/* 右侧：板块分类 */}
-        <div className="sidebar-categories">
-          <h3 className="categories-title">{t('right.categoriesTitle')}</h3>
-          {loading ? (
-            <p className="categories-loading">{t('right.loading')}</p>
-          ) : categories.length === 0 ? (
-            <p className="categories-empty">{t('right.emptyCategories')}</p>
-          ) : (
-            <div className="category-list-bubble">
-              {categories.map((category) => {
-                const isActive = location.pathname === '/' && 
-                  new URLSearchParams(location.search).get('category') === String(category.id)
-                
-                return (
-                  <div
-                    key={category.id}
-                    className={`category-bubble-item ${isActive ? 'active' : ''}`}
-                    onClick={() => {
-                      if (location.pathname === '/') {
-                        const currentCategory = new URLSearchParams(location.search).get('category')
-                        if (currentCategory === String(category.id)) {
-                          navigate('/', { replace: true })
-                        } else {
-                          navigate(`/?category=${category.id}`, { replace: true })
-                        }
-                      } else {
-                        navigate(`/?category=${category.id}`)
-                      }
-                    }}
-                  >
-                    <div
-                      className="category-color-dot"
-                      style={{ backgroundColor: category.color || '#6366f1' }}
-                    />
-                    <div className="category-info">
-                      <span className="category-name">{getCategoryName(category.name)}</span>
-                      <span className="category-count">
-                        {category.postCount || 0} {t('right.postsSuffix')}
-                      </span>
-                    </div>
-                  </div>
-                )
-              })}
+        <div className="sidebar-accordion">
+          <button
+            type="button"
+            className="sidebar-accordion-header"
+            onClick={() => setNavExpanded((prev) => !prev)}
+            aria-expanded={navExpanded}
+            aria-controls="sidebar-nav-section"
+          >
+            <div className="sidebar-accordion-label">
+              <FaThList className="accordion-leading-icon" />
+              <span>{t('sidebar.navToggle')}</span>
             </div>
-          )}
+            <FaChevronDown className={`sidebar-accordion-icon ${navExpanded ? 'open' : ''}`} />
+          </button>
+          <div
+            id="sidebar-nav-section"
+            className={`sidebar-accordion-content ${navExpanded ? 'expanded' : 'collapsed'}`}
+          >
+            <nav className="sidebar-nav">
+              <Link
+                to="/"
+                className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}
+              >
+                <FaHome className="nav-icon" />
+                <span>{t('sidebar.home')}</span>
+              </Link>
+              <Link
+                to="/about"
+                className={`nav-item ${location.pathname === '/about' ? 'active' : ''}`}
+              >
+                <FaInfoCircle className="nav-icon" />
+                <span>{t('sidebar.about')}</span>
+              </Link>
+              <Link
+                to="/contact"
+                className={`nav-item ${location.pathname === '/contact' ? 'active' : ''}`}
+              >
+                <FaEnvelope className="nav-icon" />
+                <span>{t('sidebar.contact')}</span>
+              </Link>
+              <Link
+                to="/privacy"
+                className={`nav-item ${location.pathname === '/privacy' ? 'active' : ''}`}
+              >
+                <FaShieldAlt className="nav-icon" />
+                <span>{t('sidebar.privacy')}</span>
+              </Link>
+              <Link
+                to="/changelog"
+                className={`nav-item ${location.pathname === '/changelog' ? 'active' : ''}`}
+              >
+                <FaHistory className="nav-icon" />
+                <span>{t('sidebar.changelog')}</span>
+              </Link>
+              <Link
+                to="/fixes"
+                className={`nav-item ${location.pathname === '/fixes' ? 'active' : ''}`}
+              >
+                <FaBug className="nav-icon" />
+                <span>{t('sidebar.fixes')}</span>
+              </Link>
+            </nav>
+          </div>
+        </div>
+
+        <div className="sidebar-accordion">
+            <button
+              type="button"
+              className="sidebar-accordion-header"
+              onClick={() => setCategoryExpanded((prev) => !prev)}
+              aria-expanded={categoryExpanded}
+              aria-controls="sidebar-category-section"
+            >
+              <div className="sidebar-accordion-label">
+                <FaLayerGroup className="accordion-leading-icon" />
+                <span>{t('right.categoriesTitle')}</span>
+              </div>
+            <FaChevronDown className={`sidebar-accordion-icon ${categoryExpanded ? 'open' : ''}`} />
+            </button>
+          <div
+            id="sidebar-category-section"
+            className={`sidebar-accordion-content ${categoryExpanded ? 'expanded' : 'collapsed'}`}
+          >
+            <div className="sidebar-categories">
+              {loading ? (
+                <p className="categories-loading">{t('right.loading')}</p>
+              ) : categories.length === 0 ? (
+                <p className="categories-empty">{t('right.emptyCategories')}</p>
+              ) : (
+                <div className="category-list-bubble">
+                  {categories.map((category) => {
+                    const isActive =
+                      location.pathname === '/' &&
+                      new URLSearchParams(location.search).get('category') === String(category.id)
+
+                    return (
+                      <div
+                        key={category.id}
+                        className={`category-bubble-item ${isActive ? 'active' : ''}`}
+                        onClick={() => {
+                          if (location.pathname === '/') {
+                            const currentCategory = new URLSearchParams(location.search).get('category')
+                            if (currentCategory === String(category.id)) {
+                              navigate('/', { replace: true })
+                            } else {
+                              navigate(`/?category=${category.id}`, { replace: true })
+                            }
+                          } else {
+                            navigate(`/?category=${category.id}`)
+                          }
+                        }}
+                      >
+                        <div
+                          className="category-color-dot"
+                          style={{ backgroundColor: category.color || '#6366f1' }}
+                        />
+                        <div className="category-info">
+                          {/* {getCategoryIcon(getCategoryName(category.name))} */}
+                          <span className="category-name">{getCategoryName(category.name)}</span>
+                          <span className="category-count">
+                            {category.postCount || 0} {t('right.postsSuffix')}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </aside>

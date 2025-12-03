@@ -24,6 +24,77 @@
   gap: 2rem;
 }
 
+.sidebar-accordion {
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  padding: 0.25rem 0;
+}
+
+.sidebar-accordion-header {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  padding: 0.45rem 0.25rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: opacity 0.15s ease;
+  gap: 0.75rem;
+}
+
+.sidebar-accordion-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.accordion-leading-icon {
+  font-size: 0.9rem;
+  color: var(--primary-dark, var(--primary-color));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.sidebar-accordion-icon {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: transform 0.25s ease;
+}
+
+.sidebar-accordion-icon.open {
+  transform: rotate(180deg);
+}
+
+.sidebar-accordion-content {
+  width: 100%;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.35s ease;
+  will-change: max-height, opacity, transform;
+  padding-left: 0;
+}
+
+.sidebar-accordion-content.expanded {
+  max-height: 1000px;
+  opacity: 1;
+  transform: translateY(0);
+  padding-bottom: 0.75rem;
+  margin-left: 0;
+  padding-left: 0;
+}
+
 .sidebar-nav {
   width: 100%;
 }
@@ -37,15 +108,20 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 0;
+  padding: 0.85rem 0.85rem;
   margin-bottom: 0.5rem;
-  border-radius: 0;
+  border-radius: var(--radius-lg);
+  background: transparent;
   color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.2s;
   font-weight: 500;
   font-size: 0.9375rem;
   position: relative;
+}
+
+.nav-item:last-child {
+  margin-bottom: 0;
 }
 
 .nav-item:hover {
@@ -59,18 +135,6 @@
   color: var(--primary-color);
   font-weight: 600;
   box-shadow: none;
-}
-
-.nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: -1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background-color: var(--primary-color);
-  border-radius: 0 2px 2px 0;
 }
 
 .nav-item.active .nav-icon {
@@ -175,14 +239,18 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 0;
+  padding: 0.85rem 0.85rem;
   background: transparent;
   border: none;
-  border-radius: 0;
+  border-radius: var(--radius-lg);
   box-shadow: none;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color 0.2s, background 0.2s;
   position: relative;
+}
+
+.category-bubble-item:last-child {
+  margin-bottom: 0;
 }
 
 .category-bubble-item:hover {
@@ -199,17 +267,6 @@
   color: var(--primary-color);
 }
 
-.category-bubble-item.active::before {
-  content: '';
-  position: absolute;
-  left: -1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 60%;
-  background-color: var(--primary-color);
-  border-radius: 0 2px 2px 0;
-}
 
 .category-color-dot {
   width: 6px;
@@ -256,5 +313,63 @@
   .sidebar-categories {
     border-top: 1px solid var(--border-color);
     padding-top: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    position: static;
+    height: auto;
+    padding: 0 0.5rem;
+  }
+
+  .sidebar-content {
+    gap: 0.75rem;
+  }
+
+  .sidebar-accordion {
+    border: none;
+    border-radius: var(--radius-lg);
+    background-color: transparent;
+    padding: 0 0.25rem;
+  }
+
+  .sidebar-accordion-header {
+    padding: 0.6rem 0;
+  }
+
+  .sidebar-accordion-label {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+  }
+
+  .sidebar-accordion-content {
+    padding-bottom: 0.75rem;
+  }
+
+  .sidebar-categories {
+    border-top: none;
+    padding-top: 0.5rem;
+  }
+
+  .categories-title {
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-item,
+  .category-bubble-item {
+    padding: 0.65rem 0;
+  }
+
+  /* 小屏设备上取消首页菜单和版块分类的悬浮高亮效果，只保留点击效果 */
+  .nav-item:hover {
+    background-color: transparent;
+    color: var(--text-secondary);
+  }
+
+  .category-bubble-item:hover {
+    background-color: transparent;
+    color: inherit;
   }
 }

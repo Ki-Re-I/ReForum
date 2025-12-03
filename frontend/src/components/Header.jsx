@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { FaSearch, FaPlus, FaUserCircle, FaMoon, FaSun, FaGlobeAsia } from 'react-icons/fa'
+import { FaSearch, FaPlus, FaUserCircle, FaMoon, FaSun, FaGlobeAsia, FaThLarge } from 'react-icons/fa'
 import { useLanguage } from '../context/LanguageContext'
 import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal'
@@ -17,6 +17,8 @@ const Header = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showLanguageMenu, setShowLanguageMenu] = useState(false)
+  const [showActionsMenu, setShowActionsMenu] = useState(false)
+  const [isClosingActions, setIsClosingActions] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [currentTime, setCurrentTime] = useState(() => new Date())
   const [theme, setTheme] = useState(() => {
@@ -46,6 +48,13 @@ const Header = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  useEffect(() => {
+    if (!isMobile) {
+      setShowActionsMenu(false)
+      setIsClosingActions(false)
+    }
+  }, [isMobile])
+
   // 点击外部区域时关闭语言菜单（桌面端）
   useEffect(() => {
     if (!showLanguageMenu || isMobile) return
@@ -55,7 +64,7 @@ const Header = () => {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
@@ -70,6 +79,15 @@ const Header = () => {
       document.body.style.overflow = originalOverflow
     }
   }, [showLanguageMenu, isMobile])
+
+  useEffect(() => {
+    if (!showActionsMenu || !isMobile) return
+    const originalOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = originalOverflow
+    }
+  }, [showActionsMenu, isMobile])
 
   const localeMap = {
     zh: 'zh-CN',
@@ -101,13 +119,12 @@ const Header = () => {
     return () => clearInterval(timer)
   }, [])
 
-  const yearMonth = currentTime.toLocaleDateString(currentLocale, {
-    year: 'numeric',
-    month: 'long',
-  })
-  const day = currentTime.toLocaleDateString(currentLocale, {
-    day: '2-digit',
-  })
+  // 统一日期显示格式：YYYY-MM-DD（与语言无关，始终同一样式）
+  const formattedDate = [
+    currentTime.getFullYear(),
+    String(currentTime.getMonth() + 1).padStart(2, '0'),
+    String(currentTime.getDate()).padStart(2, '0'),
+  ].join('-')
   const timeString = currentTime.toLocaleTimeString(currentLocale, {
     hour: '2-digit',
     minute: '2-digit',
@@ -164,132 +181,240 @@ const Header = () => {
       )
     : null
 
-  return (
-    <header className="header">
-      <div className="header-container">
-        <div className="header-left">
-          <Link to="/" className="header-logo">
-            <span className="logo-text">
-              <span className="logo-re">RE</span>
-              <span className="logo-forum">Forum</span>
+  const closeActionsMenu = () => {
+    if (!showActionsMenu) return
+    setIsClosingActions(true)
+    setTimeout(() => {
+      setShowActionsMenu(false)
+      setIsClosingActions(false)
+    }, 200)
+  }
+
+  const renderToolsGroup = (variant = 'inline') => {
+    const showLabels = variant !== 'inline'
+    return (
+      <div
+        className={`header-actions-group header-actions-group-tools ${
+          showLabels ? 'header-actions-group-mobile' : ''
+        }`}
+      >
+        <ThemeColorPicker showLabel={showLabels} />
+        <button
+          type="button"
+          className={`header-button theme-toggle-button ${showLabels ? 'with-label' : ''}`}
+          onClick={toggleTheme}
+          aria-pressed={theme === 'dark'}
+          title={theme === 'dark' ? t('header.toLight') : t('header.toDark')}
+        >
+          {showLabels && (
+            <span className="action-button-label">
+              {theme === 'dark' ? t('header.lightLabel') : t('header.darkLabel')}
             </span>
-          </Link>
-
-          <form className="header-search" onSubmit={handleSearch}>
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder={t('header.searchPlaceholder')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-            />
-          </form>
+          )}
+          {theme === 'dark' ? <FaSun /> : <FaMoon />}
+        </button>
+        <div
+          className={`language-switcher-header ${showLabels ? 'with-label' : ''}`}
+          ref={!isMobile ? languageMenuRef : null}
+        >
+          <button
+            type="button"
+            className={`header-button language-toggle-button ${showLabels ? 'with-label' : ''}`}
+            onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+            title={t('header.languageTitle')}
+          >
+            {showLabels && <span className="action-button-label">{t('header.languageTitle')}</span>}
+            <FaGlobeAsia />
+          </button>
+          {!isMobile && showLanguageMenu && <div className="language-menu">{languageMenuContent}</div>}
         </div>
+        {languageOverlay}
+        {isAuthenticated && <Inbox showLabel={showLabels} />}
+      </div>
+    )
+  }
 
-        <div className="header-center">
-          <div className="date-block">
-            <span className="date-year-month">{yearMonth}</span>
-            <span className="date-day">{day}</span>
-          </div>
-          <span className="time-block">{timeString}</span>
-        </div>
-
-        <div className="header-actions-row">
-          <div className="header-actions-group header-actions-group-tools">
-            <ThemeColorPicker />
+  const renderPrimaryGroup = (variant = 'inline') => {
+    const showLabels = variant !== 'inline'
+    return (
+      <div
+        className={`header-actions-group header-actions-group-primary ${
+          showLabels ? 'header-actions-group-mobile' : ''
+        }`}
+      >
+        {isAuthenticated ? (
+          <>
             <button
-              type="button"
-              className="header-button theme-toggle-button"
-              onClick={toggleTheme}
-              aria-pressed={theme === 'dark'}
-              title={theme === 'dark' ? t('header.toLight') : t('header.toDark')}
+              className={`header-button create-button ${showLabels ? 'with-label' : ''}`}
+              onClick={() => {
+                navigate('/create-post')
+                if (isMobile) closeActionsMenu()
+              }}
+              title={t('header.createTitle')}
             >
-              {theme === 'dark' ? <FaSun /> : <FaMoon />}
+              {showLabels ? (
+                <>
+                  <span className="action-button-label">{t('header.create')}</span>
+                  <FaPlus />
+                </>
+              ) : (
+                <>
+                  <FaPlus />
+                  <span className="create-button-label">{t('header.create')}</span>
+                </>
+              )}
             </button>
-            <div 
-              className="language-switcher-header"
-              ref={!isMobile ? languageMenuRef : null}
-            >
+            <div className={`user-menu ${showLabels ? 'with-label' : ''}`}>
               <button
-                type="button"
-                className="header-button language-toggle-button"
-                onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                title="Switch language"
+                className={`user-avatar-button ${showLabels ? 'with-label' : ''}`}
+                title={t('header.userMenu')}
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                onBlur={() => setTimeout(() => setShowUserMenu(false), 200)}
               >
-                <FaGlobeAsia />
+                {showLabels && <span className="action-button-label">{t('header.userMenu')}</span>}
+                <FaUserCircle className="user-avatar" />
               </button>
-              {!isMobile && showLanguageMenu && (
-                <div className="language-menu">
-                  {languageMenuContent}
+              {showUserMenu && (
+                <div className="user-dropdown">
+                  <Link
+                    to={`/user/${user.id}`}
+                    className="dropdown-item"
+                    onClick={() => {
+                      setShowUserMenu(false)
+                      if (isMobile) closeActionsMenu()
+                    }}
+                  >
+                    {t('header.profile')}
+                  </Link>
+                  <div className="dropdown-divider"></div>
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false)
+                      handleLogout()
+                      if (isMobile) closeActionsMenu()
+                    }}
+                    className="dropdown-item"
+                  >
+                    {t('header.logout')}
+                  </button>
                 </div>
               )}
             </div>
-            {languageOverlay}
-            {isAuthenticated && <Inbox />}
-          </div>
-          <div className="header-actions-group header-actions-group-primary">
-            {isAuthenticated ? (
-              <>
-                <button 
-                  className="header-button create-button"
-                  onClick={() => navigate('/create-post')}
-                  title={t('header.createTitle')}
-                >
-                  <FaPlus />
-                  <span className="create-button-label">{t('header.create')}</span>
-                </button>
-                <div className="user-menu">
-                  <button 
-                    className="user-avatar-button" 
-                    title={t('header.userMenu')}
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    onBlur={() => setTimeout(() => setShowUserMenu(false), 200)}
-                  >
-                    <FaUserCircle className="user-avatar" />
-                  </button>
-                  {showUserMenu && (
-                    <div className="user-dropdown">
-                      <Link 
-                        to={`/user/${user.id}`} 
-                        className="dropdown-item"
-                        onClick={() => setShowUserMenu(false)}
-                      >
-                        {t('header.profile')}
-                      </Link>
-                      <div className="dropdown-divider"></div>
-                      <button 
-                        onClick={() => {
-                          setShowUserMenu(false)
-                          handleLogout()
-                        }} 
-                        className="dropdown-item"
-                      >
-                        {t('header.logout')}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                <button
-                  className="header-button login-button"
-                  onClick={() => setShowLoginModal(true)}
-                >
-                    {t('header.login')}
-                </button>
-                <button
-                  className="header-button register-button"
-                  onClick={() => setShowRegisterModal(true)}
-                >
-                    {t('header.register')}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+          </>
+        ) : (
+          <>
+            <button
+              className="header-button login-button"
+              onClick={() => {
+                setShowLoginModal(true)
+                if (isMobile) closeActionsMenu()
+              }}
+            >
+              {t('header.login')}
+            </button>
+            <button
+              className="header-button register-button"
+              onClick={() => {
+                setShowRegisterModal(true)
+                if (isMobile) closeActionsMenu()
+              }}
+            >
+              {t('header.register')}
+            </button>
+          </>
+        )}
       </div>
+    )
+  }
+
+  const renderActionsLayout = (variant = 'inline') => (
+    <div className={`header-actions-row ${variant === 'modal' ? 'stacked' : ''}`}>
+      {renderToolsGroup(variant)}
+      {renderPrimaryGroup(variant)}
+    </div>
+  )
+
+  const actionsOverlay = (showActionsMenu || isClosingActions) && isMobile
+    ? createPortal(
+        <div
+          className={`actions-overlay ${isClosingActions ? 'closing' : 'opening'}`}
+          onClick={closeActionsMenu}
+        >
+          <div className="actions-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="actions-modal-close standalone"
+              onClick={closeActionsMenu}
+              aria-label="Close"
+            >
+              ×
+            </button>
+            {renderActionsLayout('modal')}
+          </div>
+        </div>,
+        document.body
+      )
+    : null
+
+  const actionsToggle =
+    isMobile &&
+    createPortal(
+      <div className="actions-toggle-wrapper">
+        <button
+          type="button"
+          className="header-button actions-toggle-button"
+          onClick={() => {
+            if (showActionsMenu) {
+              closeActionsMenu()
+            } else {
+              setShowActionsMenu(true)
+            }
+          }}
+          title={t('header.actionsTitle')}
+        >
+          <FaThLarge />
+        </button>
+        {actionsOverlay}
+      </div>,
+      document.body
+    )
+
+  return (
+    <>
+      <header className="header">
+        <div className="header-container">
+          <div className="header-left">
+            <Link to="/" className="header-logo">
+              <span className="logo-text">
+                <span className="logo-re">RE</span>
+                <span className="logo-forum">Forum</span>
+              </span>
+            </Link>
+
+            <form className="header-search" onSubmit={handleSearch}>
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder={t('header.searchPlaceholder')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+            </form>
+          </div>
+
+          <div className="header-center">
+            <div className="date-block">
+              <span className="date-year-month">{formattedDate}</span>
+            </div>
+            <span className="time-block">{timeString}</span>
+          </div>
+
+          {!isMobile && renderActionsLayout()}
+        </div>
+      </header>
+
+      {actionsToggle}
 
       {showLoginModal && (
         <LoginModal
@@ -310,7 +435,7 @@ const Header = () => {
           }}
         />
       )}
-    </header>
+    </>
   )
 }
 

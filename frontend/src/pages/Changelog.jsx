@@ -31,42 +31,54 @@ const changelogCopy = {
 const updates = [
   {
     date: '2025-12-03',
-    version: '1.6.2',
+    version: '1.7.0',
     translations: {
       zh: {
-        title: '首屏加载动画现代化',
+        title: '首屏加载动画与移动端工具集 / 侧边栏大幅升级',
         description:
-          '重塑 IntroLoader，让圆环进度、品牌文案与页面基调保持一致，并在加载完成时平滑过渡到首页。',
+          '在保留全新 IntroLoader 的基础上，本次还对移动端底部工具集按钮、Header 工具弹窗和左侧侧边栏折叠样式做了系统级 UI/交互升级。',
         features: [
           '加载进度缩短至 1 秒，圆环实时显示百分比',
           '新增 RE / FORUM 标识，字体与主页保持一致',
           '移除厚重背景与装饰，改为简洁的径向渐变',
           '加载结束后 Header、主内容和按钮栏依次淡入',
           '加载动画背景与进度条/文字颜色全面接入主题变量，修复灰色方块残影问题',
+          '移动端将 Header 右上角的多个操作按钮统一收纳到底部中间的“工具集”悬浮按钮中，任何滚动位置都可一键呼出',
+          '工具集弹窗采用自下而上的弹出/收起动画，内部按钮统一为“左侧文字、右侧图标”的两列对齐布局，行间距一致',
+          '移动端主题颜色选择器与通知列表改为居中模态，背景虚化、内容不再溢出屏幕',
+          '侧边栏导航与分类合并为更现代的手风琴样式，图标尺寸与风格统一，去掉多余背景块和分割线，整体更简洁',
         ],
       },
       en: {
-        title: 'Modernized Intro Loader',
+        title: 'Intro Loader Refresh with Mobile Toolset & Sidebar Overhaul',
         description:
-          'Refined the initial loading overlay so the circular progress, branding, and timing match the overall visual tone, then fade the app in smoothly.',
+          'Besides the new IntroLoader, this release also introduces a bottom-centered mobile toolset button, a cleaner header actions modal, and a modernized sidebar accordion.',
         features: [
           'Progress simulation now finishes in 1s with live percentage',
           'Added RE / FORUM wordmark above the ring for consistent branding',
           'Removed bulky glass backgrounds in favor of a subtle radial gradient',
           'Header, main content, and action bar fade in sequentially after loading',
           'Hooked the loader background, ring, and label colors into theme tokens and removed the gray box artifact around the progress ring',
+          'On mobile, all header utilities are grouped behind a single floating “toolset” button fixed at the bottom center of the viewport',
+          'The toolset panel now slides up from the bottom and lists actions in a consistent “label on the left, icon on the right” layout with even vertical spacing',
+          'Theme color picker and inbox/notifications open as centered modals with blurred backdrops and no more clipped content on small screens',
+          'The left sidebar navigation and category list are merged into a lighter accordion design with unified icon sizing and reduced visual noise',
         ],
       },
       ja: {
-        title: '初期ローディングアニメのモダン化',
+        title: 'イントロローダー刷新とモバイルツール集 / サイドバーの大幅改善',
         description:
-          'IntroLoader を再設計し、円形プログレスとブランド表記をサイト全体の雰囲気に合わせ、読み込み後は滑らかにページへ遷移します。',
+          '新しい IntroLoader に加えて、画面下中央のモバイル用ツール集ボタン、整理されたヘッダーアクションモーダル、そしてサイドバーのアコーディオンデザインを導入しました。',
         features: [
           '進行度シミュレーションを 1 秒で完了し、パーセンテージを即時表示',
           'リング上部に RE / FORUM ロゴタイプを追加しブランド性を統一',
           '重たい装飾背景を排除し、控えめな放射状グラデーションに変更',
           'ローディング完了後にヘッダー・メイン・ボタン列が順番にフェードイン',
           'ロード画面の背景とリング/テキストの色をテーマ変数に接続し、進捗リング周りのグレーボックス残像を解消',
+          'モバイルではヘッダー右上の各種操作を画面下中央の「ツール集」固定ボタンに集約し、どこからでもワンタップで開けるように変更',
+          'ツール集パネルは下からスライドインし、内部のボタンはすべて「左テキスト、右アイコン」のレイアウトと揃った行間に統一',
+          'テーマカラー選択と通知一覧を中央モーダル化し、小さな画面でも内容が切れないように調整',
+          '左サイドバーのメニューとカテゴリを一体型のアコーディオンに再設計し、アイコンサイズとスタイルを揃えつつ余計な背景や罫線を削減',
         ],
       },
     },
@@ -1415,7 +1427,7 @@ const Changelog = () => {
       {latestItem && (
         <div className="changelog-latest">
           <div className="changelog-latest-header">
-            <h2 className="changelog-latest-title">{latestLabel.title}</h2>
+          <h2 className="changelog-latest-title">{latestLabel.title}</h2>
             {latestFormattedDate && (
               <span className="changelog-latest-date" title={latestItem.date}>
                 {latestFormattedDate}

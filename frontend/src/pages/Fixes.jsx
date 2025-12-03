@@ -10,6 +10,49 @@ import './Fixes.css'
 export const fixes = [
   {
     date: '2025-12-03',
+    version: '1.7.0',
+    issue: 14,
+    translations: {
+      zh: {
+        title: '移动端工具集按钮与工具列表排版统一',
+        description:
+          '修复移动端“工具集”按钮跟随页面滚动、工具列表覆盖按钮、本行文字与图标对不齐、行间距不一致等一系列排版与交互问题。',
+        details: [
+          '将移动端“工具集”入口从 Header 结构中抽离，改为挂载到 body，并使用固定定位始终悬浮在屏幕底部中央（类似指纹识别区域）',
+          '重写工具集弹窗的打开/关闭逻辑：点击按钮在其上方平滑上滑展开，再次点击按钮或点击遮罩/右上角 X 时带动画下滑收起',
+          '统一工具列表中所有按钮的排版：在移动端变体下固定为左侧文字描述、右侧功能图标两列对齐，行与行之间的间隔也保持一致',
+          '将移动端主题颜色选择器与通知列表改为居中模态弹窗，背景虚化，避免内容被裁切或超出屏幕',
+          '调整工具集窗口右上角关闭按钮的位置与层级，避免被第一行按钮遮挡',
+        ],
+      },
+      en: {
+        title: 'Mobile Toolset Button & Tools List Layout Cleanup',
+        description:
+          'Fixed a series of layout and interaction issues on mobile where the floating toolset button scrolled with the page, the tools panel overlapped the button, and text/icon alignment and spacing were inconsistent.',
+        details: [
+          'Detached the mobile “Toolset” entry from the header layout and mounted it to the document body with fixed positioning so it always floats at the bottom center of the viewport',
+          'Reworked the toolset panel open/close logic so tapping the button slides the panel up above it and tapping the button again, the backdrop, or the close icon plays a smooth slide-down animation',
+          'Standardized every tool row inside the panel to a two‑column layout on mobile: text label on the left with flex:1, action icon aligned on the right, with consistent vertical spacing between rows',
+          'Converted the mobile theme color picker and notification list into centered modals with blurred backdrops to prevent content from being cut off on small screens',
+          'Adjusted the top‑right close “X” position and z‑index so it never overlaps or gets hidden by the first tool row',
+        ],
+      },
+      ja: {
+        title: 'モバイル版ツール集ボタンとツール一覧レイアウトの整理',
+        description:
+          'モバイル環境でツール集ボタンがページと一緒にスクロールしてしまう問題や、ツール一覧がボタンを覆ってしまう問題、各行のテキストとアイコンのズレ・行間の不統一などをまとめて改善しました。',
+        details: [
+          'モバイルの「ツール集」入口をヘッダー構造から切り離し、body 直下にマウントして `position: fixed` で画面下中央に常に表示されるように変更',
+          'ツール集パネルの開閉ロジックを作り直し、ボタンタップでボタン上方向にスライドインし、再度タップや背景・右上の X でスライイドアウトするアニメーションを追加',
+          'ツール一覧の各行をモバイル時はすべて「左テキストラベル、右アイコン」の2カラムレイアウトに統一し、行ごとの余白も揃えて読みやすく調整',
+          'モバイルのテーマカラー選択と通知一覧を中央モーダル化し、背景をぼかすことで小さな画面でも内容が切れないように改善',
+          'ツール集ウィンドウ右上の X ボタンの位置と z-index を調整し、最初の行のボタンに隠れないようにした',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-03',
     version: '1.6.1',
     issue: 13,
     translations: {
@@ -688,6 +731,60 @@ export const fixes = [
   },
 ]
 
+export function FixesPage() {
+  const { language } = useLanguage()
+
+  const locale = useMemo(() => {
+    if (language === 'zh') return zhCN
+    if (language === 'ja') return ja
+    return enUS
+  }, [language])
+
+  const latestFix = fixes[0]
+
+  const latestDateLabel = useMemo(() => {
+    if (!latestFix?.date) return ''
+    try {
+      return format(new Date(latestFix.date), 'PPP', { locale })
+    } catch {
+      return latestFix.date
+    }
+  }, [latestFix, locale])
+
+  const copy = {
+    zh: {
+      title: '问题修复',
+      subtitle: '这里记录了每一次对 REForum 的问题修复与质量提升。',
+      latestHeading: '最新修复',
+    },
+    en: {
+      title: 'Fixes',
+      subtitle: 'Every bug fix and quality improvement to REForum is tracked here.',
+      latestHeading: 'Latest fixes',
+    },
+    ja: {
+      title: '問題修正',
+      subtitle: 'REForum に対する不具合修正や品質改善の履歴をまとめています。',
+      latestHeading: '最新の修正',
+    },
+  }[language] || copy.en
+
+  return (
+    <div className="fixes-page">
+      <h1 className="fixes-title">{copy.title}</h1>
+      <p className="fixes-subtitle">{copy.subtitle}</p>
+
+      <section className="fixes-latest">
+        <div className="fixes-latest-header">
+          <h2 className="fixes-latest-title">{copy.latestHeading}</h2>
+          {latestDateLabel && <span className="fixes-latest-date">{latestDateLabel}</span>}
+        </div>
+        {/* 其余内容沿用原有结构，这里假设已有使用 fixes 数据渲染的逻辑 */}
+      </section>
+    </div>
+  )
+}
+
 const pageCopy = {
   zh: {
     title: '问题修复',
@@ -727,6 +824,7 @@ const Fixes = () => {
   const [expandedMonths, setExpandedMonths] = useState(new Set())
   const [expandedVersions, setExpandedVersions] = useState(new Set())
   const [expandedDates, setExpandedDates] = useState(new Set())
+
   const locale = formatLocale[language] || zhCN
   const datePattern = formatPattern[language] || formatPattern.zh
   const monthPattern = monthFormatPattern[language] || monthFormatPattern.zh
@@ -749,7 +847,7 @@ const Fixes = () => {
       const date = new Date(fix.date)
       const monthKey = format(date, 'yyyy-MM', { locale })
       const monthLabel = format(date, monthPattern, { locale })
-      
+
       // 版本号保持完整（如 1.5.10）
       const versionKey = fix.version || 'unknown'
       const dateKey = fix.date
@@ -761,21 +859,21 @@ const Fixes = () => {
           versions: {},
         }
       }
-      
+
       if (!grouped[monthKey].versions[versionKey]) {
         grouped[monthKey].versions[versionKey] = {
           version: versionKey,
           dates: {},
         }
       }
-      
+
       if (!grouped[monthKey].versions[versionKey].dates[dateKey]) {
         grouped[monthKey].versions[versionKey].dates[dateKey] = {
           date: dateKey,
           items: [],
         }
       }
-      
+
       grouped[monthKey].versions[versionKey].dates[dateKey].items.push(fix)
     })
 
@@ -787,7 +885,7 @@ const Fixes = () => {
           return new Date(b.date) - new Date(a.date)
         })
       })
-      
+
       // 将版本对象转换为数组并按版本号排序（最新的在前）
       grouped[monthKey].versionList = Object.values(grouped[monthKey].versions).sort((a, b) => {
         const aParts = a.version.split('.').map(Number)
@@ -876,6 +974,16 @@ const Fixes = () => {
     return firstDate.items[0] || null
   }, [groupedByMonth])
 
+  // 顶部“最新修复”区域右侧的日期徽章，使用最新修复的日期
+  const latestHeaderDateLabel = useMemo(() => {
+    if (!latestFix?.date) return ''
+    try {
+      return format(new Date(latestFix.date), datePattern, { locale })
+    } catch {
+      return latestFix.date
+    }
+  }, [latestFix, datePattern, locale])
+
   const latestLabels = {
     zh: { title: '最新修复' },
     en: { title: 'Latest Fixes' },
@@ -890,7 +998,12 @@ const Fixes = () => {
 
       {latestFix && (
         <div className="fixes-latest">
-          <h2 className="fixes-latest-title">{latestLabel.title}</h2>
+          <div className="fixes-latest-header">
+            <h2 className="fixes-latest-title">{latestLabel.title}</h2>
+            {latestHeaderDateLabel && (
+              <span className="fixes-latest-date">{latestHeaderDateLabel}</span>
+            )}
+          </div>
           <div className="fixes-latest-items">
             <article className="fix-card">
               <div className="fix-header">

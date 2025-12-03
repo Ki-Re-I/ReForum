@@ -17,11 +17,27 @@
   width: 2.5rem;
   height: 2.5rem;
   box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+  gap: 0.5rem;
 }
 
 .theme-color-button:hover {
   opacity: 0.92;
   transform: translateY(-1px) scale(1.01);
+}
+
+.theme-color-button.with-label {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0.5rem 0.85rem;
+  font-size: 1rem;
+}
+
+.theme-color-button-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  flex: 1;
+  text-align: left;
 }
 
 .theme-color-picker {
@@ -211,7 +227,7 @@
     padding: 0.45rem;
     font-size: 1rem;
   }
-
+  
   .eyedropper-button {
     width: 2.4rem;
     height: 2.4rem;
@@ -225,7 +241,7 @@
   .theme-picker-modal {
     padding: 1rem;
   }
-
+  
   .sl-slider {
     height: 6rem;
   }

@@ -6,7 +6,7 @@ const translations = {
   zh: {
     'common.loading': '加载中...',
 
-    'header.searchPlaceholder': '搜索帖子、用户...',
+    'header.searchPlaceholder': '搜索',
     'header.toLight': '切换到日间模式',
     'header.toDark': '切换到夜间模式',
     'header.lightLabel': '日间模式',
@@ -22,6 +22,10 @@ const translations = {
     'header.markAllRead': '全部已读',
     'header.markAsRead': '标记为已读',
     'header.noNotifications': '暂无通知',
+    'header.actionsTitle': '快速操作',
+    'header.actionsTools': '工具与切换',
+    'header.actionsPrimary': '发布与账户',
+    'header.actionsAll': '快速功能',
     'header.languageTitle': '选择语言',
     'header.themeColorTitle': '主题颜色',
     'sidebar.home': '首页',
@@ -197,7 +201,7 @@ const translations = {
   en: {
     'common.loading': 'Loading...',
 
-    'header.searchPlaceholder': 'Search posts or users...',
+    'header.searchPlaceholder': 'Search',
     'header.toLight': 'Switch to light mode',
     'header.toDark': 'Switch to dark mode',
     'header.lightLabel': 'Light mode',
@@ -213,6 +217,10 @@ const translations = {
     'header.markAllRead': 'Mark all as read',
     'header.markAsRead': 'Mark as read',
     'header.noNotifications': 'No notifications',
+    'header.actionsTitle': 'Quick actions',
+    'header.actionsTools': 'Tools & toggles',
+    'header.actionsPrimary': 'Primary actions',
+    'header.actionsAll': 'All actions',
     'header.themeColorTitle': 'Theme color',
     'header.languageTitle': 'Choose language',
     'header.themeColorTitle': 'Theme color',
@@ -389,7 +397,7 @@ const translations = {
   ja: {
     'common.loading': '読み込み中...',
 
-    'header.searchPlaceholder': '投稿やユーザーを検索...',
+    'header.searchPlaceholder': '検索',
     'header.toLight': 'ライトモードに切り替え',
     'header.toDark': 'ダークモードに切り替え',
     'header.lightLabel': 'ライトモード',
@@ -405,6 +413,10 @@ const translations = {
     'header.markAllRead': 'すべて既読にする',
     'header.markAsRead': '既読にする',
     'header.noNotifications': '通知はありません',
+    'header.actionsTitle': 'クイック操作',
+    'header.actionsTools': 'ツールと切り替え',
+    'header.actionsPrimary': '主要アクション',
+    'header.actionsAll': 'すべての操作',
     'header.themeColorTitle': 'テーマカラー',
     'header.languageTitle': '言語を選択',
     'header.themeColorTitle': 'テーマカラー',

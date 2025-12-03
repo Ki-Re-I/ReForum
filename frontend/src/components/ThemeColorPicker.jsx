@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext'
 import { useLanguage } from '../context/LanguageContext'
 import './ThemeColorPicker.css'
 
-const ThemeColorPicker = () => {
+const ThemeColorPicker = ({ showLabel = false }) => {
   const { themeColor, setThemeColor } = useTheme()
   const { t } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
@@ -114,7 +114,7 @@ const ThemeColorPicker = () => {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
@@ -192,66 +192,66 @@ const ThemeColorPicker = () => {
 
   const pickerContent = (
     <>
-      <div className="color-picker-controls">
-        <button
-          className="eyedropper-button"
-          onClick={handleEyedropper}
-          title="取色器"
-        >
-          <FaEyeDropper />
-        </button>
-        <div className="slider-group">
-          <div className="slider-container">
-            <div
-              className="hue-slider"
-              style={{ background: hueGradient }}
-              ref={hueSliderRef}
+          <div className="color-picker-controls">
+            <button
+              className="eyedropper-button"
+              onClick={handleEyedropper}
+              title="取色器"
             >
-              <input
-                type="range"
-                min="0"
-                max="360"
-                value={hue}
-                onChange={handleHueChange}
-                className="slider-input"
-              />
-              <div
-                className="slider-handle"
-                style={{ left: `${(hue / 360) * 100}%` }}
-              />
+              <FaEyeDropper />
+            </button>
+            <div className="slider-group">
+              <div className="slider-container">
+                <div
+                  className="hue-slider"
+                  style={{ background: hueGradient }}
+                  ref={hueSliderRef}
+                >
+                  <input
+                    type="range"
+                    min="0"
+                    max="360"
+                    value={hue}
+                    onChange={handleHueChange}
+                    className="slider-input"
+                  />
+                  <div
+                    className="slider-handle"
+                    style={{ left: `${(hue / 360) * 100}%` }}
+                  />
+                </div>
+              </div>
+              <div className="slider-container">
+                <div
+                  className="sl-slider"
+                  style={{ background: slGradient }}
+                  ref={slSliderRef}
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    handleSLChange(e)
+                    const handleMouseMove = (moveEvent) => {
+                      moveEvent.preventDefault()
+                      handleSLChange(moveEvent)
+                    }
+                    const handleMouseUp = () => {
+                      document.removeEventListener('mousemove', handleMouseMove)
+                      document.removeEventListener('mouseup', handleMouseUp)
+                    }
+                    document.addEventListener('mousemove', handleMouseMove)
+                    document.addEventListener('mouseup', handleMouseUp)
+                  }}
+                >
+                  <div
+                    className="sl-handle"
+                    style={{
+                      left: `${saturation}%`,
+                      bottom: `${lightness}%`,
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
-          <div className="slider-container">
-            <div
-              className="sl-slider"
-              style={{ background: slGradient }}
-              ref={slSliderRef}
-              onMouseDown={(e) => {
-                e.preventDefault()
-                handleSLChange(e)
-                const handleMouseMove = (moveEvent) => {
-                  moveEvent.preventDefault()
-                  handleSLChange(moveEvent)
-                }
-                const handleMouseUp = () => {
-                  document.removeEventListener('mousemove', handleMouseMove)
-                  document.removeEventListener('mouseup', handleMouseUp)
-                }
-                document.addEventListener('mousemove', handleMouseMove)
-                document.addEventListener('mouseup', handleMouseUp)
-              }}
-            >
-              <div
-                className="sl-handle"
-                style={{
-                  left: `${saturation}%`,
-                  bottom: `${lightness}%`,
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
     </>
   )
 
@@ -278,18 +278,19 @@ const ThemeColorPicker = () => {
     return (
       <div className="theme-color-picker" ref={pickerRef}>
         {pickerContent}
-      </div>
+        </div>
     )
   }
 
   return (
     <div className="theme-color-picker-wrapper" ref={pickerRef}>
       <button
-        className="theme-color-button icon-button"
+        className={`theme-color-button icon-button ${showLabel ? 'with-label' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
-        title="主题颜色"
+        title={t('header.themeColorTitle') || 'Theme color'}
         style={{ backgroundColor: themeColor, color: '#fff' }}
       >
+        {showLabel && <span className="theme-color-button-label">{t('header.themeColorTitle')}</span>}
         <FaEyeDropper />
       </button>
       {renderPicker()}
