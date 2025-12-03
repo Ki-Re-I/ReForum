@@ -253,12 +253,12 @@ const Home = () => {
     setPagination(prev => ({ ...prev, page: 1 }))
   }, [searchParams])
 
-  // 获取所有帖子用于日期分组（不限制数量）
+  // 获取所有帖子用于日期分组（数量上限适当降低，避免对后端造成压力）
   const fetchAllPostsForGrouping = useCallback(async () => {
     try {
       const params = {
         page: 1,
-        limit: 1000, // 获取足够多的帖子用于日期分组
+        limit: 200, // 获取足够多的帖子用于日期分组，同时控制请求体积
         sort: 'time',
       }
       if (selectedCategory) {
@@ -266,10 +266,14 @@ const Home = () => {
       }
 
       const response = await postAPI.getPosts(params)
-      setAllPosts(response.data.data || [])
+      const all = response.data?.data || []
+      // 只在请求成功时覆盖 allPosts，避免失败时把已有分组数据清空
+      if (Array.isArray(all) && all.length > 0) {
+        setAllPosts(all)
+      }
     } catch (error) {
       console.error('Failed to fetch all posts for grouping:', error)
-      setAllPosts([])
+      // 保留之前的 allPosts，至少让已有的日期徽章继续可用
     }
   }, [selectedCategory])
 
