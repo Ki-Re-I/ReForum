@@ -89,6 +89,16 @@ const Header = () => {
     }
   }, [showActionsMenu, isMobile])
 
+  // 移动端打开头像菜单时禁用滚动
+  useEffect(() => {
+    if (!showUserMenu || !isMobile) return
+    const originalOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = originalOverflow
+    }
+  }, [showUserMenu, isMobile])
+
   const localeMap = {
     zh: 'zh-CN',
     en: 'en-US',
@@ -269,19 +279,18 @@ const Header = () => {
                 className={`user-avatar-button ${showLabels ? 'with-label' : ''}`}
                   title={t('header.userMenu')}
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  onBlur={() => setTimeout(() => setShowUserMenu(false), 200)}
                 >
                 {showLabels && <span className="action-button-label">{t('header.userMenu')}</span>}
                   <FaUserCircle className="user-avatar" />
                 </button>
-                {showUserMenu && (
+                {/* 桌面端使用下拉菜单，移动端改为居中模态 */}
+                {!isMobile && showUserMenu && (
                   <div className="user-dropdown">
                     <Link 
                       to={`/user/${user.id}`} 
                       className="dropdown-item"
                     onClick={() => {
                       setShowUserMenu(false)
-                      if (isMobile) closeActionsMenu()
                     }}
                     >
                       {t('header.profile')}
@@ -291,7 +300,6 @@ const Header = () => {
                       onClick={() => {
                         setShowUserMenu(false)
                         handleLogout()
-                      if (isMobile) closeActionsMenu()
                       }} 
                       className="dropdown-item"
                     >
@@ -379,6 +387,63 @@ const Header = () => {
       document.body
     )
 
+  const userOverlay =
+    showUserMenu && isMobile
+      ? createPortal(
+          <div
+            className="user-overlay"
+            onClick={() => {
+              setShowUserMenu(false)
+            }}
+          >
+            <div
+              className="user-modal"
+              onClick={(e) => {
+                e.stopPropagation()
+              }}
+            >
+              <div className="user-modal-header">
+                <span>{t('header.userMenu')}</span>
+                <button
+                  type="button"
+                  className="user-modal-close"
+                  onClick={() => setShowUserMenu(false)}
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="user-modal-actions">
+                <button
+                  type="button"
+                  className="dropdown-item"
+                  onClick={() => {
+                    setShowUserMenu(false)
+                    navigate(`/user/${user.id}`)
+                    closeActionsMenu()
+                  }}
+                >
+                  {t('header.profile')}
+                </button>
+                <div className="dropdown-divider"></div>
+                <button
+                  type="button"
+                  className="dropdown-item"
+                  onClick={() => {
+                    setShowUserMenu(false)
+                    handleLogout()
+                    closeActionsMenu()
+                  }}
+                >
+                  {t('header.logout')}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )
+      : null
+
   return (
     <>
       <header className="header">
@@ -415,6 +480,7 @@ const Header = () => {
       </header>
 
       {actionsToggle}
+      {userOverlay}
 
       {showLoginModal && (
         <LoginModal

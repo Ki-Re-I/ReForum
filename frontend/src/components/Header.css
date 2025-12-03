@@ -690,12 +690,6 @@
   animation: fadeIn 0.2s ease-out;
 }
 
-/* 移动端动作面板中：头像按钮在底部时，将菜单向上展开，避免被底部工具集或屏幕边缘遮挡 */
-.header-actions-group-mobile .user-menu .user-dropdown {
-  top: auto;
-  bottom: calc(100% + 0.5rem);
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -740,6 +734,62 @@
   height: 1px;
   background-color: var(--border-color);
   margin: 0.25rem 0;
+}
+
+/* 移动端头像菜单模态（工具集内点击头像时居中弹出，带虚化背景） */
+.user-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  z-index: 1350;
+}
+
+.user-modal {
+  width: min(360px, 100%);
+  background: var(--dropdown-background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  padding: 1rem 1rem 0.75rem;
+  animation: fadeIn 0.2s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.user-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--radius-md);
+}
+
+.user-modal-close:hover {
+  background: var(--hover-background);
+  color: var(--primary-color);
+}
+
+.user-modal-actions {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.25rem;
 }
 
 @media (min-width: 769px) {
