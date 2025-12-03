@@ -6,6 +6,7 @@ import { useLanguage } from '../context/LanguageContext'
 import LoginModal from './LoginModal'
 import RegisterModal from './RegisterModal'
 import Inbox from './Inbox'
+import ThemeColorPicker from './ThemeColorPicker'
 import './Header.css'
 
 const Header = () => {
@@ -16,6 +17,7 @@ const Header = () => {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showLanguageMenu, setShowLanguageMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [currentTime, setCurrentTime] = useState(() => new Date())
   const [theme, setTheme] = useState(() => {
     if (typeof window === 'undefined') return 'light'
     return localStorage.getItem('theme') || 'light'
@@ -46,6 +48,14 @@ const Header = () => {
     }
   }, [showLanguageMenu])
 
+  const localeMap = {
+    zh: 'zh-CN',
+    en: 'en-US',
+    ja: 'ja-JP',
+  }
+
+  const currentLocale = localeMap[language] || 'en-US'
+
   const handleSearch = (e) => {
     e.preventDefault()
     if (searchQuery.trim()) {
@@ -63,6 +73,24 @@ const Header = () => {
     localStorage.setItem('theme', theme)
   }, [theme])
 
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const yearMonth = currentTime.toLocaleDateString(currentLocale, {
+    year: 'numeric',
+    month: 'long',
+  })
+  const day = currentTime.toLocaleDateString(currentLocale, {
+    day: '2-digit',
+  })
+  const timeString = currentTime.toLocaleTimeString(currentLocale, {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
@@ -75,25 +103,36 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-container">
-        <Link to="/" className="header-logo">
-          <span className="logo-text">
-            <span className="logo-re">RE</span>
-            <span className="logo-forum">Forum</span>
-          </span>
-        </Link>
+        <div className="header-left">
+          <Link to="/" className="header-logo">
+            <span className="logo-text">
+              <span className="logo-re">RE</span>
+              <span className="logo-forum">Forum</span>
+            </span>
+          </Link>
 
-        <form className="header-search" onSubmit={handleSearch}>
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder={t('header.searchPlaceholder')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-        </form>
+          <form className="header-search" onSubmit={handleSearch}>
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder={t('header.searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input"
+            />
+          </form>
+        </div>
+
+        <div className="header-center">
+          <div className="date-block">
+            <span className="date-year-month">{yearMonth}</span>
+            <span className="date-day">{day}</span>
+          </div>
+          <span className="time-block">{timeString}</span>
+        </div>
 
         <div className="header-actions">
+          <ThemeColorPicker />
           <button
             type="button"
             className="header-button theme-toggle-button"

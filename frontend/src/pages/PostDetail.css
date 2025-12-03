@@ -28,6 +28,60 @@
   flex: 1;
 }
 
+.post-detail-skeleton {
+  border-bottom-color: rgba(148, 163, 184, 0.35);
+}
+
+.post-skeleton-header {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.skeleton-line {
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.15),
+    rgba(148, 163, 184, 0.35),
+    rgba(148, 163, 184, 0.15)
+  );
+  background-size: 200% 100%;
+  animation: postSkeletonShimmer 1.2s ease-in-out infinite;
+}
+
+.skeleton-line-sm {
+  width: 120px;
+  height: 0.75rem;
+}
+
+.skeleton-line-md {
+  width: 80%;
+  max-width: 520px;
+  height: 0.9rem;
+  margin-bottom: 0.6rem;
+}
+
+.skeleton-line-lg {
+  width: 100%;
+  max-width: 640px;
+  height: 1.3rem;
+  margin-bottom: 0.9rem;
+}
+
+.skeleton-line-fade {
+  width: 65%;
+}
+
+@keyframes postSkeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 .post-header {
   display: flex;
   align-items: center;

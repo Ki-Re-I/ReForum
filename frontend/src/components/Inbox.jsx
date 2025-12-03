@@ -148,6 +148,28 @@ const Inbox = () => {
     }
   }
 
+  // 格式化通知标题（根据通知类型和语言）
+  const formatNotificationTitle = (notification) => {
+    // 如果通知类型是 new_post，根据语言生成标题
+    if (notification.type === 'new_post' && notification.related_username) {
+      const username = notification.related_username
+      const translationKey = 'notification.newPost'
+      const template = t(translationKey)
+      return template.replace('{username}', username)
+    }
+    
+    // 如果标题包含"发布了新帖子"（中文），尝试替换为多语言版本
+    if (notification.title && notification.title.includes('发布了新帖子')) {
+      const username = notification.related_username || notification.title.split(' ')[0]
+      const translationKey = 'notification.newPost'
+      const template = t(translationKey)
+      return template.replace('{username}', username)
+    }
+    
+    // 其他情况直接返回原始标题
+    return notification.title
+  }
+
   return (
     <div className="inbox-container" ref={dropdownRef}>
       <button
@@ -199,7 +221,7 @@ const Inbox = () => {
                   }}
                 >
                   <div className="inbox-item-content">
-                    <div className="inbox-item-title">{notification.title}</div>
+                    <div className="inbox-item-title">{formatNotificationTitle(notification)}</div>
                     {notification.content && (
                       <div className="inbox-item-text">{notification.content}</div>
                     )}

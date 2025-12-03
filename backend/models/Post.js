@@ -252,13 +252,15 @@ class Post {
     try {
       await client.query('BEGIN');
 
-      // 检查是否已经浏览过
+      // 检查是否已经浏览过（24小时内）
       let hasViewed = false;
 
       if (userId) {
-        // 已登录用户：检查用户是否已经浏览过
+        // 已登录用户：检查用户在24小时内是否已经浏览过
         const userViewResult = await client.query(
-          'SELECT id FROM post_views WHERE post_id = $1 AND user_id = $2',
+          `SELECT id FROM post_views 
+           WHERE post_id = $1 AND user_id = $2
+           AND viewed_at > NOW() - INTERVAL '24 hours'`,
           [id, userId]
         );
         hasViewed = userViewResult.rows.length > 0;
@@ -271,24 +273,33 @@ class Post {
           [id, ipAddress]
         );
         hasViewed = ipViewResult.rows.length > 0;
+      } else {
+        // 既没有userId也没有ipAddress，无法去重，直接增加浏览量
+        // 这种情况应该很少见，但为了确保浏览量能增加，我们仍然增加计数
+        await client.query('UPDATE posts SET view_count = view_count + 1 WHERE id = $1', [id]);
+        await client.query('COMMIT');
+        return;
       }
 
-      // 如果没有浏览过，增加浏览量并记录
+      // 如果没有在24小时内浏览过，增加浏览量并记录
       if (!hasViewed) {
-        // 增加浏览量
+        // 先增加浏览量
         await client.query('UPDATE posts SET view_count = view_count + 1 WHERE id = $1', [id]);
         
-        // 记录浏览历史
+        // 然后记录浏览历史
         try {
           if (userId) {
-            // 已登录用户：使用 user_id 唯一约束
+            // 已登录用户：插入浏览记录
             await client.query(
               `INSERT INTO post_views (post_id, user_id, ip_address) 
-               VALUES ($1, $2, $3)`,
+               VALUES ($1, $2, $3)
+               ON CONFLICT (post_id, user_id) WHERE user_id IS NOT NULL
+               DO UPDATE SET viewed_at = NOW()`,
               [id, userId, ipAddress]
             );
           } else if (ipAddress) {
-            // 未登录用户：直接插入（已在上面检查过24小时内是否浏览过）
+            // 未登录用户：插入浏览记录
+            // 注意：这里可能会有并发问题，但数据库的唯一约束会处理
             await client.query(
               `INSERT INTO post_views (post_id, user_id, ip_address) 
                VALUES ($1, NULL, $2)`,
@@ -296,9 +307,15 @@ class Post {
             );
           }
         } catch (insertError) {
-          // 如果插入失败（可能是并发导致的唯一约束冲突），忽略错误
-          // 因为我们已经检查过，这种情况很少发生
-          if (!insertError.code || insertError.code !== '23505') {
+          // 如果插入失败（可能是并发导致的唯一约束冲突）
+          // 检查是否是唯一约束冲突
+          if (insertError.code === '23505') {
+            // 唯一约束冲突：说明在检查和插入之间，另一个请求已经插入了记录
+            // 这是正常的并发情况，我们不需要回滚，因为浏览量已经增加了
+            console.log(`浏览记录插入冲突（并发请求）: post_id=${id}, user_id=${userId}, ip=${ipAddress}`);
+          } else {
+            // 其他错误，回滚并抛出
+            await client.query('ROLLBACK');
             throw insertError;
           }
         }
@@ -307,6 +324,7 @@ class Post {
       await client.query('COMMIT');
     } catch (error) {
       await client.query('ROLLBACK');
+      console.error('增加浏览量错误:', error);
       throw error;
     } finally {
       client.release();

@@ -24,6 +24,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// 信任代理（用于正确获取客户端真实IP地址）
+app.set('trust proxy', true);
+
 // 安全中间件（允许跨域加载资源，如图片）
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },

@@ -14,6 +14,7 @@ const RegisterModal = ({ onClose, onSwitchToLogin }) => {
     verificationCode: '',
   })
   const [error, setError] = useState('')
+  const [errorKey, setErrorKey] = useState(null) // 存储错误键而不是翻译后的文本
   const [loading, setLoading] = useState(false)
   const [sendingCode, setSendingCode] = useState(false)
   const [codeSent, setCodeSent] = useState(false)
@@ -24,18 +25,21 @@ const RegisterModal = ({ onClose, onSwitchToLogin }) => {
 
   const handleSendCode = async () => {
     if (!formData.email) {
-      setError('请先输入邮箱地址')
+      setErrorKey('auth.error.emailRequired')
+      setError('')
       return
     }
 
     // 验证邮箱格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
-      setError('请输入有效的邮箱地址')
+      setErrorKey('auth.error.invalidEmail')
+      setError('')
       return
     }
 
     setError('')
+    setErrorKey(null)
     setSendingCode(true)
 
     try {
@@ -54,7 +58,9 @@ const RegisterModal = ({ onClose, onSwitchToLogin }) => {
         })
       }, 1000)
     } catch (err) {
-      setError(err.response?.data?.message || '发送验证码失败，请稍后重试')
+      // 后端返回的错误消息直接显示
+      setError(err.response?.data?.message || t('auth.error.sendCodeFailed'))
+      setErrorKey(null)
     } finally {
       setSendingCode(false)
     }
@@ -63,24 +69,25 @@ const RegisterModal = ({ onClose, onSwitchToLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setErrorKey(null)
 
     if (!formData.verificationCode) {
-      setError('请输入验证码')
+      setErrorKey('auth.error.codeRequired')
       return
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('两次输入的密码不一致')
+      setErrorKey('auth.error.passwordMismatch')
       return
     }
 
     if (formData.password.length < 6) {
-      setError('密码长度至少为6位')
+      setErrorKey('auth.error.passwordTooShort')
       return
     }
 
     if (!codeSent) {
-      setError('请先获取验证码')
+      setErrorKey('auth.error.codeNotSent')
       return
     }
 
@@ -93,9 +100,12 @@ const RegisterModal = ({ onClose, onSwitchToLogin }) => {
       onClose()
       navigate('/')
     } else {
-      // 如果错误消息是翻译键，则翻译；否则直接显示
-      const errorMsg = result.error?.startsWith('error.') ? t(result.error) : result.error
-      setError(errorMsg)
+      // 存储错误键或原始错误消息
+      if (result.error?.startsWith('error.') || result.error?.startsWith('auth.error.')) {
+        setErrorKey(result.error)
+      } else {
+        setError(result.error)
+      }
     }
     
     setLoading(false)
@@ -136,7 +146,11 @@ const RegisterModal = ({ onClose, onSwitchToLogin }) => {
           <a href="/privacy" target="_blank" rel="noopener noreferrer">隐私政策</a>。
         </p>
 
-        {error && <div className="modal-error">{error}</div>}
+        {(error || errorKey) && (
+          <div className="modal-error">
+            {errorKey ? t(errorKey) : error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">

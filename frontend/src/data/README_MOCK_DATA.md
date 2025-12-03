@@ -22,12 +22,15 @@ VITE_USE_MOCK_DATA=true
 
 - `frontend/src/components/Sidebar.jsx`
 - `frontend/src/components/RightSidebar.jsx`
+- `frontend/src/services/api.js` (帖子 API 会自动使用 mock 数据)
 
 ```javascript
 const USE_MOCK_DATA = true  // 使用假数据
 // 或
 const USE_MOCK_DATA = false // 使用真实API
 ```
+
+**注意**：帖子 API 会自动根据环境变量 `VITE_USE_MOCK_DATA` 来决定使用假数据还是真实 API，无需单独配置。
 
 ## 假数据内容
 
@@ -55,6 +58,16 @@ const USE_MOCK_DATA = false // 使用真实API
 - Git (5)
 - Linux (4)
 - Database (6)
+
+### 帖子数据（25个）
+包含完整的帖子数据，用于测试和预览：
+- 涵盖所有分类的帖子
+- 包含不同的标签组合
+- 随机生成浏览量、点赞数、评论数
+- 部分帖子包含图片预览
+- 支持按分类、标签筛选
+- 支持按时间、热度排序
+- 支持分页功能
 
 ## 注意事项
 

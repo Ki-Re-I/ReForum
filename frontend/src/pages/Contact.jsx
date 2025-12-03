@@ -1,14 +1,15 @@
 import React from 'react'
-import { FaRegEnvelope, FaRegUser, FaRegComments } from 'react-icons/fa'
-import { RiQqLine } from 'react-icons/ri'
+import { FaRegEnvelope, FaRegUser } from 'react-icons/fa'
 import { useLanguage } from '../context/LanguageContext'
 import './Contact.css'
 
-const QqIcon = RiQqLine
-
 const contributors = [
   {
-    name: '黄伟隆',
+    name: {
+      zh: '黄伟隆',
+      en: 'Huang Weilong',
+      ja: '黄偉隆',
+    },
     avatar: '/avatars/admin1.jpg',
     role: {
       zh: '项目负责人',
@@ -22,12 +23,14 @@ const contributors = [
     },
     contacts: {
       email: '3571676852@qq.com',
-      qq: '3571676852',
-      wechat: 'X15021373202',
     },
   },
   {
-    name: '江海鹏',
+    name: {
+      zh: '江海鹏',
+      en: 'Jiang Haipeng',
+      ja: '江海鵬',
+    },
     avatar: '/avatars/admin2.jpg',
     role: {
       zh: '开发工程师',
@@ -41,8 +44,6 @@ const contributors = [
     },
     contacts: {
       email: '3242772908@qq.com',
-      qq: '3242772908',
-      wechat: 'jhp061224',
     },
   },
 ]
@@ -51,37 +52,23 @@ const contactCopy = {
   zh: {
     title: '联系我们',
     contributorsTitle: '项目贡献者',
-    description: '如有想法、合作与问题反馈，欢迎使用以下任意方式与我们交流。',
+    description: '如有想法、合作与问题反馈，欢迎使用以下方式与我们交流。',
     emailTitle: '发送邮件',
-    qqTitle: 'QQ',
-    wechatTitle: '微信',
-    qqCopied: 'QQ号 {value} 已复制到剪贴板',
-    wechatCopied: '微信号 {value} 已复制到剪贴板',
   },
   en: {
     title: 'Contact Us',
     contributorsTitle: 'Core Contributors',
     description:
-      'Have feedback, partnership ideas, or bug reports? Reach us through any channel below.',
+      'Have feedback, partnership ideas, or bug reports? Reach us through the channel below.',
     emailTitle: 'Send email',
-    qqTitle: 'QQ',
-    wechatTitle: 'WeChat',
-    qqCopied: 'QQ number {value} copied to your clipboard.',
-    wechatCopied: 'WeChat ID {value} copied to your clipboard.',
   },
   ja: {
     title: 'お問い合わせ',
     contributorsTitle: '主要メンバー',
     description: 'ご意見やご提案、不具合の報告などがあれば、以下の方法でお気軽にご連絡ください。',
     emailTitle: 'メールを送信',
-    qqTitle: 'QQ',
-    wechatTitle: 'WeChat',
-    qqCopied: 'QQ番号 {value} をクリップボードにコピーしました。',
-    wechatCopied: 'WeChat ID {value} をクリップボードにコピーしました。',
   },
 }
-
-const formatTemplate = (template, value) => template.replace('{value}', value)
 
 const Contact = () => {
   const { language } = useLanguage()
@@ -89,25 +76,29 @@ const Contact = () => {
 
   return (
     <div className="contact-page">
-      <div className="contact-container">
-        <div className="contact-header">
-          <FaRegEnvelope className="contact-icon" />
-          <h1>{copy.title}</h1>
-        </div>
+      <div className="contact-header">
+        <h1>{copy.title}</h1>
+        <p className="contact-intro">{copy.description}</p>
+      </div>
 
-        <div className="contact-content">
-          <div className="contributors-section">
-            <h2>{copy.contributorsTitle}</h2>
-            <p className="section-description">{copy.description}</p>
-
-            <div className="contributors-grid">
-              {contributors.map((contributor) => (
-                <div key={contributor.name} className="contributor-card">
+      <div className="contributors-section">
+        <h2 className="contributors-title">{copy.contributorsTitle}</h2>
+        <div className="contributors-grid">
+              {contributors.map((contributor) => {
+                const contributorName = typeof contributor.name === 'string' 
+                  ? contributor.name 
+                  : contributor.name[language] || contributor.name.zh
+                const contributorKey = typeof contributor.name === 'string'
+                  ? contributor.name
+                  : contributor.name.zh
+                
+                return (
+                <div key={contributorKey} className="contributor-card">
                   <div className="contributor-avatar">
                     {contributor.avatar ? (
                       <img
                         src={contributor.avatar}
-                        alt={contributor.name}
+                        alt={contributorName}
                         className="avatar-image"
                         onError={(e) => {
                           e.target.style.display = 'none'
@@ -124,7 +115,7 @@ const Contact = () => {
                     />
                   </div>
                   <div className="contributor-info">
-                    <h3 className="contributor-name">{contributor.name}</h3>
+                    <h3 className="contributor-name">{contributorName}</h3>
                     <p className="contributor-role">
                       {contributor.role[language] || contributor.role.zh}
                     </p>
@@ -143,43 +134,10 @@ const Contact = () => {
                       <FaRegEnvelope className="contact-link-icon" />
                       <span>{contributor.contacts.email}</span>
                     </a>
-                    {contributor.contacts.qq && (
-                      <div
-                        className="contact-link"
-                        title={copy.qqTitle}
-                        onClick={() => {
-                          navigator.clipboard.writeText(contributor.contacts.qq)
-                          alert(formatTemplate(copy.qqCopied, contributor.contacts.qq))
-                        }}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <QqIcon className="contact-link-icon" />
-                        <span>
-                          {copy.qqTitle}: {contributor.contacts.qq}
-                        </span>
-                      </div>
-                    )}
-                    {contributor.contacts.wechat && (
-                      <div
-                        className="contact-link"
-                        title={copy.wechatTitle}
-                        onClick={() => {
-                          navigator.clipboard.writeText(contributor.contacts.wechat)
-                          alert(formatTemplate(copy.wechatCopied, contributor.contacts.wechat))
-                        }}
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <FaRegComments className="contact-link-icon" />
-                        <span>
-                          {copy.wechatTitle}: {contributor.contacts.wechat}
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+                )
+              })}
         </div>
       </div>
     </div>

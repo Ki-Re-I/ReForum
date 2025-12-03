@@ -2,18 +2,32 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
 import zhCN from 'date-fns/locale/zh-CN'
+import enUS from 'date-fns/locale/en-US'
+import ja from 'date-fns/locale/ja'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { postAPI } from '../services/api'
 import { FaComment, FaHeart, FaRegHeart } from 'react-icons/fa'
-import { useLanguage } from '../context/LanguageContext'
 import './PostCard.css'
 
 const PostCard = ({ post }) => {
   const { isAuthenticated } = useAuth()
-  const { getCategoryName } = useLanguage()
+  const { t, getCategoryName, language } = useLanguage()
   const [liked, setLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(post.likeCount || 0)
   const [liking, setLiking] = useState(false)
+  
+  // 获取日期格式化locale
+  const getDateLocale = () => {
+    switch (language) {
+      case 'zh':
+        return zhCN
+      case 'ja':
+        return ja
+      default:
+        return enUS
+    }
+  }
 
   useEffect(() => {
     // 如果后端返回了liked状态，直接使用
@@ -26,12 +40,51 @@ const PostCard = ({ post }) => {
 
   const formatDate = (dateString) => {
     try {
-      return formatDistanceToNow(new Date(dateString), {
+      if (!dateString) return t('comment.unknownTime')
+      
+      const date = new Date(dateString)
+      
+      // 检查日期是否有效
+      if (isNaN(date.getTime())) {
+        return t('comment.unknownTime')
+      }
+      
+      return formatDistanceToNow(date, {
         addSuffix: true,
-        locale: zhCN,
+        locale: getDateLocale(),
       })
     } catch {
-      return '未知时间'
+      return t('comment.unknownTime')
+    }
+  }
+  
+  // 格式化发布日期（完整日期）
+  const formatPublishDate = (dateString) => {
+    try {
+      if (!dateString) return ''
+      
+      const date = new Date(dateString)
+      
+      // 检查日期是否有效
+      if (isNaN(date.getTime())) {
+        return ''
+      }
+      
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+      
+      if (language === 'zh') {
+        return `${year}年${month}月${day}日`
+      } else if (language === 'ja') {
+        return `${year}年${month}月${day}日`
+      } else {
+        // 英文格式：Month Day, Year
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        return `${monthNames[month - 1]} ${day}, ${year}`
+      }
+    } catch {
+      return ''
     }
   }
 
@@ -160,27 +213,34 @@ const PostCard = ({ post }) => {
             </button>
             <Link to={`/post/${post.id}`} className="post-action">
               <FaComment />
-              <span>{post.commentCount || 0} 条评论</span>
+              <span>{post.commentCount || 0} {t('post.commentCountSuffix')}</span>
             </Link>
           </div>
           <div className="post-stats">
-            <span>{post.viewCount || 0} 次浏览</span>
+            <span>{post.viewCount || 0} {t('post.viewSuffix')}</span>
           </div>
         </div>
 
-        {post.tags && post.tags.length > 0 && (
-          <div className="post-tags">
-            {post.tags.map((tag) => (
-              <span
-                key={tag.id || tag.name}
-                className="post-tag"
-                style={{ cursor: 'default', pointerEvents: 'none' }}
-              >
-                #{tag.name}
-              </span>
-            ))}
+        {(post.tags && post.tags.length > 0) || post.createdAt ? (
+          <div className="post-tags-row">
+            {post.tags && post.tags.length > 0 && (
+              <div className="post-tags">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag.id || tag.name}
+                    className="post-tag"
+                    style={{ cursor: 'default', pointerEvents: 'none' }}
+                  >
+                    #{tag.name}
+                  </span>
+                ))}
+              </div>
+            )}
+            {post.createdAt && (
+              <span className="post-publish-date">{formatPublishDate(post.createdAt)}</span>
+            )}
           </div>
-        )}
+        ) : null}
       </div>
     </article>
   )

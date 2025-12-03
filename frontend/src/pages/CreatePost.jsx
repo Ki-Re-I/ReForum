@@ -18,6 +18,7 @@ const CreatePost = () => {
   })
   const [images, setImages] = useState([])
   const [error, setError] = useState('')
+  const [errorKey, setErrorKey] = useState(null) // 存储错误键而不是翻译后的文本
   const [submitting, setSubmitting] = useState(false)
   const { t, getCategoryName } = useLanguage()
 
@@ -100,7 +101,6 @@ const CreatePost = () => {
       navigate(`/post/${response.data.id}`)
     } catch (error) {
       console.error('Failed to create post:', error)
-      let errorMessage = t('create.errorSubmit')
       
       if (error.response?.data) {
         // 处理验证错误
@@ -108,13 +108,23 @@ const CreatePost = () => {
           const details = error.response.data.details
             .map(d => d.message || d)
             .join('; ')
-          errorMessage = `${t('create.errorValidationPrefix')}${details}`
+          // 存储验证错误详情
+          setError(`${t('create.errorValidationPrefix')}${details}`)
+          setErrorKey(null)
         } else if (error.response.data.message) {
-          errorMessage = error.response.data.message
+          // 后端返回的错误消息直接显示
+          setError(error.response.data.message)
+          setErrorKey(null)
+        } else {
+          // 使用默认错误键
+          setErrorKey('create.errorSubmit')
+          setError('')
         }
+      } else {
+        // 使用默认错误键
+        setErrorKey('create.errorSubmit')
+        setError('')
       }
-      
-      setError(errorMessage)
     } finally {
       setSubmitting(false)
     }
@@ -129,7 +139,11 @@ const CreatePost = () => {
       <div className="create-post-card">
         <h1 className="create-post-title">{t('create.title')}</h1>
 
-        {error && <div className="create-post-error">{error}</div>}
+        {(error || errorKey) && (
+          <div className="create-post-error">
+            {errorKey ? t(errorKey) : error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="create-post-form">
           <div className="form-group">

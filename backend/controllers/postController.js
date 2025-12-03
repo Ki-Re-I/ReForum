@@ -42,7 +42,19 @@ class PostController {
     try {
       const { postId } = req.params;
       const userId = req.userId || null; // 可能为 undefined，转换为 null
-      const ipAddress = req.ip || req.connection.remoteAddress || null;
+      
+      // 改进IP地址获取逻辑
+      let ipAddress = null;
+      if (req.ip) {
+        ipAddress = req.ip;
+      } else if (req.headers['x-forwarded-for']) {
+        // 从代理头获取真实IP（取第一个IP）
+        ipAddress = req.headers['x-forwarded-for'].split(',')[0].trim();
+      } else if (req.connection && req.connection.remoteAddress) {
+        ipAddress = req.connection.remoteAddress;
+      } else if (req.socket && req.socket.remoteAddress) {
+        ipAddress = req.socket.remoteAddress;
+      }
 
       const post = await Post.findById(parseInt(postId));
 
@@ -54,7 +66,12 @@ class PostController {
       }
 
       // 增加浏览量（去重：同一用户或同一IP在24小时内只计算一次）
-      await Post.incrementViewCount(parseInt(postId), userId, ipAddress);
+      try {
+        await Post.incrementViewCount(parseInt(postId), userId, ipAddress);
+      } catch (viewError) {
+        // 浏览量增加失败不应该影响帖子详情获取
+        console.error('增加浏览量失败:', viewError);
+      }
 
       // 重新获取帖子以获取最新的浏览量
       const updatedPost = await Post.findById(parseInt(postId));

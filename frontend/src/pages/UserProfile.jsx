@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { userAPI, postAPI } from '../services/api'
 import PostCard from '../components/PostCard'
 import { FaTrash } from 'react-icons/fa'
@@ -9,6 +10,7 @@ import './UserProfile.css'
 const UserProfile = () => {
   const { userId } = useParams()
   const { user: currentUser, isAuthenticated } = useAuth()
+  const { t, language } = useLanguage()
   const [user, setUser] = useState(null)
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -35,7 +37,7 @@ const UserProfile = () => {
   }
 
   const handleDeletePost = async (postId) => {
-    if (!window.confirm('确定要删除这条帖子吗？此操作无法撤销。')) {
+    if (!window.confirm(t('profile.deleteConfirm'))) {
       return
     }
 
@@ -52,7 +54,8 @@ const UserProfile = () => {
       window.dispatchEvent(new CustomEvent('postDeleted'))
     } catch (error) {
       console.error('Failed to delete post:', error)
-      alert(error.response?.data?.message || '删除帖子失败，请重试')
+      const errorMsg = error.response?.data?.message || t('profile.deleteFailed')
+      alert(errorMsg)
     } finally {
       setDeleting(null)
     }
@@ -62,11 +65,11 @@ const UserProfile = () => {
   const isOwnProfile = isAuthenticated && currentUser && parseInt(userId) === currentUser.id
 
   if (loading) {
-    return <div className="user-profile-loading">加载中...</div>
+    return <div className="user-profile-loading">{t('profile.loading')}</div>
   }
 
   if (!user) {
-    return <div className="user-profile-error">用户不存在</div>
+    return <div className="user-profile-error">{t('profile.userNotFound')}</div>
   }
 
   return (
@@ -87,30 +90,33 @@ const UserProfile = () => {
           <div className="profile-stats">
             <div className="stat-item">
               <span className="stat-value">{user.postCount || 0}</span>
-              <span className="stat-label">帖子</span>
+              <span className="stat-label">{t('profile.posts')}</span>
             </div>
             <div className="stat-item">
               <span className="stat-value">{user.commentCount || 0}</span>
-              <span className="stat-label">评论</span>
+              <span className="stat-label">{t('profile.comments')}</span>
             </div>
             <div className="stat-item">
               <span className="stat-value">
-                {new Date(user.joinDate).toLocaleDateString('zh-CN', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                {new Date(user.joinDate).toLocaleDateString(
+                  language === 'zh' ? 'zh-CN' : language === 'ja' ? 'ja-JP' : 'en-US',
+                  {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }
+                )}
               </span>
-              <span className="stat-label">加入时间</span>
+              <span className="stat-label">{t('profile.joinTime')}</span>
             </div>
           </div>
         </div>
       </div>
 
       <div className="profile-content">
-        <h2 className="profile-section-title">发布的帖子</h2>
+        <h2 className="profile-section-title">{t('profile.postsTitle')}</h2>
         {posts.length === 0 ? (
-          <div className="profile-empty">该用户还没有发布任何帖子</div>
+          <div className="profile-empty">{t('profile.empty')}</div>
         ) : (
           <div className="profile-posts">
             {posts.map((post) => (
@@ -121,9 +127,9 @@ const UserProfile = () => {
                     className="delete-post-button"
                     onClick={() => handleDeletePost(post.id)}
                     disabled={deleting === post.id}
-                    title="删除帖子"
+                    title={t('profile.delete')}
                   >
-                    {deleting === post.id ? '删除中...' : <FaTrash />}
+                    {deleting === post.id ? t('profile.deleting') : <FaTrash />}
                   </button>
                 )}
               </div>

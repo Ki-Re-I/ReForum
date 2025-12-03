@@ -9,6 +9,10 @@
   box-shadow: none;
 }
 
+.post-card-skeleton {
+  border-bottom-color: rgba(148, 163, 184, 0.35);
+}
+
 .post-card:hover {
   background-color: transparent;
   border-bottom-color: var(--primary-color);
@@ -19,6 +23,56 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.post-skeleton-header {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.skeleton-line {
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.15),
+    rgba(148, 163, 184, 0.35),
+    rgba(148, 163, 184, 0.15)
+  );
+  background-size: 200% 100%;
+  animation: postListSkeletonShimmer 1.2s ease-in-out infinite;
+}
+
+.skeleton-line-sm {
+  width: 110px;
+  height: 0.7rem;
+}
+
+.skeleton-line-md {
+  width: 78%;
+  max-width: 480px;
+  height: 0.8rem;
+  margin-bottom: 0.55rem;
+}
+
+.skeleton-line-lg {
+  width: 95%;
+  max-width: 560px;
+  height: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.skeleton-line-fade {
+  width: 60%;
+}
+
+@keyframes postListSkeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .post-header {
@@ -148,15 +202,26 @@
   color: var(--text-tertiary);
   display: flex;
   gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.post-tags-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0;
+  border-top: none;
+  flex-wrap: wrap;
 }
 
 .post-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding-top: 0;
-  border-top: none;
+  flex: 1;
 }
 
 .post-tag {
@@ -174,6 +239,14 @@
 .post-tag:hover {
   color: var(--primary-color);
   background-color: transparent;
+}
+
+.post-publish-date {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .post-content-preview {
@@ -218,6 +291,18 @@
     margin-left: 0;
     width: 100%;
     margin-top: 0.5rem;
+  }
+  
+  .post-tags-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .post-publish-date {
+    font-size: 0.6875rem;
+    margin-left: 0;
+    align-self: flex-end;
   }
   
   .post-action {

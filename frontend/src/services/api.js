@@ -1,6 +1,8 @@
 import axios from 'axios'
+import { mockPostAPI } from '../data/mockData'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true'
 
 // 创建 axios 实例
 const api = axios.create({
@@ -85,13 +87,55 @@ export const userAPI = {
 
 // 帖子 API
 export const postAPI = {
-  getPosts: (params) => api.get('/posts', { params }),
-  getPost: (postId) => api.get(`/posts/${postId}`),
-  createPost: (data) => api.post('/posts', data),
-  updatePost: (postId, data) => api.put(`/posts/${postId}`, data),
-  deletePost: (postId) => api.delete(`/posts/${postId}`),
-  toggleLike: (postId) => api.post(`/posts/${postId}/like`),
-  checkLikeStatus: (postId) => api.get(`/posts/${postId}/like`),
+  getPosts: (params) => {
+    if (USE_MOCK_DATA) {
+      return mockPostAPI.getPosts(params)
+    }
+    return api.get('/posts', { params })
+  },
+  getPost: (postId) => {
+    if (USE_MOCK_DATA) {
+      return mockPostAPI.getPost(postId)
+    }
+    return api.get(`/posts/${postId}`)
+  },
+  createPost: (data) => {
+    if (USE_MOCK_DATA) {
+      // Mock 模式下返回一个模拟的创建结果
+      return Promise.resolve({
+        data: {
+          id: Date.now(),
+          ...data,
+          createdAt: new Date().toISOString(),
+        },
+      })
+    }
+    return api.post('/posts', data)
+  },
+  updatePost: (postId, data) => {
+    if (USE_MOCK_DATA) {
+      return Promise.resolve({ data: { id: postId, ...data } })
+    }
+    return api.put(`/posts/${postId}`, data)
+  },
+  deletePost: (postId) => {
+    if (USE_MOCK_DATA) {
+      return Promise.resolve({ data: { id: postId } })
+    }
+    return api.delete(`/posts/${postId}`)
+  },
+  toggleLike: (postId) => {
+    if (USE_MOCK_DATA) {
+      return mockPostAPI.toggleLike(postId)
+    }
+    return api.post(`/posts/${postId}/like`)
+  },
+  checkLikeStatus: (postId) => {
+    if (USE_MOCK_DATA) {
+      return mockPostAPI.checkLikeStatus(postId)
+    }
+    return api.get(`/posts/${postId}/like`)
+  },
 }
 
 // 评论 API

@@ -121,7 +121,19 @@ const PostDetail = () => {
   }
 
   if (loading) {
-    return <div className="post-detail-loading">加载中...</div>
+    return (
+      <div className="post-detail">
+        <article className="post-detail-card post-detail-skeleton">
+          <div className="post-skeleton-header">
+            <div className="skeleton-line skeleton-line-sm" />
+            <div className="skeleton-line skeleton-line-sm" />
+          </div>
+          <div className="skeleton-line skeleton-line-lg" />
+          <div className="skeleton-line skeleton-line-md" />
+          <div className="skeleton-line skeleton-line-md skeleton-line-fade" />
+        </article>
+      </div>
+    )
   }
 
   if (!post) {

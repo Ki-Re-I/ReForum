@@ -10,6 +10,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
     password: '',
   })
   const [error, setError] = useState('')
+  const [errorKey, setErrorKey] = useState(null) // 存储错误键而不是翻译后的文本
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const { t } = useLanguage()
@@ -18,6 +19,7 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setErrorKey(null)
     setLoading(true)
 
     const result = await login(formData)
@@ -26,9 +28,12 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
       onClose()
       navigate('/')
     } else {
-      // 如果错误消息是翻译键，则翻译；否则直接显示
-      const errorMsg = result.error?.startsWith('error.') ? t(result.error) : result.error
-      setError(errorMsg)
+      // 存储错误键或原始错误消息
+      if (result.error?.startsWith('error.')) {
+        setErrorKey(result.error)
+      } else {
+        setError(result.error)
+      }
     }
     
     setLoading(false)
@@ -57,7 +62,11 @@ const LoginModal = ({ onClose, onSwitchToRegister }) => {
           <a href="#">{t('auth.agreementPrivacy')}</a>
         </p>
 
-        {error && <div className="modal-error">{error}</div>}
+        {(error || errorKey) && (
+          <div className="modal-error">
+            {errorKey ? t(errorKey) : error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
