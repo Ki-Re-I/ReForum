@@ -677,7 +677,6 @@
 
 .user-dropdown {
   position: absolute;
-  top: calc(100% + 0.5rem);
   right: 0;
   background: var(--dropdown-background);
   backdrop-filter: blur(20px);
@@ -689,6 +688,12 @@
   overflow: hidden;
   z-index: 1000;
   animation: fadeIn 0.2s ease-out;
+}
+
+/* 移动端动作面板中：头像按钮在底部时，将菜单向上展开，避免被底部工具集或屏幕边缘遮挡 */
+.header-actions-group-mobile .user-menu .user-dropdown {
+  top: auto;
+  bottom: calc(100% + 0.5rem);
 }
 
 @keyframes fadeIn {
