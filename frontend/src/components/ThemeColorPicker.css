@@ -3,12 +3,12 @@
 }
 
 .theme-color-button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
+  background-color: var(--button-gray);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 0.625rem;
-  font-size: 1.25rem;
+  padding: 0.5rem;
+  font-size: 1.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,13 +16,13 @@
   transition: all 0.2s;
   width: 2.5rem;
   height: 2.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .theme-color-button:hover {
+  background-color: var(--hover-background);
+  color: var(--primary-color);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  opacity: 0.9;
 }
 
 .theme-color-picker {
@@ -36,7 +36,7 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   padding: 1rem;
   z-index: 1001;
-  min-width: 280px;
+  min-width: min(320px, calc(100vw - 2rem));
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -141,37 +141,36 @@
   border-color: rgba(255, 255, 255, 0.8);
 }
 
+.theme-color-picker {
+  max-width: calc(100vw - 1rem);
+}
+
 @media (max-width: 768px) {
   .theme-color-picker {
-    right: 0;
     left: auto;
-    min-width: 260px;
+    right: 0;
   }
 }
 
 @media (max-width: 480px) {
-  .theme-color-picker {
-    right: 0;
-    left: auto;
-    min-width: 240px;
-    padding: 0.75rem;
-  }
-  
   .theme-color-button {
     width: 2.25rem;
     height: 2.25rem;
-    padding: 0.5rem;
-    font-size: 1.1rem;
+    padding: 0.45rem;
+    font-size: 1rem;
   }
-  
+
   .eyedropper-button {
-    width: 2.5rem;
-    height: 2.5rem;
-    font-size: 1.1rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    font-size: 1rem;
   }
-  
+
+  .theme-color-picker {
+    padding: 0.75rem;
+  }
+
   .sl-slider {
     height: 6rem;
   }
 }
-

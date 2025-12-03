@@ -166,7 +166,7 @@ const ThemeColorPicker = () => {
   return (
     <div className="theme-color-picker-wrapper" ref={pickerRef}>
       <button
-        className="theme-color-button"
+        className="theme-color-button icon-button"
         onClick={() => setIsOpen(!isOpen)}
         title="主题颜色"
         style={{ backgroundColor: themeColor }}

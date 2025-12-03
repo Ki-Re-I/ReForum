@@ -181,6 +181,23 @@
   width: fit-content;
 }
 
+.header-actions > * {
+  display: flex;
+  align-items: center;
+}
+
+.icon-button,
+.theme-toggle-button,
+.language-toggle-button,
+.inbox-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.5rem !important;
+  border-radius: var(--radius-md);
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .header-button {
   padding: 0.625rem 1.25rem;
   border-radius: var(--radius-md);
@@ -517,12 +534,24 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    justify-content: space-between;
   }
   
-  /* 确保按钮不会溢出 */
+  .header-actions > * {
+    flex: 1 1 calc(50% - 0.5rem);
+    justify-content: center;
+  }
+  
+  .theme-color-picker-wrapper,
+  .language-switcher-header,
+  .user-menu,
+  .icon-button {
+    flex: 0 0 auto;
+  }
+  
   .header-button {
     min-width: 0;
-    flex-shrink: 0;
+    flex: 1 1 140px;
   }
   
   .create-button {
@@ -572,10 +601,11 @@
     gap: 0.375rem;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
   }
 
   .header-button {
-    flex: 0 0 auto;
+    flex: 1 1 calc(50% - 0.5rem);
     padding: 0.5rem 0.875rem;
     font-size: 0.875rem;
     min-width: 0;
@@ -658,12 +688,13 @@
     justify-content: center;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
   }
 
   .header-button {
     padding: 0.5rem 0.75rem;
     font-size: 0.8125rem;
-    flex: 0 0 auto;
+    flex: 1 1 calc(50% - 0.5rem);
     white-space: nowrap;
   }
 
