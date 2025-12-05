@@ -10,6 +10,7 @@ import {
   FaChevronDown,
   FaThList,
   FaLayerGroup,
+  FaFileContract,
 } from 'react-icons/fa'
 import { useLanguage } from '../context/LanguageContext'
 import { categoryAPI } from '../services/api'
@@ -32,6 +33,7 @@ const Sidebar = () => {
   })
   const [navExpanded, setNavExpanded] = useState(!isMobile)
   const [categoryExpanded, setCategoryExpanded] = useState(!isMobile)
+  const [policyExpanded, setPolicyExpanded] = useState(!isMobile)
 
   const fetchCategories = async () => {
     try {
@@ -73,9 +75,11 @@ const Sidebar = () => {
     if (isMobile) {
       setNavExpanded(false)
       setCategoryExpanded(false)
+      setPolicyExpanded(false)
     } else {
       setNavExpanded(true)
       setCategoryExpanded(true)
+      setPolicyExpanded(true)
     }
   }, [isMobile])
 
@@ -121,13 +125,6 @@ const Sidebar = () => {
               >
                 <FaEnvelope className="nav-icon" />
                 <span>{t('sidebar.contact')}</span>
-              </Link>
-              <Link
-                to="/privacy"
-                className={`nav-item ${location.pathname === '/privacy' ? 'active' : ''}`}
-              >
-                <FaShieldAlt className="nav-icon" />
-                <span>{t('sidebar.privacy')}</span>
               </Link>
               <Link
                 to="/changelog"
@@ -211,6 +208,43 @@ const Sidebar = () => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+
+        <div className="sidebar-accordion">
+          <button
+            type="button"
+            className="sidebar-accordion-header"
+            onClick={() => setPolicyExpanded((prev) => !prev)}
+            aria-expanded={policyExpanded}
+            aria-controls="sidebar-policy-section"
+          >
+            <div className="sidebar-accordion-label">
+              <FaShieldAlt className="accordion-leading-icon" />
+              <span>{t('sidebar.policies')}</span>
+            </div>
+            <FaChevronDown className={`sidebar-accordion-icon ${policyExpanded ? 'open' : ''}`} />
+          </button>
+          <div
+            id="sidebar-policy-section"
+            className={`sidebar-accordion-content ${policyExpanded ? 'expanded' : 'collapsed'}`}
+          >
+            <nav className="sidebar-nav">
+              <Link
+                to="/terms"
+                className={`nav-item ${location.pathname === '/terms' ? 'active' : ''}`}
+              >
+                <FaFileContract className="nav-icon" />
+                <span>{t('sidebar.terms')}</span>
+              </Link>
+              <Link
+                to="/privacy"
+                className={`nav-item ${location.pathname === '/privacy' ? 'active' : ''}`}
+              >
+                <FaShieldAlt className="nav-icon" />
+                <span>{t('sidebar.privacy')}</span>
+              </Link>
+            </nav>
           </div>
         </div>
       </div>

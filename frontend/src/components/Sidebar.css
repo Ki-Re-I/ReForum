@@ -68,7 +68,9 @@
 .sidebar-accordion-icon {
   font-size: 0.9rem;
   color: var(--text-secondary);
-  transition: transform 0.25s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  transform-origin: center;
 }
 
 .sidebar-accordion-icon.open {
@@ -78,21 +80,34 @@
 .sidebar-accordion-content {
   width: 100%;
   overflow: hidden;
-  max-height: 0;
+  display: grid;
+  grid-template-rows: 0fr;
   opacity: 0;
-  transform: translateY(-6px);
-  transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.35s ease;
-  will-change: max-height, opacity, transform;
+  transform: translateY(-4px);
+  /* 关闭时：先淡出，再收缩 */
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+              transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+              grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.15s;
+  will-change: grid-template-rows, opacity, transform;
   padding-left: 0;
 }
 
+.sidebar-accordion-content > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .sidebar-accordion-content.expanded {
-  max-height: 1000px;
+  grid-template-rows: 1fr;
   opacity: 1;
   transform: translateY(0);
   padding-bottom: 0.75rem;
   margin-left: 0;
   padding-left: 0;
+  /* 展开时：先展开，再淡入 */
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.1s,
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.05s;
 }
 
 .sidebar-nav {

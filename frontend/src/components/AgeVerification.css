@@ -1,170 +1,139 @@
-.age-verification-overlay {
+.age-banner-overlay {
   position: fixed;
-  top: 0;
+  top: 16px;
   left: 0;
   right: 0;
-  bottom: 0;
-  background-color: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(8px);
+  z-index: 3500;
+  padding: 0 1rem;
+  animation: slideDown 0.35s ease-out;
+  pointer-events: none;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  z-index: 4000;
-  padding: 1rem;
-  animation: fadeIn 0.3s ease-out;
+  box-sizing: border-box;
 }
 
-.age-verification-modal {
+.age-banner {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
   background-color: var(--card-background);
   border-radius: var(--radius-xl);
-  padding: 2.5rem;
-  max-width: 480px;
-  width: 100%;
+  padding: 1.25rem 1.5rem;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-color);
-  animation: slideUp 0.4s ease-out;
-  text-align: center;
-}
-
-.age-verification-content {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  pointer-events: all;
+}
+
+.age-banner-header {
+  display: flex;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: default;
+  width: 100%;
 }
 
-.age-verification-icon {
-  font-size: 4rem;
-  line-height: 1;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+.age-banner-content {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.age-verification-title {
-  font-size: 1.75rem;
+.age-banner-text {
+  flex: 1;
+}
+
+.age-banner-expand-icon {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.age-banner-expand-icon.expanded {
+  transform: rotate(180deg);
+}
+
+.age-banner-title {
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  letter-spacing: -0.5px;
 }
 
-.age-verification-description {
-  font-size: 1rem;
+.age-banner-description {
+  font-size: 0.9375rem;
   color: var(--text-secondary);
   line-height: 1.6;
-  margin: 0;
-  max-width: 400px;
+  margin: 0 0 0.75rem 0;
 }
 
-.age-verification-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.age-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  text-align: left;
-}
-
-.age-form-label {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.age-date-inputs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-}
-
-.age-date-select {
-  padding: 0.875rem 1rem;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  font-size: 0.9375rem;
-  transition: all 0.2s;
-  background-color: var(--card-background);
-  color: var(--text-primary);
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.age-date-select:focus {
-  border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.age-error {
-  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-  color: #dc2626;
-  padding: 0.875rem 1rem;
-  border-radius: var(--radius-md);
+.age-banner-note {
   font-size: 0.875rem;
-  border: 1px solid #fecaca;
-  font-weight: 500;
-  text-align: left;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  margin: 0;
+  font-style: italic;
 }
 
-.age-verification-actions {
+.age-banner-actions {
   display: flex;
-  gap: 0.75rem;
   justify-content: flex-end;
-  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-.age-button {
-  padding: 0.875rem 1.75rem;
+.age-banner-button {
+  padding: 0.75rem 1.5rem;
   border-radius: var(--radius-md);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   border: 1.5px solid transparent;
-  font-family: inherit;
+  min-width: 140px;
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
-.age-button-verify {
+.age-banner-button-accept {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
   color: white;
   box-shadow: var(--shadow-sm);
 }
 
-.age-button-verify:hover {
+.age-banner-button-accept:hover {
   background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary-color) 100%);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
-.age-button-exit {
+.age-banner-button-decline {
   background-color: var(--button-gray);
   color: var(--text-primary);
   border-color: var(--border-color);
 }
 
-.age-button-exit:hover {
+.age-banner-button-decline:hover {
   background-color: var(--button-gray-hover);
   border-color: var(--text-tertiary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
-@keyframes fadeIn {
+@keyframes slideDown {
   from {
     opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-100%);
   }
   to {
     opacity: 1;
@@ -172,47 +141,52 @@
   }
 }
 
-@media (max-width: 480px) {
-  .age-verification-modal {
-    padding: 2rem 1.5rem;
+@media (max-width: 768px) {
+  .age-banner {
+    padding: 1rem 1.25rem;
   }
 
-  .age-verification-icon {
-    font-size: 3rem;
+  .age-banner-header {
+    cursor: pointer;
+    padding: 0.25rem 0;
   }
 
-  .age-verification-title {
-    font-size: 1.5rem;
+  .age-banner-content {
+    align-items: flex-start;
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    padding: 0;
   }
 
-  .age-date-inputs {
-    grid-template-columns: 1fr;
+  .age-banner-content:not(.collapsed) {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-light);
   }
 
-  .age-verification-actions {
+  .age-banner-actions {
     flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
   }
 
-  .age-button {
+  .age-banner-button {
     width: 100%;
+    min-width: auto;
+  }
+
+  .age-banner-title {
+    font-size: 1rem;
+  }
+
+  .age-banner-description,
+  .age-banner-note {
+    font-size: 0.875rem;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

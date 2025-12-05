@@ -9,6 +9,52 @@ import './Fixes.css'
 
 export const fixes = [
   {
+    date: '2025-12-05',
+    version: '1.8.0',
+    issue: 18,
+    translations: {
+      zh: {
+        title: '登录注册弹窗定位、用户协议弹窗闪烁与侧边栏动画卡顿',
+        description:
+          '修复登录和注册弹窗位置不正确、用户协议弹窗闪烁、侧边栏动画卡顿等问题。',
+        details: [
+          '登录和注册弹窗现在固定在屏幕中央，不会跟随页面滚动，所有设备上都能完整显示',
+          '弹窗在所有设备上都能正确居中，不会被屏幕边缘遮挡',
+          '修复用户协议和隐私政策弹窗的闪烁问题，现在可以稳定显示',
+          '用户协议和隐私政策现在显示完整内容，不再只显示摘要，支持多语言',
+          'Cookie 提示中的隐私政策链接改为弹窗显示，与登录注册中的协议弹窗一致',
+          '侧边栏菜单的关闭动画更加流畅，不再卡顿',
+        ],
+      },
+      en: {
+        title: 'Login/Register Modal Positioning, Terms Modal Flickering & Sidebar Animation Stutter',
+        description:
+          'Fixed issues with login/register modal positioning, terms modal flickering, and sidebar animation stuttering.',
+        details: [
+          'Login and register modals now stay fixed in the center of the screen and no longer scroll with the page',
+          'Modals are properly centered on all devices and no longer get cut off by screen edges',
+          'Fixed flickering issue with terms and privacy modals, they now display stably',
+          'Terms and privacy modals now show full content instead of summaries, with multi-language support',
+          'Privacy policy link in cookie consent banner now opens in a modal, consistent with terms modals',
+          'Sidebar menu close animation is now smoother without stuttering',
+        ],
+      },
+      ja: {
+        title: 'ログイン/登録モーダルの位置・利用規約モーダルのちらつき・サイドバーアニメーションのカクつき',
+        description:
+          'ログイン/登録モーダルの位置の問題、利用規約モーダルのちらつき、サイドバーアニメーションのカクつきを修正しました。',
+        details: [
+          'ログインと登録モーダルは画面中央に固定され、ページと一緒にスクロールしなくなりました',
+          'モーダルはすべてのデバイスで正しく中央に配置され、画面端で切り取られなくなりました',
+          '利用規約とプライバシーポリシーモーダルのちらつきを修正し、安定して表示されるようになりました',
+          '利用規約とプライバシーポリシーは要約ではなく完全な内容を表示し、多言語に対応',
+          'Cookie 同意バナー内のプライバシーポリシーリンクはモーダルで開くように変更し、利用規約モーダルと一致',
+          'サイドバーメニューの閉じるアニメーションがよりスムーズになり、カクつきがなくなりました',
+        ],
+      },
+    },
+  },
+  {
     date: '2025-12-03',
     version: '1.7.2',
     issue: 17,
@@ -16,34 +62,34 @@ export const fixes = [
       zh: {
         title: '移动端日历头部对齐、Cookie 提示遮挡与通知列表不同步',
         description:
-          '修复移动端首页日历头部图标在小屏上偏移、Cookie 横幅被底部工具集按钮挡住，以及 Inbox 未读徽章数量与通知列表内容不一致的问题。',
+          '修复手机上日历头部按钮位置不对、Cookie 提示被底部按钮遮挡、通知数量显示不正确的问题。',
         details: [
-          '在 768px / 480px 以下断点调整 `.calendar-header` 与 `.calendar-controls` 的对齐方式，让上一周 / 下一周 / 月份切换 / 展开按钮在一条线上整体居中，而不是挤在右侧',
-          '为移动端单独覆写 `.cookie-consent-overlay` 的定位，将 Cookie 提示从底部改为固定在顶部展示，避免 Accept 按钮被底部工具集按钮覆盖',
-          '拆分 Inbox 通知下拉的逻辑，保留桌面端点击外部关闭的事件监听，同时新增一个在 `showDropdown === true` 且已登录时统一调用 `fetchNotifications()` 的副作用，保证手机端打开弹窗也能拉取最新通知',
-          '验证在移动端：当有新帖子通知时，通知图标显示的未读数量与列表内容一致，不再出现“有未读但列表为空”的情况',
+          '手机上日历的上一周、下一周、月份切换等按钮现在在一行上居中显示，不再挤在右侧',
+          'Cookie 提示在手机上改为显示在顶部，避免被底部工具按钮遮挡',
+          '修复手机上打开通知列表时无法获取最新通知的问题，现在每次打开都会刷新',
+          '通知图标显示的未读数量现在与列表内容一致，不再出现"有未读但列表为空"的情况',
         ],
       },
       en: {
         title: 'Mobile Calendar Header Alignment, Cookie Banner Overlap & Inbox Desync',
         description:
-          'Fixed issues where the calendar header controls looked off on phones, the cookie banner’s Accept button was hidden behind the bottom toolset, and the Inbox unread badge count did not match the actual notifications list.',
+          'Fixed calendar header button alignment on phones, cookie banner being hidden by bottom buttons, and notification count mismatch issues.',
         details: [
-          'Tweaked `.calendar-header` and `.calendar-controls` at 768px/480px breakpoints so previous/next, month switcher, and expand icon render in a single centered row instead of being pushed to the far right',
-          'Added a mobile-only override for `.cookie-consent-overlay` that anchors the banner to the top of the screen, preventing the Accept button from sitting under the bottom toolset button',
-          'Refactored Inbox dropdown effects so desktop still uses a click‑outside listener to close, while a new effect calls `fetchNotifications()` whenever `showDropdown` becomes true for authenticated users, on both desktop and mobile',
-          'Confirmed on mobile that when a new post notification exists, the unread badge matches the list contents and no longer shows “1 unread” with an empty list',
+          'Calendar navigation buttons (previous/next week, month switcher) now center properly on one line on phones instead of being pushed to the right',
+          'Cookie consent banner now appears at the top on mobile to avoid being hidden by bottom tool buttons',
+          'Fixed issue where opening notification list on mobile didn\'t fetch latest notifications, now refreshes every time',
+          'Notification badge count now matches the actual list contents, no more "1 unread" with empty list',
         ],
       },
       ja: {
         title: 'モバイル版カレンダーヘッダーのずれ・Cookie バナーの遮蔽・通知一覧の非同期',
         description:
-          'モバイル環境でカレンダーヘッダーのアイコン位置がずれて見える問題、Cookie バナーの Accept ボタンが下部ツール集ボタンに隠れる問題、Inbox の未読バッジ数と通知一覧が一致しない問題を修正しました。',
+          'スマホでのカレンダーヘッダーボタンの位置ずれ、Cookie バナーが下部ボタンに隠れる問題、通知数の不一致を修正しました。',
         details: [
-          '768px/480px 以下のブレークポイントで `.calendar-header` と `.calendar-controls` の整列ルールを見直し、「前週 / 次週」「月切替」「展開アイコン」が一列の中央揃えで表示されるように変更',
-          'モバイル専用の `.cookie-consent-overlay` 上書きを追加し、Cookie 同意バナーを画面下ではなく上部に固定して表示、Accept ボタンがツール集ボタンの背後に隠れないように調整',
-          'Inbox 通知ドロップダウンの副作用を分離し、デスクトップでは従来どおり外側クリックで閉じる処理を維持しつつ、`showDropdown` が true かつログイン済みの場合に `fetchNotifications()` を必ず呼び出すように変更（デスクトップ/モバイル共通）',
-          'モバイルで新規投稿通知が存在するケースを確認し、未読バッジの数字と一覧に表示される件数が一致することを検証',
+          'スマホでカレンダーの「前週/次週」「月切替」ボタンが一列で中央揃えに表示されるようになりました',
+          'Cookie 同意バナーをスマホでは上部に表示するように変更し、下部ツールボタンに隠れなくなりました',
+          'スマホで通知一覧を開いたときに最新の通知が取得されない問題を修正し、毎回更新されるようになりました',
+          '通知バッジの未読数が一覧の内容と一致するようになり、「未読1件」なのに一覧が空という問題がなくなりました',
         ],
       },
     },
@@ -56,34 +102,34 @@ export const fixes = [
       zh: {
         title: '日历按日期筛选与帖子数量徽章在真实数据下失效',
         description:
-          '修复首页日历在接入真实后端数据后，点击日期无法按天筛选帖子，以及日期角标数量只在 Mock 环境下正常的问题。',
+          '修复日历点击日期无法筛选帖子，以及日期上的帖子数量显示不正确的问题。',
         details: [
-          '点击日历中的某一天会在 URL 中写入 ?date=YYYY-MM-DD，并据此重新向后端请求该日期的帖子列表',
-          '日期单元格右上角的帖子数量徽章统一使用后端返回的 posts 进行日期分组，Mock 与真实环境表现一致',
-          '热门排序模式在带日期筛选时，会在该日期的帖子集合内计算热门分数并排序，而不是忽略日期条件',
-          '通过在 useEffect 依赖中加入 searchParams，确保当用户通过日历或地址栏修改 ?date 参数时都会自动刷新数据',
+          '点击日历日期现在可以正确筛选出当天的帖子',
+          '日期右上角的帖子数量现在使用真实数据，不再只显示测试数据',
+          '选择日期后使用"热门"排序，会在当天的帖子中按热门度排序',
+          '通过日历或地址栏修改日期时，会自动刷新显示对应日期的帖子',
         ],
       },
       en: {
         title: 'Calendar Date Filter & Daily Post Count with Real Backend',
         description:
-          'Fixed the home calendar so that date clicks and per-day post count badges work correctly when talking to the real backend, not just mock data.',
+          'Fixed calendar date filtering and post count badge display when using real backend data.',
         details: [
-          'Clicking a calendar day now updates the URL with ?date=YYYY-MM-DD and re-fetches posts filtered to that exact date',
-          'The small badge in the top-right of each day cell now uses posts from the backend, grouped by publish date, instead of relying on mocks',
-          'When the “Hot” sort is active together with a selected date, posts are ranked by hot score within that day’s results',
-          'Updated the data-fetching effect to depend on searchParams so any change to the ?date query (via calendar or URL) triggers a fresh request',
+          'Clicking a calendar date now correctly filters posts for that day',
+          'Post count badges now use real backend data instead of mock data',
+          'Using "Hot" sort with a selected date now sorts posts by popularity within that day',
+          'Changing the date via calendar or URL automatically refreshes posts for that date',
         ],
       },
       ja: {
         title: '本番バックエンドでのカレンダー日付フィルタと投稿数バッジの修正',
         description:
-          'ホームのカレンダーが本番バックエンドに接続されているときでも、日付クリックと日別投稿数バッジが正しく動作するように修正しました。',
+          '本番環境でカレンダーの日付クリックと投稿数バッジが正しく動作するように修正しました。',
         details: [
-          'カレンダーの日付をクリックすると URL に ?date=YYYY-MM-DD を付与し、その日付の投稿のみをバックエンドから取得して表示します',
-          '各日付セル右上の投稿数バッジは、バックエンドから返された投稿一覧を日付ごとにグルーピングして算出するように変更',
-          '「人気順」ソートと日付フィルタを同時に使った場合も、その日の投稿だけを対象に人気スコア順に並べ替え',
-          'searchParams を useEffect の依存に含めることで、カレンダー操作や URL の ?date 変更時に自動でデータを再取得します',
+          'カレンダーの日付をクリックすると、その日の投稿だけが正しく表示されるようになりました',
+          '日付右上の投稿数バッジが実際のデータを表示するようになりました',
+          '日付を選択して「人気順」を使うと、その日の投稿だけを人気度でソートします',
+          'カレンダー操作や URL の日付変更時に、自動でデータが更新されるようになりました',
         ],
       },
     },
@@ -96,31 +142,31 @@ export const fixes = [
       zh: {
         title: '移动端工具集中的头像菜单被底部按钮遮挡',
         description:
-          '修复移动端底部“工具集”弹窗中，头像菜单仍沿用桌面端向下展开逻辑，导致个人资料 / 退出登录选项被底部按钮和屏幕边缘遮住的问题。',
+          '修复手机上工具集弹窗中头像菜单被底部按钮遮挡的问题。',
         details: [
-          '在 `.header-actions-group-mobile` 场景下单独覆写 `.user-dropdown` 的定位，让头像菜单从按钮上方向上展开，而不是继续向下溢出视口',
-          '保持桌面端 Header 右上角头像菜单的原有行为不变，仅在移动端 actions 面板内部应用该样式修正',
-          '在多种手机分辨率下验证，确保菜单内容完整可见、不会再被底部工具集按钮遮挡',
+          '手机上工具集弹窗中的头像菜单现在向上展开，不会被底部按钮遮挡',
+          '桌面端右上角的头像菜单保持原有行为不变',
+          '现在可以正常查看和点击"个人资料"和"退出登录"等选项',
         ],
       },
       en: {
         title: 'Avatar Menu Hidden Behind Mobile Toolset Button',
         description:
-          'Fixed an issue where the user menu inside the mobile bottom “toolset” panel still opened downward and got covered by the toolset button and screen edge.',
+          'Fixed avatar menu being hidden behind bottom buttons in mobile toolset panel.',
         details: [
-          'Added a scoped CSS override so that `.header-actions-group-mobile .user-menu .user-dropdown` opens upward above the avatar button instead of below it',
-          'Kept the desktop header avatar dropdown behavior unchanged by only applying the new positioning within the mobile actions panel',
-          'Tested across multiple mobile breakpoints to ensure profile/logout entries remain fully visible and easy to tap',
+          'Avatar menu in mobile toolset panel now opens upward instead of downward',
+          'Desktop header avatar menu behavior remains unchanged',
+          'Profile and logout options are now fully visible and tappable on phones',
         ],
       },
       ja: {
         title: 'モバイルツール集ボタンの背後に隠れていたアバターメニュー',
         description:
-          'モバイル画面下部の「ツール集」パネル内で、アバターのメニューが下向きに開き、ツール集ボタンや画面端に隠れてしまう問題を修正しました。',
+          'スマホのツール集パネルでアバターメニューが下部ボタンに隠れる問題を修正しました。',
         details: [
-          '`.header-actions-group-mobile .user-menu .user-dropdown` に限定したスタイルを追加し、メニューがボタンの下ではなく上方向に展開されるように変更',
-          'デスクトップヘッダー右上のアバターメニューには影響を与えず、従来どおり下方向に表示されるように維持',
-          '複数のスマートフォン解像度で動作を確認し、プロフィール/ログアウトなどの項目が常に完全に表示され、タップしやすいことをチェック',
+          'スマホのツール集パネル内では、アバターメニューが上方向に展開されるようになりました',
+          'デスクトップ右上のアバターメニューは従来どおり下向きに開きます',
+          '「プロフィール」と「ログアウト」などの項目が完全に表示され、タップしやすくなりました',
         ],
       },
     },
@@ -133,37 +179,37 @@ export const fixes = [
       zh: {
         title: '移动端工具集按钮与工具列表排版统一',
         description:
-          '修复移动端“工具集”按钮跟随页面滚动、工具列表覆盖按钮、本行文字与图标对不齐、行间距不一致等一系列排版与交互问题。',
+          '修复手机上工具集按钮位置不对、工具列表排版混乱的问题。',
         details: [
-          '将移动端“工具集”入口从 Header 结构中抽离，改为挂载到 body，并使用固定定位始终悬浮在屏幕底部中央（类似指纹识别区域）',
-          '重写工具集弹窗的打开/关闭逻辑：点击按钮在其上方平滑上滑展开，再次点击按钮或点击遮罩/右上角 X 时带动画下滑收起',
-          '统一工具列表中所有按钮的排版：在移动端变体下固定为左侧文字描述、右侧功能图标两列对齐，行与行之间的间隔也保持一致',
-          '将移动端主题颜色选择器与通知列表改为居中模态弹窗，背景虚化，避免内容被裁切或超出屏幕',
-          '调整工具集窗口右上角关闭按钮的位置与层级，避免被第一行按钮遮挡',
+          '工具集按钮现在固定在屏幕底部中央，不会跟随页面滚动',
+          '工具集弹窗从底部滑出，关闭时平滑收起',
+          '工具列表按钮统一为左侧文字、右侧图标布局，行间距一致',
+          '手机上的主题颜色选择和通知列表改为居中弹窗，不会被屏幕边缘遮挡',
+          '工具集窗口的关闭按钮位置调整，不会被其他按钮遮挡',
         ],
       },
       en: {
         title: 'Mobile Toolset Button & Tools List Layout Cleanup',
         description:
-          'Fixed a series of layout and interaction issues on mobile where the floating toolset button scrolled with the page, the tools panel overlapped the button, and text/icon alignment and spacing were inconsistent.',
+          'Fixed toolset button positioning and tool list layout issues on mobile.',
         details: [
-          'Detached the mobile “Toolset” entry from the header layout and mounted it to the document body with fixed positioning so it always floats at the bottom center of the viewport',
-          'Reworked the toolset panel open/close logic so tapping the button slides the panel up above it and tapping the button again, the backdrop, or the close icon plays a smooth slide-down animation',
-          'Standardized every tool row inside the panel to a two‑column layout on mobile: text label on the left with flex:1, action icon aligned on the right, with consistent vertical spacing between rows',
-          'Converted the mobile theme color picker and notification list into centered modals with blurred backdrops to prevent content from being cut off on small screens',
-          'Adjusted the top‑right close “X” position and z‑index so it never overlaps or gets hidden by the first tool row',
+          'Toolset button now fixed at bottom center of screen and no longer scrolls with page',
+          'Toolset panel slides up from bottom and closes smoothly',
+          'All tool buttons use consistent left-text, right-icon layout with even spacing',
+          'Theme color picker and notifications open as centered modals on mobile, no content clipping',
+          'Close button position adjusted to avoid being hidden by other buttons',
         ],
       },
       ja: {
         title: 'モバイル版ツール集ボタンとツール一覧レイアウトの整理',
         description:
-          'モバイル環境でツール集ボタンがページと一緒にスクロールしてしまう問題や、ツール一覧がボタンを覆ってしまう問題、各行のテキストとアイコンのズレ・行間の不統一などをまとめて改善しました。',
+          'スマホでのツール集ボタンの位置とツール一覧のレイアウトの問題を修正しました。',
         details: [
-          'モバイルの「ツール集」入口をヘッダー構造から切り離し、body 直下にマウントして `position: fixed` で画面下中央に常に表示されるように変更',
-          'ツール集パネルの開閉ロジックを作り直し、ボタンタップでボタン上方向にスライドインし、再度タップや背景・右上の X でスライイドアウトするアニメーションを追加',
-          'ツール一覧の各行をモバイル時はすべて「左テキストラベル、右アイコン」の2カラムレイアウトに統一し、行ごとの余白も揃えて読みやすく調整',
-          'モバイルのテーマカラー選択と通知一覧を中央モーダル化し、背景をぼかすことで小さな画面でも内容が切れないように改善',
-          'ツール集ウィンドウ右上の X ボタンの位置と z-index を調整し、最初の行のボタンに隠れないようにした',
+          'ツール集ボタンが画面下中央に固定され、ページと一緒にスクロールしなくなりました',
+          'ツール集パネルが下からスライドインし、閉じる際もスムーズに動作します',
+          'すべてのツールボタンが「左テキスト、右アイコン」の統一レイアウトになり、行間も揃いました',
+          'テーマカラー選択と通知を中央モーダル化し、小さな画面でも内容が切れなくなりました',
+          '閉じるボタンの位置を調整し、他のボタンに隠れなくなりました',
         ],
       },
     },
@@ -176,31 +222,31 @@ export const fixes = [
       zh: {
         title: '加载动画主题适配与灰色方块残影问题',
         description:
-          '修复首页加载动画在切换“整体页面基调”后颜色未同步，以及进度条周围出现灰色方块残影的问题。',
+          '修复加载动画颜色不跟随主题变化，以及进度条周围出现灰色方块的问题。',
         details: [
-          '将 Intro 加载页背景改为直接使用主题背景变量，跟随右上角主题色变化',
-          '进度条圆环、百分比文字和 LOADING 文案统一使用主题主色系变量渲染',
-          '移除进度条的模糊阴影，消除灰色方块感，视觉更干净',
+          '加载页面背景现在会跟随主题色变化',
+          '进度条和文字颜色现在会跟随主题色',
+          '移除进度条周围的灰色阴影，视觉效果更干净',
         ],
       },
       en: {
         title: 'Loading Overlay Theme Sync & Gray Box Artifact',
         description:
-          'Fixed the issue where the initial loading animation did not follow the global theme color and showed a gray box around the progress ring.',
+          'Fixed loading animation not following theme colors and gray box around progress ring.',
         details: [
-          'Intro screen background now uses the themed background token so it changes with the global color baseline',
-          'Progress ring, percentage text, and LOADING label all render with theme-driven primary colors',
-          'Removed the blur shadow around the ring to eliminate the gray block artifact and keep visuals clean',
+          'Loading screen background now follows theme color changes',
+          'Progress ring and text colors now follow theme colors',
+          'Removed gray shadow around progress ring for cleaner visuals',
         ],
       },
       ja: {
         title: 'ロードアニメーションのテーマ連動とグレーボックス残像の修正',
         description:
-          '「全体のカラー基調」を変更してもロードアニメーションの色が追従せず、進捗リングの周りにグレーの四角い残像が出ていた問題を修正しました。',
+          'ロードアニメーションの色がテーマに追従せず、進捗リングの周りにグレーの四角い残像が出る問題を修正しました。',
         details: [
-          'イントロロード画面の背景をテーマ背景トークンに切り替え、右上のテーマ色変更に連動',
-          '進捗リング・パーセンテージ表示・LOADING テキストをテーマのプライマリカラーで描画',
-          'リング周辺のぼかしシャドウを削除し、グレーの四角い残像をなくしてスッキリした見た目に調整',
+          'ロード画面の背景がテーマ色の変更に追従するようになりました',
+          '進捗リングとテキストの色がテーマ色に追従するようになりました',
+          '進捗リング周辺のグレーの影を削除し、視覚的にすっきりしました',
         ],
       },
     },
@@ -212,31 +258,31 @@ export const fixes = [
     translations: {
       zh: {
         title: '更新日志最新条目日期缺失与徽章对比度低',
-        description: '修复更新日志页面“最新更新”区域没有显示发布日期、且“更新”徽章在浅色背景下难以辨认的问题。',
+        description: '修复更新日志页面没有显示发布日期，以及"更新"徽章在浅色背景下看不清的问题。',
         details: [
-          '在“最新更新”标题旁展示符合当前语言格式的发布日期',
-          '“更新/Update”徽章改为高对比度的胶囊样式，明暗主题都能清晰辨认',
-          '日期标签重新设计为渐变芯片风格，整体视觉更现代',
+          '在"最新更新"标题旁显示发布日期',
+          '"更新"徽章改为更醒目的样式，在任何主题下都能看清',
+          '日期标签样式重新设计，更美观',
         ],
       },
       en: {
         title: 'Changelog Latest Block Date & Badge Contrast',
         description:
-          'Fixed the issue where the changelog’s “Latest Updates” block failed to show the release date and the Update badge looked washed out.',
+          'Fixed missing release date in changelog and low contrast Update badge.',
         details: [
-          'Shows the release date next to the heading in the correct locale format',
-          'Gives the “Update” badge a high-contrast pill design that works in light/dark themes',
-          'Refreshes the date chip styling with a modern gradient treatment',
+          'Release date now shown next to the heading',
+          'Update badge redesigned for better visibility in all themes',
+          'Date label styling refreshed for better appearance',
         ],
       },
       ja: {
         title: '更新履歴の最新セクションでの日付表示とバッジ視認性',
         description:
-          '更新履歴ページの「最新の更新」ブロックに日付が表示されず、アップデートバッジのコントラストが低かった問題を修正しました。',
+          '更新履歴ページに日付が表示されず、アップデートバッジが見づらい問題を修正しました。',
         details: [
-          '見出し横に現在の言語フォーマットで公開日を表示',
-          '「更新/Update」バッジを高コントラストのピル形状に刷新し、ライト/ダーク両テーマで読みやすく調整',
-          '日付チップをグラデーションを使ったモダンなスタイルに再設計',
+          '見出し横に公開日を表示するようになりました',
+          '「更新」バッジをより見やすいデザインに変更し、すべてのテーマで読みやすくなりました',
+          '日付ラベルのスタイルを再設計し、より美しくなりました',
         ],
       },
     },
@@ -545,39 +591,39 @@ export const fixes = [
     version: '1.3.1',
     translations: {
       zh: {
-        title: '频繁请求导致后端数据加载失败',
-        description: '修复用户快速操作（切换排序、搜索、切换分类等）时，请求过于频繁导致后端数据加载不出来的问题。',
+        title: '频繁请求导致数据加载失败',
+        description: '修复用户快速操作（切换排序、搜索、切换分类等）时，数据加载不出来的问题。',
         details: [
-          '放宽后端速率限制，从 15 分钟内 100 个请求增加到 500 个请求',
-          '首页和搜索页面添加防抖（300ms）和节流（500ms最小间隔）机制',
-          'API 请求超时时间从 5 秒增加到 10 秒，给后端更多处理时间',
-          '优化 429 速率限制错误的处理，提供更友好的错误提示',
+          '提高系统可处理的请求数量，减少请求限制',
+          '优化快速操作时的请求处理，避免重复请求',
+          '延长请求等待时间，提高成功率',
+          '改进错误提示，更清楚地告知用户问题原因',
         ],
       },
       en: {
         title: 'Rapid Requests Causing Data Loading Failures',
-        description: 'Fixed an issue where rapid user actions (sorting, searching, category switching) caused backend data loading failures due to too many requests.',
+        description: 'Fixed an issue where rapid user actions (sorting, searching, category switching) caused data loading failures.',
         details: [
-          'Relaxed backend rate limit from 100 to 500 requests per 15 minutes',
-          'Added debounce (300ms) and throttle (500ms min interval) on Home and Search pages',
-          'Extended API timeout from 5 to 10 seconds for better backend processing',
-          'Improved 429 rate limit error handling with clearer user feedback',
+          'Increased system request capacity to reduce limitations',
+          'Optimized request handling for rapid operations to avoid duplicate requests',
+          'Extended request timeout for better success rate',
+          'Improved error messages for clearer user feedback',
         ],
       },
       ja: {
         title: '頻繁なリクエストによるデータ読み込み失敗',
-        description: 'ユーザーが素早く操作（並び替え、検索、カテゴリー切替など）した際、リクエストが多すぎてデータが読み込めなくなる問題を修正しました。',
+        description: 'ユーザーが素早く操作（並び替え、検索、カテゴリー切替など）した際、データが読み込めなくなる問題を修正しました。',
         details: [
-          'バックエンドのレート制限を15分間100リクエストから500リクエストに緩和',
-          'ホームと検索ページにデバウンス（300ms）とスロットル（最小間隔500ms）を実装',
-          'API リクエストのタイムアウトを5秒から10秒に延長し、バックエンドの処理時間を確保',
-          '429 レート制限エラーの処理を改善し、より分かりやすいエラーメッセージを提供',
+          'システムが処理できるリクエスト数を増やし、制限を緩和',
+          '素早い操作時のリクエスト処理を最適化し、重複リクエストを防止',
+          'リクエストの待機時間を延長し、成功率を向上',
+          'エラーメッセージを改善し、ユーザーに問題の原因をより明確に伝達',
         ],
       },
     },
   },
   {
-    date: '2025-11-13',
+    date: '2025-12-02',
     version: '1.4.0',
     translations: {
       zh: {
@@ -590,10 +636,10 @@ export const fixes = [
       },
       en: {
         title: 'Fixes Page Layout Alignment',
-        description: 'Standardized spacing and alignment across breakpoints.',
+        description: 'Standardized spacing and alignment across all screen sizes.',
         details: [
-          'Responsive grid keeps cards tidy on desktop and mobile',
-          'Reworked typography rhythm for headings, copy, and bullets',
+          'Cards display neatly on desktop and mobile',
+          'Improved spacing and typography for headings and content',
         ],
       },
       ja: {
@@ -607,7 +653,7 @@ export const fixes = [
     },
   },
   {
-    date: '2025-11-13',
+    date: '2025-12-02',
     version: '1.4.0',
     translations: {
       zh: {
@@ -637,7 +683,7 @@ export const fixes = [
     },
   },
   {
-    date: '2025-11-13',
+    date: '2025-12-02',
     version: '1.4.0',
     translations: {
       zh: {
@@ -667,7 +713,7 @@ export const fixes = [
     },
   },
   {
-    date: '2025-11-13',
+    date: '2025-12-02',
     version: '1.4.0',
     translations: {
       zh: {
@@ -697,7 +743,7 @@ export const fixes = [
     },
   },
   {
-    date: '2025-11-13',
+    date: '2025-12-02',
     version: '1.4.0',
     translations: {
       zh: {
@@ -727,7 +773,7 @@ export const fixes = [
     },
   },
   {
-    date: '2025-11-13',
+    date: '2025-12-02',
     version: '1.4.0',
     translations: {
       zh: {
@@ -757,7 +803,7 @@ export const fixes = [
     },
   },
   {
-    date: '2025-11-13',
+    date: '2025-12-02',
     version: '1.4.0',
     translations: {
       zh: {
@@ -787,7 +833,7 @@ export const fixes = [
     },
   },
   {
-    date: '2025-11-13',
+    date: '2025-12-02',
     version: '1.4.0',
     translations: {
       zh: {
@@ -817,7 +863,7 @@ export const fixes = [
     },
   },
   {
-    date: '2025-11-12',
+    date: '2025-12-01',
     version: '1.3.0',
     translations: {
       zh: {

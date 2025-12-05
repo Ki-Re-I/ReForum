@@ -1,12 +1,16 @@
 .cookie-consent-overlay {
   position: fixed;
-  bottom: 0;
   left: 0;
   right: 0;
+  bottom: 16px;
   z-index: 3000;
-  padding: 1rem;
+  padding: 0 1rem;
   animation: slideUp 0.4s ease-out;
   pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .cookie-consent-banner {
@@ -60,6 +64,9 @@
   font-weight: 600;
   margin-left: 0.25rem;
   transition: color 0.2s;
+  font-size: inherit;
+  font-family: inherit;
+  display: inline;
 }
 
 .cookie-consent-link:hover {
@@ -119,12 +126,6 @@
 }
 
 @media (max-width: 768px) {
-  .cookie-consent-overlay {
-    /* 移动端将 Cookie 提示固定在顶部，避免被底部工具集按钮遮挡 */
-    top: 0;
-    bottom: auto;
-  }
-
   .cookie-consent-banner {
     padding: 1.25rem;
   }

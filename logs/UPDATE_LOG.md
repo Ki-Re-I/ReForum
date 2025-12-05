@@ -6,7 +6,59 @@
 
 ---
 
-## 最新修复：移动端日历 / Cookie 提示与通知列表体验
+## 最新更新：登录注册弹窗优化、合规提示完善、侧边栏动画优化与站外邮箱通知功能
+
+### 更新日期
+2025-12-05
+
+### 版本号
+v1.8.0
+
+### 更新内容
+- ✅ **登录和注册弹窗定位修复**：使用 React Portal 将弹窗渲染到 `document.body`，确保弹窗固定在浏览器视口中间，不再跟随页面滚动
+- ✅ **用户协议和隐私政策弹窗优化**：修复弹窗闪烁问题，改为显示完整的协议和隐私政策内容，支持多语言切换
+- ✅ **Cookie 提示隐私政策链接优化**：将 Cookie 提示中的隐私政策链接改为弹窗显示完整内容，不再跳转到新页面
+- ✅ **年龄提示功能完善**：添加"我没满 18 岁"选项，丰富提示内容说明，移动端支持展开/收起查看详细内容
+- ✅ **合规提示账户绑定**：年龄提示和 Cookie 提示改为基于用户账户（用户ID）存储状态，确保每个账户只显示一次
+- ✅ **拒绝提示跳转逻辑**：拒绝年龄验证或 Cookie 同意时，自动跳转到外部网站（Google）
+- ✅ **侧边栏手风琴动画优化**：使用 CSS Grid 的 `grid-template-rows` 替代 `max-height`，优化手风琴关闭动画，消除卡顿
+- ✅ **站外邮箱通知功能**：当有新帖子发布时，系统会通过 Resend 邮件服务自动向所有用户（除作者外）发送邮件通知，包含帖子标题、摘要和查看链接
+
+### 修改文件
+- `frontend/src/components/LoginModal.jsx` - 使用 Portal 渲染主弹窗到 body，添加协议弹窗状态管理，优化事件处理
+- `frontend/src/components/RegisterModal.jsx` - 使用 Portal 渲染主弹窗到 body，添加协议弹窗状态管理，优化事件处理
+- `frontend/src/components/Modal.css` - 优化弹窗定位样式，确保桌面端和移动端都能完全居中显示
+- `frontend/src/components/TermsContent.jsx` - 新增用户协议内容组件，支持多语言
+- `frontend/src/components/PrivacyContent.jsx` - 新增隐私政策内容组件，支持多语言
+- `frontend/src/components/CookieConsent.jsx` - 添加隐私政策弹窗，改为基于用户ID存储状态，拒绝时跳转
+- `frontend/src/components/AgeVerification.jsx` - 添加"我没满18岁"选项，丰富内容，移动端展开/收起功能，改为基于用户ID存储状态，拒绝时跳转
+- `frontend/src/components/AgeVerification.css` - 优化移动端样式，添加展开/收起动画
+- `frontend/src/components/Sidebar.css` - 优化手风琴动画，使用 grid-template-rows 替代 max-height
+- `frontend/src/context/LanguageContext.jsx` - 添加新的翻译键（年龄提示、协议内容等）
+- `backend/services/emailService.js` - 新增 `sendNewPostNotificationEmails` 方法，实现批量发送新帖子通知邮件
+- `backend/controllers/postController.js` - 在创建帖子时异步触发站外邮箱通知，不阻塞 API 响应
+- `backend/models/User.js` - 新增 `findAllEmailsExcept` 方法，获取除指定用户外的所有用户邮箱
+
+### 技术实现
+- **Portal 渲染弹窗**：使用 `createPortal` 将登录/注册弹窗渲染到 `document.body`，避免被父元素滚动影响，确保弹窗固定在视口中间
+- **防止背景滚动**：弹窗打开时使用 `position: fixed` 锁定 body，保存并恢复滚动位置
+- **协议弹窗防闪烁**：使用 `useMemo` 和 `useCallback` 优化状态管理，避免不必要的重新渲染
+- **Grid 动画优化**：使用 `grid-template-rows: 0fr` 到 `1fr` 的过渡替代 `max-height`，实现更流畅的手风琴动画
+- **账户绑定存储**：使用 `age-verified-${userId}` 和 `cookie-consent-${userId}` 作为 localStorage key，确保每个账户状态独立
+- **异步邮件发送**：使用 `Promise.allSettled` 并发发送邮件，不阻塞帖子创建 API 响应，失败时记录日志但不影响用户体验
+- **邮件模板设计**：使用 HTML 格式的邮件模板，包含帖子标题、作者信息、摘要和查看链接，支持多语言显示
+
+### 对用户的影响
+- 登录和注册弹窗在所有设备上都能正确居中显示，不会跟随页面滚动或被截断
+- 用户协议和隐私政策可以在弹窗中直接查看完整内容，无需跳转
+- 年龄提示和 Cookie 提示每个账户只会显示一次，拒绝时会跳转到外部网站
+- 侧边栏手风琴动画更加流畅，关闭时不再有卡顿感
+- 移动端年龄提示默认收起，节省屏幕空间，需要时可展开查看详细内容
+- 当有新帖子发布时，所有用户（除作者外）都会收到邮件通知，及时了解社区动态，提升用户参与度
+
+---
+
+## 历史更新：移动端日历 / Cookie 提示与通知列表体验
 
 ### 更新日期
 2025-12-03

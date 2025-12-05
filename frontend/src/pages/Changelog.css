@@ -48,7 +48,7 @@
 .changelog-latest-date {
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--primary-dark, var(--primary-color));
+  color: var(--primary-color);
   background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(14, 165, 233, 0.12));
   border: none;
   border-radius: var(--radius-full);
@@ -60,7 +60,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   box-shadow: var(--shadow-md);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
 }
 
 .changelog-latest-date::before {
@@ -68,7 +68,7 @@
   width: 0.35rem;
   height: 0.35rem;
   border-radius: 50%;
-  background: var(--primary-color);
+  background: #2563eb;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
 }
 

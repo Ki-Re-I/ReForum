@@ -4,6 +4,8 @@ const STORAGE_KEY = 'app-language'
 
 const translations = {
   zh: {
+    'common.ok': '确定',
+
     'common.loading': '加载中...',
 
     'header.searchPlaceholder': '搜索',
@@ -32,6 +34,8 @@ const translations = {
     'sidebar.about': '关于我们',
     'sidebar.contact': '联系我们',
     'sidebar.privacy': '隐私政策',
+    'sidebar.terms': '用户协议',
+    'sidebar.policies': '合规与政策',
     'sidebar.changelog': '更新日志',
     'sidebar.fixes': '问题修复',
     'sidebar.navToggle': '首页菜单',
@@ -87,6 +91,29 @@ const translations = {
     'auth.login': '登录',
     'auth.newUser': '新用户？',
     'auth.register': '注册',
+    'auth.registering': '注册中...',
+    'auth.username': '用户名 *',
+    'auth.usernamePlaceholder': '3-20个字符，仅字母、数字和下划线',
+    'auth.email': '邮箱 *',
+    'auth.emailPlaceholder': 'your@email.com',
+    'auth.verificationCode': '验证码 *',
+    'auth.verificationCodePlaceholder': '请输入6位验证码',
+    'auth.sendCode': '获取验证码',
+    'auth.sendingCode': '发送中...',
+    'auth.codeSent': '验证码已发送到您的邮箱，有效期5分钟',
+    'auth.retryAfter': '{countdown}秒后重试',
+    'auth.confirmPassword': '确认密码 *',
+    'auth.confirmPasswordPlaceholder': '再次输入密码',
+    'auth.passwordPlaceholder': '至少6个字符',
+    'auth.hasAccount': '已有账户？',
+    'auth.consentLabel': '我已阅读并同意《用户协议》和《隐私政策》',
+    'auth.termsTitle': '用户协议',
+    'auth.privacyTitle': '隐私政策',
+    'auth.agreementModalHint': '以下为概要说明，完整内容请查看文档。',
+    'auth.openFull': '查看完整内容',
+    'auth.termsSummary': '本用户协议说明您的账户、行为规范、内容发布和责任。继续使用即表示接受全部条款。',
+    'auth.privacySummary': '本隐私政策说明我们如何收集、使用和保护您的个人信息。',
+    'auth.error.consentRequired': '请先勾选同意用户协议和隐私政策',
     'auth.error.emailRequired': '请先输入邮箱地址',
     'auth.error.invalidEmail': '请输入有效的邮箱地址',
     'auth.error.sendCodeFailed': '发送验证码失败，请稍后重试',
@@ -163,6 +190,11 @@ const translations = {
     'cookie.accept': '接受',
     'cookie.decline': '拒绝',
     'age.title': '年龄验证',
+    'age.bannerTitle': '此网站适用于 18 岁及以上用户',
+    'age.bannerDescription': '根据相关法律法规，本网站仅面向年满 18 周岁的用户提供服务。继续使用本网站即表示您确认已年满 18 岁，并同意遵守我们的用户协议和隐私政策。',
+    'age.bannerNote': '如果您未满 18 岁，请选择"我没满 18 岁"选项。我们建议未成年人在家长或监护人的指导下使用互联网。',
+    'age.bannerAccept': '我已年满 18 岁',
+    'age.bannerDecline': '我没满 18 岁',
 
     // 错误提示
     'error.loadFailed': '加载失败',
@@ -199,6 +231,8 @@ const translations = {
     'age.error.underage': '抱歉，您必须年满 18 岁才能访问本网站',
   },
   en: {
+    'common.ok': 'OK',
+
     'common.loading': 'Loading...',
 
     'header.searchPlaceholder': 'Search',
@@ -228,6 +262,8 @@ const translations = {
     'sidebar.about': 'About',
     'sidebar.contact': 'Contact',
     'sidebar.privacy': 'Privacy Policy',
+    'sidebar.terms': 'Terms of Service',
+    'sidebar.policies': 'Compliance & Policies',
     'sidebar.changelog': 'Changelog',
     'sidebar.fixes': 'Fixes',
     'sidebar.navToggle': 'Menu',
@@ -283,6 +319,29 @@ const translations = {
     'auth.login': 'Log in',
     'auth.newUser': 'New here?',
     'auth.register': 'Sign up',
+    'auth.registering': 'Registering...',
+    'auth.username': 'Username *',
+    'auth.usernamePlaceholder': '3-20 characters, letters, numbers and underscores only',
+    'auth.email': 'Email *',
+    'auth.emailPlaceholder': 'your@email.com',
+    'auth.verificationCode': 'Verification Code *',
+    'auth.verificationCodePlaceholder': 'Enter 6-digit code',
+    'auth.sendCode': 'Get Code',
+    'auth.sendingCode': 'Sending...',
+    'auth.codeSent': 'Code sent to your email, valid for 5 minutes',
+    'auth.retryAfter': 'Retry in {countdown}s',
+    'auth.confirmPassword': 'Confirm Password *',
+    'auth.confirmPasswordPlaceholder': 'Re-enter password',
+    'auth.passwordPlaceholder': 'At least 6 characters',
+    'auth.hasAccount': 'Already have an account?',
+    'auth.consentLabel': 'I have read and agree to the Terms and Privacy Policy',
+    'auth.termsTitle': 'Terms of Service',
+    'auth.privacyTitle': 'Privacy Policy',
+    'auth.agreementModalHint': 'This is a brief summary. Please review the full documents.',
+    'auth.openFull': 'View full content',
+    'auth.termsSummary': 'These terms describe your account, conduct rules, content posting and responsibilities. Continuing means you accept all terms.',
+    'auth.privacySummary': 'This policy explains how we collect, use, and protect your personal data.',
+    'auth.error.consentRequired': 'Please check the box to agree to the terms and privacy policy first',
     'auth.error.emailRequired': 'Please enter your email address first',
     'auth.error.invalidEmail': 'Please enter a valid email address',
     'auth.error.sendCodeFailed': 'Failed to send verification code, please try again later',
@@ -359,6 +418,11 @@ const translations = {
     'cookie.accept': 'Accept',
     'cookie.decline': 'Decline',
     'age.title': 'Age Verification',
+    'age.bannerTitle': 'This site is for users aged 18 and over',
+    'age.bannerDescription': 'In accordance with applicable laws and regulations, this website is intended for users who are 18 years of age or older. By continuing, you confirm that you are at least 18 years old and agree to comply with our Terms of Service and Privacy Policy.',
+    'age.bannerNote': 'If you are under 18, please select "I am under 18". We recommend that minors use the internet under the guidance of parents or guardians.',
+    'age.bannerAccept': 'I am 18 or older',
+    'age.bannerDecline': 'I am under 18',
 
     // Error messages
     'error.loadFailed': 'Failed to load',
@@ -395,6 +459,8 @@ const translations = {
     'age.error.underage': 'Sorry, you must be at least 18 years old to access this website',
   },
   ja: {
+    'common.ok': 'OK',
+
     'common.loading': '読み込み中...',
 
     'header.searchPlaceholder': '検索',
@@ -424,6 +490,8 @@ const translations = {
     'sidebar.about': '私たちについて',
     'sidebar.contact': 'お問い合わせ',
     'sidebar.privacy': 'プライバシーポリシー',
+    'sidebar.terms': '利用規約',
+    'sidebar.policies': 'コンプライアンス・ポリシー',
     'sidebar.changelog': '更新履歴',
     'sidebar.fixes': '修正情報',
     'sidebar.navToggle': 'メニュー',
@@ -479,6 +547,29 @@ const translations = {
     'auth.login': 'ログイン',
     'auth.newUser': '初めての方は',
     'auth.register': '新規登録',
+    'auth.registering': '登録中...',
+    'auth.username': 'ユーザー名 *',
+    'auth.usernamePlaceholder': '3-20文字、英数字とアンダースコアのみ',
+    'auth.email': 'メールアドレス *',
+    'auth.emailPlaceholder': 'your@email.com',
+    'auth.verificationCode': '確認コード *',
+    'auth.verificationCodePlaceholder': '6桁のコードを入力',
+    'auth.sendCode': 'コードを取得',
+    'auth.sendingCode': '送信中...',
+    'auth.codeSent': 'メールに送信されました。有効期限は5分です',
+    'auth.retryAfter': '{countdown}秒後に再試行',
+    'auth.confirmPassword': 'パスワード確認 *',
+    'auth.confirmPasswordPlaceholder': 'パスワードを再入力',
+    'auth.passwordPlaceholder': '少なくとも6文字',
+    'auth.hasAccount': '既にアカウントをお持ちですか？',
+    'auth.consentLabel': '利用規約とプライバシーポリシーに同意します',
+    'auth.termsTitle': '利用規約',
+    'auth.privacyTitle': 'プライバシーポリシー',
+    'auth.agreementModalHint': '以下は概要です。必ず全文をご確認ください。',
+    'auth.openFull': '全文を見る',
+    'auth.termsSummary': '本規約はアカウント、行動規範、投稿内容、責任について定めています。続行することで全てに同意したとみなされます。',
+    'auth.privacySummary': '本ポリシーは個人情報の収集・利用・保護について説明します。',
+    'auth.error.consentRequired': '利用規約とプライバシーポリシーへの同意が必要です',
     'auth.error.emailRequired': 'まずメールアドレスを入力してください',
     'auth.error.invalidEmail': '有効なメールアドレスを入力してください',
     'auth.error.sendCodeFailed': '確認コードの送信に失敗しました。しばらくしてから再試行してください',
@@ -554,7 +645,11 @@ const translations = {
     'cookie.privacyLink': 'プライバシーポリシー',
     'cookie.accept': '同意する',
     'cookie.decline': '拒否する',
-
+    'age.bannerTitle': '本サイトは18歳以上の方を対象としています',
+    'age.bannerDescription': '関連する法律・規制に基づき、本サイトは18歳以上のユーザーを対象としています。続行することで、18歳以上であることを確認し、利用規約およびプライバシーポリシーに同意したものとみなされます。',
+    'age.bannerNote': '18歳未満の場合は、「18歳未満です」を選択してください。未成年者は保護者または後見人の指導のもとでインターネットを利用することをお勧めします。',
+    'age.bannerAccept': '18歳以上です',
+    'age.bannerDecline': '18歳未満です',
     // エラーメッセージ
     'error.loadFailed': '読み込み失敗',
     'error.detail': '詳細:',
@@ -611,9 +706,18 @@ export const LanguageProvider = ({ children }) => {
     localStorage.setItem(STORAGE_KEY, language)
   }, [language])
 
-  const t = (key) => {
+  const t = (key, params = {}) => {
     const dict = translations[language] || translations.en
-    return dict[key] || translations.en[key] || key
+    let text = dict[key] || translations.en[key] || key
+    
+    // 支持参数替换，例如 {countdown} 会被替换为实际值
+    if (params && typeof text === 'string') {
+      Object.keys(params).forEach(paramKey => {
+        text = text.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), params[paramKey])
+      })
+    }
+    
+    return text
   }
 
   // 获取分类名称的翻译

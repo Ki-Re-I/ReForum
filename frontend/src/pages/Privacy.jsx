@@ -145,6 +145,14 @@ const EnglishPrivacy = () => (
                 via the <a href="/contact">Contact</a> page.
               </p>
             </section>
+
+            <section className="privacy-section">
+              <h2>User Agreement</h2>
+              <p>
+                For rules about account use, content posting, and responsibilities, please review our{' '}
+                <a href="/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
+              </p>
+            </section>
       </div>
     </div>
   </div>
@@ -276,6 +284,15 @@ const JapanesePrivacy = () => (
                 <a href="/contact">お問い合わせ</a>ページよりご連絡ください。
               </p>
             </section>
+
+            <section className="privacy-section">
+              <h2>利用規約</h2>
+              <p>
+                アカウントの利用、投稿、責任に関するルールは
+                <a href="/terms" target="_blank" rel="noopener noreferrer">利用規約</a>
+                をご覧ください。
+              </p>
+            </section>
       </div>
     </div>
   </div>
@@ -401,6 +418,14 @@ const ChinesePrivacy = () => (
             <h2>10. 联系我们</h2>
             <p>
               如果您对本隐私政策有任何疑问或担忧，请通过 <a href="/contact">联系我们</a> 页面与我们取得联系。
+            </p>
+          </section>
+
+          <section className="privacy-section">
+            <h2>用户协议</h2>
+            <p>
+              关于账户使用、内容发布和责任的规定，请查看
+              <a href="/terms" target="_blank" rel="noopener noreferrer">用户协议</a>。
             </p>
           </section>
       </div>
