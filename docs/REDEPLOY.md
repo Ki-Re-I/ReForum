@@ -8,10 +8,18 @@
 # 1. 进入项目目录
 cd /opt/ReForum
 
+git fetch origin
+
+git checkout v1.6.2
+
 # 2. 拉取最新代码
 git pull origin master
 
-git pull origin feature/i18n-multilang-fixes
+git pull origin v1.5.8
+
+git pull origin v1.6.2
+
+git pull origin v1.7.0
 
 # 3. 停止现有容器
 docker-compose down

@@ -177,6 +177,71 @@ class EmailService {
       return false;
     }
   }
+
+  // 站外新帖通知邮件
+  static async sendNewPostNotificationEmails({ recipients, postTitle, postId, authorUsername, excerpt }) {
+    try {
+      if (!process.env.RESEND_API_KEY) {
+        console.warn('RESEND_API_KEY 未配置，跳过邮件发送');
+        return { successCount: 0, failureCount: recipients?.length || 0 };
+      }
+
+      if (!Array.isArray(recipients) || recipients.length === 0) {
+        console.log('没有需要发送的邮件收件人，跳过邮件发送');
+        return { successCount: 0, failureCount: 0 };
+      }
+
+      const postUrlBase = process.env.FRONTEND_URL || process.env.APP_URL || '';
+      const postUrl = `${postUrlBase}/post/${postId}`;
+      const previewText = excerpt ? excerpt.slice(0, 160) : '点击查看详情';
+
+      const results = await Promise.allSettled(
+        recipients.map(async ({ email, username }) => {
+          const displayName = username || 'REForum 用户';
+          const { error } = await resend.emails.send({
+            from: 'REForum <noreply@reforum.space>',
+            to: email,
+            subject: `${authorUsername} 发布了新帖子：${postTitle}`,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 20px;">
+                <p style="color: #6b7280; font-size: 12px; margin: 0 0 12px;">${previewText}</p>
+                <h1 style="color: #111827; font-size: 22px; margin: 0 0 16px;">${postTitle}</h1>
+                <p style="color: #374151; margin: 0 0 16px;">您好，${displayName}！</p>
+                <p style="color: #374151; margin: 0 0 16px;">${authorUsername} 刚刚发布了新的帖子，快来看看：</p>
+                <div style="margin: 12px 0 20px;">
+                  <a href="${postUrl}" style="display: inline-block; padding: 12px 20px; background-color: #2563eb; color: #fff; text-decoration: none; border-radius: 6px;">查看帖子</a>
+                </div>
+                ${excerpt ? `<p style="color: #4b5563; margin: 0 0 12px;">${excerpt}</p>` : ''}
+                <p style="color: #6b7280; font-size: 12px; margin-top: 24px;">如果按钮无法点击，请复制链接到浏览器：<br /><span style="word-break: break-all;">${postUrl}</span></p>
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+                <p style="color: #9ca3af; font-size: 12px;">此邮件由 REForum 系统自动发送，请勿回复。</p>
+              </div>
+            `,
+          });
+
+          if (error) {
+            throw new Error(error.message || '发送失败');
+          }
+        })
+      );
+
+      const successCount = results.filter(r => r.status === 'fulfilled').length;
+      const failureCount = results.length - successCount;
+
+      if (failureCount > 0) {
+        const errors = results
+          .filter(r => r.status === 'rejected')
+          .map(r => r.reason?.message || '未知错误');
+        console.error('部分新帖通知邮件发送失败:', errors);
+      }
+
+      console.log(`新帖通知邮件发送完成，成功 ${successCount}，失败 ${failureCount}`);
+      return { successCount, failureCount };
+    } catch (error) {
+      console.error('发送新帖通知邮件出现异常:', error);
+      return { successCount: 0, failureCount: recipients?.length || 0 };
+    }
+  }
 }
 
 export default EmailService;

@@ -1,6 +1,7 @@
 import Post from '../models/Post.js';
 import Category from '../models/Category.js';
 import Notification from '../models/Notification.js';
+import EmailService from '../services/emailService.js';
 
 class PostController {
   // 获取帖子列表
@@ -140,6 +141,14 @@ class PostController {
         [post.id]
       );
 
+      // 获取需要邮件通知的用户
+      const recipientResult = await query(
+        `SELECT username, email 
+         FROM users 
+         WHERE id != $1 AND email IS NOT NULL AND email <> ''`,
+        [userId]
+      );
+
       const formattedPost = await Post.formatPostDetail({
         ...post,
         tags: tagsResult.rows,
@@ -164,6 +173,17 @@ class PostController {
         console.error('错误详情:', err.message);
         console.error('错误堆栈:', err.stack);
         // 通知创建失败不影响帖子创建
+      });
+
+      // 异步站外邮件通知
+      EmailService.sendNewPostNotificationEmails({
+        recipients: recipientResult.rows,
+        postTitle: title,
+        postId: post.id,
+        authorUsername,
+        excerpt,
+      }).catch(err => {
+        console.error('发送站外新帖邮件失败:', err);
       });
 
       return res.status(201).json(formattedPost);
