@@ -31,6 +31,49 @@ const changelogCopy = {
 const updates = [
   {
     date: '2025-12-08',
+    version: '1.9.4',
+    type: 'fix',
+    translations: {
+      zh: {
+        title: '编辑资料验证和响应式布局修复',
+        description:
+          '修复编辑资料时请求参数验证失败、响应式设备上布局间距冲突以及测试登录环境变量逻辑问题。',
+        details: [
+          '修复编辑资料时请求参数验证失败问题：优化后端验证规则，允许空值字段',
+          '前端只发送有变化的字段，空值转换为 null，避免发送未修改的数据',
+          '修复响应式设备上用户名、称号和编辑按钮间距冲突问题',
+          '修复 VITE_ENABLE_TEST_LOGIN 环境变量逻辑，确保只在测试环境中生效',
+          '添加调试信息帮助诊断测试登录问题',
+        ],
+      },
+      en: {
+        title: 'Edit Profile Validation and Responsive Layout Fix',
+        description:
+          'Fixed request parameter validation failure when editing profile, layout spacing conflicts on responsive devices, and test login environment variable logic issues.',
+        details: [
+          'Fixed request parameter validation failure when editing profile: Optimized backend validation rules to allow null value fields',
+          'Frontend only sends changed fields, converts empty values to null, avoids sending unmodified data',
+          'Fixed spacing conflicts between username, tag and edit button on responsive devices',
+          'Fixed VITE_ENABLE_TEST_LOGIN environment variable logic to ensure it only works in test environments',
+          'Added debug information to help diagnose test login issues',
+        ],
+      },
+      ja: {
+        title: 'プロフィール編集検証とレスポンシブレイアウトの修正',
+        description:
+          'プロフィール編集時のリクエストパラメータ検証エラー、レスポンシブデバイスでのレイアウト間隔の競合、テストログイン環境変数のロジックの問題を修正しました。',
+        details: [
+          'プロフィール編集時のリクエストパラメータ検証エラーを修正：バックエンド検証ルールを最適化し、null 値フィールドを許可',
+          'フロントエンドは変更されたフィールドのみを送信し、空の値を null に変換して未変更のデータを送信しない',
+          'レスポンシブデバイスでのユーザー名、称号、編集ボタン間の間隔の競合を修正',
+          'VITE_ENABLE_TEST_LOGIN 環境変数のロジックを修正し、テスト環境でのみ機能することを保証',
+          'テストログインの問題を診断するためのデバッグ情報を追加',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-08',
     version: '1.9.3',
     type: 'fix',
     translations: {

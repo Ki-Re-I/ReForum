@@ -56,26 +56,61 @@ export const validateLogin = [
 // 更新用户资料验证
 export const validateUpdateProfile = [
   body('avatar')
-    .optional()
-    .isURL()
-    .withMessage('头像必须是有效的URL'),
+    .optional({ nullable: true, checkFalsy: true })
+    .custom((value) => {
+      // 如果提供了 avatar，则必须是有效的 URL 或 null
+      if (value === null || value === undefined || value === '') {
+        return true; // 允许 null、undefined 或空字符串
+      }
+      // 使用正则表达式检查是否是有效的 URL
+      const urlPattern = /^(https?:\/\/|\/)/;
+      if (!urlPattern.test(value)) {
+        throw new Error('头像必须是有效的URL');
+      }
+      return true;
+    }),
   body('bio')
-    .optional()
-    .trim()
-    .isLength({ max: 200 })
-    .withMessage('个人简介不能超过200个字符'),
+    .optional({ nullable: true, checkFalsy: true })
+    .custom((value) => {
+      // 如果提供了 bio，检查长度
+      if (value === null || value === undefined) {
+        return true; // 允许 null 或 undefined
+      }
+      const trimmed = String(value).trim();
+      if (trimmed.length > 200) {
+        throw new Error('个人简介不能超过200个字符');
+      }
+      return true;
+    }),
   body('username')
-    .optional()
-    .trim()
-    .isLength({ min: 3, max: 20 })
-    .withMessage('用户名长度必须在3-20个字符之间')
-    .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage('用户名只能包含字母、数字和下划线'),
+    .optional({ nullable: true, checkFalsy: true })
+    .custom((value) => {
+      // 如果提供了 username，进行验证
+      if (value === null || value === undefined || value === '') {
+        return true; // 允许不提供 username
+      }
+      const trimmed = String(value).trim();
+      if (trimmed.length < 3 || trimmed.length > 20) {
+        throw new Error('用户名长度必须在3-20个字符之间');
+      }
+      if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) {
+        throw new Error('用户名只能包含字母、数字和下划线');
+      }
+      return true;
+    }),
   body('tag')
-    .optional()
-    .trim()
-    .isLength({ max: 20 })
-    .withMessage('称号不能超过20个字符'),
+    .optional({ nullable: true, checkFalsy: true })
+    .custom((value) => {
+      // 如果提供了 tag，检查长度
+      if (value === null || value === undefined) {
+        return true; // 允许 null 或 undefined
+      }
+      const trimmed = String(value).trim();
+      if (trimmed.length > 20) {
+        throw new Error('称号不能超过20个字符');
+      }
+      return true;
+    }),
   handleValidationErrors,
 ];
 

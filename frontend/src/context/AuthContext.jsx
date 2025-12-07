@@ -22,11 +22,11 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem('token')
       const storedUser = localStorage.getItem('user')
       
-      // 检查测试登录是否被禁用
-      const enableTestLogin = import.meta.env.VITE_ENABLE_TEST_LOGIN !== 'false' && 
-                             (import.meta.env.VITE_ENABLE_TEST_LOGIN === 'true' || 
-                              import.meta.env.DEV || 
-                              import.meta.env.MODE === 'development')
+      // 检查是否启用测试登录
+      // 只有在开发/测试环境中，且 VITE_ENABLE_TEST_LOGIN 明确设置为 'true' 时才启用
+      // 生产环境中无论设置什么值都禁用测试登录
+      const isDevOrTest = import.meta.env.DEV || import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test'
+      const enableTestLogin = isDevOrTest && import.meta.env.VITE_ENABLE_TEST_LOGIN === 'true'
       
       // 如果测试登录被禁用，且当前是测试用户，清除登录状态
       // 确保 storedToken 是字符串
@@ -159,15 +159,13 @@ export const AuthProvider = ({ children }) => {
   // 测试登录功能（仅在开发/测试环境启用）
   const testLogin = (testUserData = null) => {
     // 检查是否启用测试登录
-    // 如果 VITE_ENABLE_TEST_LOGIN 明确设置为 'false'，则禁用测试登录
-    // 否则，检查是否是开发环境或明确设置为 'true'
-    const enableTestLogin = import.meta.env.VITE_ENABLE_TEST_LOGIN !== 'false' && 
-                           (import.meta.env.VITE_ENABLE_TEST_LOGIN === 'true' || 
-                            import.meta.env.DEV || 
-                            import.meta.env.MODE === 'development')
+    // 只有在开发/测试环境中，且 VITE_ENABLE_TEST_LOGIN 明确设置为 'true' 时才启用
+    // 生产环境中无论设置什么值都禁用测试登录
+    const isDevOrTest = import.meta.env.DEV || import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test'
+    const enableTestLogin = isDevOrTest && import.meta.env.VITE_ENABLE_TEST_LOGIN === 'true'
     
     if (!enableTestLogin) {
-      console.warn('Test login is disabled')
+      console.warn('Test login is disabled. Set VITE_ENABLE_TEST_LOGIN=true in development/test environment to enable.')
       return { success: false, error: 'Test login is disabled' }
     }
 

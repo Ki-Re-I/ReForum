@@ -185,17 +185,30 @@ const EditProfileModal = ({ user, onClose, onUpdate }) => {
       }
 
       // 更新用户资料
-      const updateData = {
-        bio: bio.trim(),
-        avatar: avatarUrl,
+      const updateData = {}
+
+      // 只添加有变化的字段
+      if (bio.trim() !== (user?.bio || '')) {
+        updateData.bio = bio.trim() || null
+      }
+      
+      // 如果头像有变化，添加头像字段
+      if (avatarUrl !== user?.avatar) {
+        updateData.avatar = avatarUrl || null
       }
 
       // 只有可以修改时才添加username和tag
       if (usernameUpdateInfo?.canModify && username.trim() !== user?.username) {
         updateData.username = username.trim()
       }
-      if (tagUpdateInfo?.canModify && tag.trim() !== user?.tag) {
-        updateData.tag = tag.trim()
+      if (tagUpdateInfo?.canModify && tag.trim() !== (user?.tag || '')) {
+        updateData.tag = tag.trim() || null
+      }
+
+      // 如果没有要更新的字段，直接关闭
+      if (Object.keys(updateData).length === 0) {
+        onClose()
+        return
       }
 
       // 检查是否是测试用户

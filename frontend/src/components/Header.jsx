@@ -15,12 +15,24 @@ const Header = () => {
   const { t, language, setLanguage } = useLanguage()
   
   // 检查是否启用测试登录
-  // 如果 VITE_ENABLE_TEST_LOGIN 明确设置为 'false'，则禁用测试登录
-  // 否则，检查是否是开发环境或明确设置为 'true'
-  const enableTestLogin = import.meta.env.VITE_ENABLE_TEST_LOGIN !== 'false' && 
-                          (import.meta.env.VITE_ENABLE_TEST_LOGIN === 'true' || 
-                           import.meta.env.DEV || 
-                           import.meta.env.MODE === 'development')
+  // 只有在开发/测试环境中，且 VITE_ENABLE_TEST_LOGIN 明确设置为 'true' 时才启用
+  // 生产环境中无论设置什么值都禁用测试登录
+  const isDevOrTest = import.meta.env.DEV || import.meta.env.MODE === 'development' || import.meta.env.MODE === 'test'
+  const enableTestLogin = isDevOrTest && import.meta.env.VITE_ENABLE_TEST_LOGIN === 'true'
+  
+  // 调试信息（仅在开发环境）
+  useEffect(() => {
+    if (isDevOrTest) {
+      console.log('Test Login Debug:', {
+        DEV: import.meta.env.DEV,
+        MODE: import.meta.env.MODE,
+        VITE_ENABLE_TEST_LOGIN: import.meta.env.VITE_ENABLE_TEST_LOGIN,
+        isDevOrTest,
+        enableTestLogin,
+        isAuthenticated,
+      })
+    }
+  }, [isDevOrTest, enableTestLogin, isAuthenticated])
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)

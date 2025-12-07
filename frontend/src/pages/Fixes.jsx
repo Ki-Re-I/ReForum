@@ -10,6 +10,126 @@ import './Fixes.css'
 export const fixes = [
   {
     date: '2025-12-08',
+    version: '1.9.4',
+    issue: 38,
+    translations: {
+      zh: {
+        title: 'VITE_ENABLE_TEST_LOGIN 环境变量逻辑不正确',
+        description:
+          '修复测试登录环境变量的逻辑，确保只在开发/测试环境中生效，且必须明确设置为 true 才能启用。',
+        details: [
+          '修改逻辑：只有在开发/测试环境中，且 VITE_ENABLE_TEST_LOGIN 明确设置为 true 时才启用测试登录',
+          '在生产环境中，无论设置什么值都禁用测试登录',
+          '更新 AuthContext 和 Header 组件中的测试登录检查逻辑',
+          '添加调试信息帮助诊断问题',
+        ],
+      },
+      en: {
+        title: 'VITE_ENABLE_TEST_LOGIN Environment Variable Logic Incorrect',
+        description:
+          'Fixed the logic for test login environment variable, ensuring it only works in development/test environments and must be explicitly set to true to enable.',
+        details: [
+          'Modified logic: Only enable test login in development/test environments when VITE_ENABLE_TEST_LOGIN is explicitly set to true',
+          'In production environment, disable test login regardless of the value set',
+          'Updated test login check logic in AuthContext and Header components',
+          'Added debug information to help diagnose issues',
+        ],
+      },
+      ja: {
+        title: 'VITE_ENABLE_TEST_LOGIN 環境変数のロジックが正しくない',
+        description:
+          'テストログイン環境変数のロジックを修正し、開発/テスト環境でのみ有効になり、明示的に true に設定する必要があることを確認しました。',
+        details: [
+          'ロジックを変更：開発/テスト環境でのみ、VITE_ENABLE_TEST_LOGIN が明示的に true に設定されている場合にテストログインを有効化',
+          '本番環境では、設定された値に関係なくテストログインを無効化',
+          'AuthContext と Header コンポーネントのテストログインチェックロジックを更新',
+          '問題の診断を支援するデバッグ情報を追加',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-08',
+    version: '1.9.4',
+    issue: 37,
+    translations: {
+      zh: {
+        title: '响应式设备上用户名、称号和编辑按钮间距冲突',
+        description:
+          '修复移动端用户资料页面中用户名、称号和编辑资料按钮之间的间距问题，确保布局清晰易读。',
+        details: [
+          '增加 profile-username-row 的 gap 从 0.75rem 到 1rem',
+          '为 profile-username-wrapper 添加底部间距',
+          '为 edit-profile-button 添加顶部间距',
+          '确保在 768px 和 480px 断点都应用这些修复',
+        ],
+      },
+      en: {
+        title: 'Username, Tag and Edit Button Spacing Conflict on Responsive Devices',
+        description:
+          'Fixed spacing issues between username, tag and edit profile button on mobile user profile page, ensuring clear and readable layout.',
+        details: [
+          'Increased profile-username-row gap from 0.75rem to 1rem',
+          'Added bottom margin to profile-username-wrapper',
+          'Added top margin to edit-profile-button',
+          'Applied these fixes at both 768px and 480px breakpoints',
+        ],
+      },
+      ja: {
+        title: 'レスポンシブデバイスでのユーザー名、称号、編集ボタンの間隔の競合',
+        description:
+          'モバイルユーザープロフィールページでユーザー名、称号、プロフィール編集ボタン間の間隔の問題を修正し、明確で読みやすいレイアウトを確保しました。',
+        details: [
+          'profile-username-row の gap を 0.75rem から 1rem に増加',
+          'profile-username-wrapper に下部マージンを追加',
+          'edit-profile-button に上部マージンを追加',
+          '768px と 480px の両方のブレークポイントでこれらの修正を適用',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-08',
+    version: '1.9.4',
+    issue: 36,
+    translations: {
+      zh: {
+        title: '编辑资料时请求参数验证失败',
+        description:
+          '修复点击编辑资料保存按钮后报错"请求参数验证失败"的问题，确保可以正常保存资料修改。',
+        details: [
+          '后端：修改 validateUpdateProfile 验证规则，使用自定义验证函数，允许空值字段',
+          '前端：只发送有变化的字段，空值转换为 null，避免发送未修改的数据',
+          '如果没有字段被修改，直接关闭弹窗，不发送请求',
+          '确保空值字段可以正常处理',
+        ],
+      },
+      en: {
+        title: 'Request Parameter Validation Failed When Editing Profile',
+        description:
+          'Fixed the "Request parameter validation failed" error when clicking save button in edit profile, ensuring profile modifications can be saved normally.',
+        details: [
+          'Backend: Modified validateUpdateProfile validation rules, using custom validation functions to allow null value fields',
+          'Frontend: Only send changed fields, convert empty values to null, avoid sending unmodified data',
+          'If no fields are modified, close modal directly without sending request',
+          'Ensure null value fields can be processed normally',
+        ],
+      },
+      ja: {
+        title: 'プロフィール編集時のリクエストパラメータ検証エラー',
+        description:
+          'プロフィール編集で保存ボタンをクリックした際の「リクエストパラメータ検証エラー」を修正し、プロフィールの変更を正常に保存できるようにしました。',
+        details: [
+          'バックエンド：validateUpdateProfile 検証ルールを修正し、カスタム検証関数を使用して null 値フィールドを許可',
+          'フロントエンド：変更されたフィールドのみを送信し、空の値を null に変換して未変更のデータを送信しない',
+          'フィールドが変更されていない場合、リクエストを送信せずにモーダルを直接閉じる',
+          'null 値フィールドが正常に処理されることを保証',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-08',
     version: '1.9.3',
     issue: 35,
     translations: {
