@@ -20,6 +20,8 @@ git pull origin v1.7.0
 
 git pull origin v1.8.0
 
+git pull origin v1.9.0
+
 # 3. 停止现有容器
 docker-compose down
 
