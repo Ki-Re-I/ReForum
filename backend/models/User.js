@@ -6,11 +6,11 @@ class User {
   static async findById(id) {
     try {
       // 尝试查询包含新字段的完整信息
-      const result = await query(
+    const result = await query(
         'SELECT id, username, email, avatar, bio, tag, exp, join_date, created_at, updated_at, username_updated_at, tag_updated_at FROM users WHERE id = $1',
-        [id]
-      );
-      return result.rows[0] || null;
+      [id]
+    );
+    return result.rows[0] || null;
     } catch (error) {
       // 如果新字段不存在（数据库迁移未执行），回退到基本查询
       if (error.code === '42703' || error.message.includes('column') || error.message.includes('does not exist')) {
@@ -139,14 +139,14 @@ class User {
       updates.push(`username = $${paramCount++}`);
       values.push(username);
       if (hasNewFields) {
-        updates.push(`username_updated_at = CURRENT_TIMESTAMP`);
+      updates.push(`username_updated_at = CURRENT_TIMESTAMP`);
       }
     }
     if (tag !== undefined) {
       updates.push(`tag = $${paramCount++}`);
       values.push(tag);
       if (hasNewFields) {
-        updates.push(`tag_updated_at = CURRENT_TIMESTAMP`);
+      updates.push(`tag_updated_at = CURRENT_TIMESTAMP`);
       }
     }
 
@@ -156,14 +156,14 @@ class User {
 
     values.push(id);
     try {
-      const result = await query(
-        `UPDATE users 
-         SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP 
-         WHERE id = $${paramCount} 
+    const result = await query(
+      `UPDATE users 
+       SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = $${paramCount} 
          RETURNING id, username, email, avatar, bio, tag, exp, join_date, created_at, updated_at, username_updated_at, tag_updated_at`,
-        values
-      );
-      return result.rows[0];
+      values
+    );
+    return result.rows[0];
     } catch (error) {
       // 如果新字段不存在，使用基本查询
       if (error.code === '42703' || error.message.includes('column') || error.message.includes('does not exist')) {
@@ -218,7 +218,7 @@ class User {
       // 如果 user_received_likes 视图不存在（数据库迁移未执行），回退到基本查询
       if (error.code === '42P01' || error.message.includes('does not exist') || error.message.includes('relation')) {
         console.warn('user_received_likes 视图不存在，使用向后兼容查询:', error.message);
-        const result = await query(
+    const result = await query(
           `SELECT 
             COALESCE(us.post_count, 0) as post_count,
             COALESCE(us.comment_count, 0) as comment_count,
@@ -226,8 +226,8 @@ class User {
            FROM users u
            LEFT JOIN user_stats us ON u.id = us.id
            WHERE u.id = $1`,
-          [userId]
-        );
+      [userId]
+    );
         return result.rows[0] || { post_count: 0, comment_count: 0, received_likes: 0 };
       }
       throw error;
@@ -270,16 +270,16 @@ class User {
       // 如果新字段或视图不存在（数据库迁移未执行），回退到基本查询
       if (error.code === '42703' || error.code === '42P01' || error.message.includes('does not exist') || error.message.includes('column')) {
         console.warn('新字段或视图不存在，使用向后兼容查询:', error.message);
-        const result = await query(
-          `SELECT u.id, u.username, u.avatar, u.bio, u.tag, u.join_date,
-                  COALESCE(us.post_count, 0) as post_count,
+    const result = await query(
+      `SELECT u.id, u.username, u.avatar, u.bio, u.tag, u.join_date,
+              COALESCE(us.post_count, 0) as post_count,
                   COALESCE(us.comment_count, 0) as comment_count,
                   0 as received_likes
-           FROM users u
-           LEFT JOIN user_stats us ON u.id = us.id
-           WHERE u.id = $1`,
-          [userId]
-        );
+       FROM users u
+       LEFT JOIN user_stats us ON u.id = us.id
+       WHERE u.id = $1`,
+      [userId]
+    );
         const user = result.rows[0] || null;
         if (user) {
           // 为缺失的字段设置默认值

@@ -9,7 +9,7 @@ import { useLanguage } from '../context/LanguageContext'
 import { postAPI } from '../services/api'
 import { FaComment, FaHeart, FaRegHeart } from 'react-icons/fa'
 import { isOfficialTag, getOfficialTagText } from '../utils/tagUtils'
-import { getUserExp, updateTask } from '../utils/dailyTasks'
+import { updateTask } from '../utils/dailyTasks'
 import LevelBadge from '../components/LevelBadge'
 import './PostCard.css'
 
@@ -157,7 +157,7 @@ const PostCard = ({ post }) => {
             )}
             {post.author?.id && (
               <LevelBadge 
-                exp={post.author?.exp || getUserExp()} 
+                exp={post.author?.exp ?? 0} 
                 size="small" 
               />
             )}

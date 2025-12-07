@@ -1,6 +1,6 @@
 {
   "name": "reforum-frontend",
-  "version": "1.9.0",
+  "version": "1.9.2",
   "description": "REForum 论坛系统前端",
   "private": true,
   "dependencies": {

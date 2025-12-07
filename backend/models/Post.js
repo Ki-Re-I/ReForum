@@ -3,18 +3,45 @@ import { query, getClient } from '../config/database.js';
 class Post {
   // 根据 ID 查找帖子
   static async findById(id) {
-    const result = await query(
-      `SELECT p.*, 
-              u.id as author_id, u.username as author_username, u.avatar as author_avatar,
-              c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
-              (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
-       FROM posts p
-       LEFT JOIN users u ON p.author_id = u.id
-       LEFT JOIN categories c ON p.category_id = c.id
-       WHERE p.id = $1`,
-      [id]
-    );
-    return result.rows[0] || null;
+    try {
+      const result = await query(
+        `SELECT p.*, 
+                u.id as author_id, u.username as author_username, u.avatar as author_avatar,
+                u.exp as author_exp, u.tag as author_tag,
+                c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
+                (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+         FROM posts p
+         LEFT JOIN users u ON p.author_id = u.id
+         LEFT JOIN categories c ON p.category_id = c.id
+         WHERE p.id = $1`,
+        [id]
+      );
+      return result.rows[0] || null;
+    } catch (error) {
+      // 如果新字段不存在（数据库迁移未执行），回退到基本查询
+      if (error.code === '42703' || error.message.includes('column') || error.message.includes('does not exist')) {
+        console.warn('作者 exp 或 tag 字段不存在，使用向后兼容查询:', error.message);
+        const result = await query(
+          `SELECT p.*, 
+                  u.id as author_id, u.username as author_username, u.avatar as author_avatar,
+                  c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
+                  (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+           FROM posts p
+           LEFT JOIN users u ON p.author_id = u.id
+           LEFT JOIN categories c ON p.category_id = c.id
+           WHERE p.id = $1`,
+          [id]
+        );
+        const post = result.rows[0] || null;
+        if (post) {
+          // 为缺失的字段设置默认值
+          post.author_exp = 0;
+          post.author_tag = null;
+        }
+        return post;
+      }
+      throw error;
+    }
   }
 
   // 创建帖子
@@ -208,17 +235,45 @@ class Post {
        LEFT JOIN categories c ON p.category_id = c.id
     `;
 
-    const result = await query(
-      `SELECT p.*,
-              u.id as author_id, u.username as author_username, u.avatar as author_avatar,
-              c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
-              (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
-       ${baseFromClause}
-       ${whereClause}
-       ORDER BY ${orderBy}
-       LIMIT $${paramCount++} OFFSET $${paramCount++}`,
-      params
-    );
+    let result;
+    try {
+      result = await query(
+        `SELECT p.*,
+                u.id as author_id, u.username as author_username, u.avatar as author_avatar,
+                u.exp as author_exp, u.tag as author_tag,
+                c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
+                (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+         ${baseFromClause}
+         ${whereClause}
+         ORDER BY ${orderBy}
+         LIMIT $${paramCount++} OFFSET $${paramCount++}`,
+        params
+      );
+    } catch (error) {
+      // 如果新字段不存在（数据库迁移未执行），回退到基本查询
+      if (error.code === '42703' || error.message.includes('column') || error.message.includes('does not exist')) {
+        console.warn('作者 exp 或 tag 字段不存在，使用向后兼容查询:', error.message);
+        result = await query(
+          `SELECT p.*,
+                  u.id as author_id, u.username as author_username, u.avatar as author_avatar,
+                  c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
+                  (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+           ${baseFromClause}
+           ${whereClause}
+           ORDER BY ${orderBy}
+           LIMIT $${paramCount++} OFFSET $${paramCount++}`,
+          params
+        );
+        // 为缺失的字段设置默认值
+        result.rows = result.rows.map(post => ({
+          ...post,
+          author_exp: 0,
+          author_tag: null,
+        }));
+      } else {
+        throw error;
+      }
+    }
 
     // 获取总数
     const countResult = await query(
@@ -425,6 +480,8 @@ class Post {
         id: post.author_id,
         username: post.author_username,
         avatar: post.author_avatar,
+        exp: post.author_exp !== undefined ? post.author_exp : 0, // 添加经验值，如果不存在则默认为0
+        tag: post.author_tag !== undefined ? post.author_tag : null, // 添加称号，如果不存在则默认为null
       },
       category: {
         id: post.category_id,

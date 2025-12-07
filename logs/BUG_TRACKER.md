@@ -4,6 +4,173 @@
 
 ---
 
+## 2025-12-08 - v1.9.2
+
+### Bug #034: 经验值条显示不正确
+
+**严重程度**: 中等  
+**影响范围**: 所有用户（用户资料页面）  
+**状态**: ✅ 已修复
+
+**问题描述**:
+- 当用户在数据库中修改了用户的 `exp` 字段后，用户资料页面的经验值条仍然显示旧的经验值
+- 70级用户的经验值条显示为1级状态（30经验值），而不是满级状态
+- 经验值条从 localStorage 读取经验值，而不是从服务器获取的用户数据
+
+**复现步骤**:
+1. 在数据库中修改用户的 `exp` 字段（例如设置为70级对应的经验值）
+2. 刷新用户资料页面
+3. 发现经验值条仍然显示旧的经验值或显示为1级状态
+
+**根本原因**:
+- `getUserExp` 函数不接受 `user` 参数，总是从 localStorage 读取经验值
+- `UserProfile.jsx` 中使用 `user.exp || getUserExp()`，当 `user.exp` 为 0 时会被误判为 falsy
+- `ExpProgressBar` 组件传递了 `user` 参数，但 `getUserExp` 函数没有使用它
+
+**修复方案**:
+- 修改 `getUserExp` 函数，接受 `user` 参数，优先使用 `user.exp`（如果存在）
+- 仅在 `user` 不存在或 `user.exp` 未定义时才从 localStorage 读取
+- 修改 `UserProfile.jsx`，直接使用 `getUserExp(user)` 而不是 `user.exp || getUserExp()`
+- 确保经验值从服务器实时获取，而不是使用本地缓存
+
+**修复文件**:
+- `frontend/src/utils/dailyTasks.js`
+- `frontend/src/pages/UserProfile.jsx`
+
+**测试验证**:
+- ✅ 验证在数据库中修改用户经验值后，经验值条正确显示
+- ✅ 验证70级用户显示满级状态（100%进度条）
+- ✅ 验证经验值从服务器实时获取，不使用本地缓存
+
+---
+
+### Bug #033: 帖子中作者等级不更新
+
+**严重程度**: 中等  
+**影响范围**: 所有用户（帖子显示）  
+**状态**: ✅ 已修复
+
+**问题描述**:
+- 当用户在数据库中修改了用户的 `exp` 字段后，已发布帖子中显示的作者等级没有更新
+- 帖子卡片和帖子详情页中的作者等级仍然显示旧等级
+- 用户资料页面的等级已更新，但帖子中的等级未更新
+
+**复现步骤**:
+1. 在数据库中修改用户的 `exp` 字段（例如设置为70级对应的经验值）
+2. 查看该用户之前发布的帖子
+3. 发现帖子中显示的作者等级仍然是旧等级
+
+**根本原因**:
+- 后端 `Post.js` 模型在查询帖子时，没有包含作者的 `exp` 和 `tag` 字段
+- `findById` 和 `findAll` 方法只查询了 `author_id`, `author_username`, `author_avatar`
+- `formatPostListItem` 方法在格式化 `author` 对象时，没有包含 `exp` 和 `tag` 字段
+- 前端 `PostCard.jsx` 使用 `getUserExp()` 获取当前登录用户的经验值，而不是帖子作者的经验值
+
+**修复方案**:
+- 后端：在 `Post.findById` 和 `Post.findAll` 查询中添加 `u.exp as author_exp` 和 `u.tag as author_tag`
+- 后端：添加向后兼容性，如果新字段不存在，自动回退到基本查询并设置默认值
+- 后端：在 `formatPostListItem` 方法中，将 `exp` 和 `tag` 添加到 `author` 对象中
+- 前端：修改 `PostCard.jsx`，使用 `post.author?.exp ?? 0` 而不是 `getUserExp()`
+- 前端：在 `PostDetail.jsx` 中添加作者等级显示
+- 前端：移除不再需要的 `getUserExp` 导入
+
+**修复文件**:
+- `backend/models/Post.js`
+- `frontend/src/components/PostCard.jsx`
+- `frontend/src/pages/PostDetail.jsx`
+
+**测试验证**:
+- ✅ 验证在数据库中修改用户经验值后，所有帖子中显示的作者等级正确更新
+- ✅ 验证帖子卡片和帖子详情页中的作者等级显示正确
+- ✅ 验证数据库迁移未执行时，应用仍能正常运行（使用默认值）
+
+---
+
+## 2025-12-07 - v1.9.1
+
+### Bug #032: 编辑资料弹窗中访问 null 对象的 daysRemaining 属性导致错误
+
+**严重程度**: 中等  
+**影响范围**: 所有用户（编辑资料功能）  
+**状态**: ✅ 已修复
+
+**问题描述**:
+- 点击编辑资料按钮时，控制台报错：`Cannot read properties of null (reading 'daysRemaining')`
+- 错误发生在尝试访问 `usernameUpdateInfo.daysRemaining` 或 `tagUpdateInfo.daysRemaining` 时
+- 导致编辑资料弹窗无法正常显示或功能异常
+
+**复现步骤**:
+1. 登录系统
+2. 打开用户资料页面
+3. 点击"编辑资料"按钮
+4. 控制台出现错误：`Cannot read properties of null (reading 'daysRemaining')`
+
+**根本原因**:
+- `usernameUpdateInfo` 和 `tagUpdateInfo` 初始状态为 `null`
+- 在 `useEffect` 计算完成前，代码尝试访问这些对象的 `daysRemaining` 属性
+- 条件判断使用了可选链 `?.`，但在访问 `daysRemaining` 时没有先检查对象是否存在
+
+**修复方案**:
+- 在访问 `daysRemaining` 前添加对象存在性检查：`usernameUpdateInfo && !usernameUpdateInfo.canModify`
+- 在 `useEffect` 中添加 try-catch 错误处理，确保计算失败时设置默认值
+- 当 `user` 为 `null` 时，重置 `usernameUpdateInfo` 和 `tagUpdateInfo` 为 `null`
+
+**修复文件**:
+- `frontend/src/components/EditProfileModal.jsx`
+
+**测试验证**:
+- ✅ 验证点击编辑资料按钮不再出现错误
+- ✅ 验证编辑资料弹窗正常显示
+- ✅ 验证用户名和称号的修改限制提示正常显示
+- ✅ 验证在用户数据加载完成前不会访问 null 对象
+
+---
+
+### Bug #031: 登录后刷新页面自动退出登录和用户资料显示"用户不存在"
+
+**严重程度**: 高  
+**影响范围**: 所有用户（登录功能）  
+**状态**: ✅ 已修复
+
+**问题描述**:
+- 用户登录后刷新页面会自动退出登录
+- 登录后点击"我的资料"显示"用户不存在"错误
+- 控制台报错：`TypeError: w.startsWith is not a function`
+- 后端返回 500 错误：`GET /api/users/profile 500 (Internal Server Error)`
+
+**复现步骤**:
+1. 用户登录系统
+2. 刷新页面
+3. 发现自动退出登录，或点击"我的资料"显示"用户不存在"
+4. 查看控制台，发现 `startsWith is not a function` 错误
+5. 查看网络请求，发现 `/api/users/profile` 返回 500 错误
+
+**根本原因**:
+- `AuthContext.jsx` 中 `parsedUser.id` 可能是数字类型，调用 `startsWith` 方法失败
+- 后端查询新字段（`exp`, `username_updated_at`, `tag_updated_at`）时，如果数据库迁移未执行，会导致 SQL 错误
+- 500 错误被前端误判为认证失败，自动清除登录状态
+
+**修复方案**:
+- 前端：在调用 `startsWith` 前将 `id` 和 `token` 转换为字符串
+- 前端：修改错误处理逻辑，只有 401/403 错误才清除登录状态，500 错误不清除
+- 后端：添加向后兼容性，如果新字段不存在，自动回退到基本查询
+- 后端：为所有新字段查询添加 try-catch 和回退逻辑
+- 后端：`getStats` 方法在 `user_received_likes` 视图不存在时回退到基本查询
+
+**修复文件**:
+- `frontend/src/context/AuthContext.jsx`
+- `backend/models/User.js`
+- `backend/controllers/userController.js`
+
+**测试验证**:
+- ✅ 验证登录后刷新页面不会自动退出
+- ✅ 验证登录后可以正常访问用户资料
+- ✅ 验证数据库迁移未执行时，应用仍能正常运行（使用默认值）
+- ✅ 验证控制台不再出现 `startsWith` 错误
+- ✅ 验证后端 500 错误不会导致自动退出登录
+
+---
+
 ## 2025-12-07 - v1.9.0
 
 ### Bug #030: 问题修复页面日期标签渐变背景样式
@@ -1027,8 +1194,8 @@
 ## Bug 分类统计
 
 ### 按严重程度
-- **高**: 3 个 (#002, #010, #011)
-- **中等**: 16 个 (#003, #007, #008, #009, #012, #013, #014, #017, #021, #023, #025, #026, #027, #028)
+- **高**: 4 个 (#002, #010, #011, #031)
+- **中等**: 19 个 (#003, #007, #008, #009, #012, #013, #014, #017, #021, #023, #025, #026, #027, #028, #032, #033, #034)
 - **低**: 11 个 (#001, #004, #005, #006, #015, #016, #019, #022, #024, #029, #030)
 
 ### 按影响范围
@@ -1040,7 +1207,7 @@
 - **非中文用户**: 1 个
 
 ### 按状态
-- **已修复**: 30 个
+- **已修复**: 34 个
 - **待修复**: 0 个
 - **已知问题**: 0 个
 
@@ -1069,4 +1236,10 @@
 - 2025-12-05: 添加 v1.5.10 的 Bug 修复记录（#020）
 - 2025-12-05: 简化更新日志和问题修复页面内容，修复版本日期错误，重新分配 issue 号从最早版本开始连续编号
 - 2025-12-07: 添加 v1.9.0 的 Bug 修复记录（#028, #029, #030）
+- 2025-12-07: 添加 v1.9.1 的 Bug 修复记录（#031, #032）
+  - Bug #031: 登录后刷新页面自动退出登录和用户资料显示"用户不存在"
+  - Bug #032: 编辑资料弹窗中访问 null 对象的 daysRemaining 属性导致错误
+- 2025-12-08: 添加 v1.9.2 的 Bug 修复记录（#033, #034）
+  - Bug #033: 帖子中作者等级不更新
+  - Bug #034: 经验值条显示不正确
 

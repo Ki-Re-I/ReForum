@@ -204,36 +204,36 @@
     width: 100%;
     flex-basis: 100%;
     margin-top: -1rem; /* 向上移动，与等级徽章对齐 */
-  }
+}
 
-  .profile-avatar {
-    flex-shrink: 0;
-  }
+.profile-avatar {
+  flex-shrink: 0;
+}
 
-  .profile-avatar img {
+.profile-avatar img {
     width: 120px;
     height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
+  border-radius: 50%;
+  object-fit: cover;
     border: 3px solid var(--border-color, #e5e7eb);
-  }
+}
 
-  .avatar-placeholder {
+.avatar-placeholder {
     width: 120px;
     height: 120px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
     font-size: 3rem;
-    font-weight: 600;
+  font-weight: 600;
     border: 3px solid var(--border-color, #e5e7eb);
-  }
+}
 
-  .profile-info {
-    flex: 1;
+.profile-info {
+  flex: 1;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -271,9 +271,9 @@
     flex-wrap: wrap;
     flex: 1;
     min-width: 0; /* 允许收缩 */
-  }
+}
 
-  .profile-username {
+.profile-username {
     font-size: 1.75rem;
     font-weight: 700;
     margin: 0;
@@ -297,7 +297,7 @@
     color: #ffffff;
     padding: 0.25rem 0.75rem;
     border-radius: 14px;
-    font-weight: 600;
+  font-weight: 600;
     font-size: 0.8125rem;
     opacity: 1;
     box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
@@ -332,35 +332,35 @@
   .edit-profile-button svg {
     width: 14px;
     height: 14px;
-  }
+}
 
-  .profile-bio {
-    color: var(--text-secondary);
+.profile-bio {
+  color: var(--text-secondary);
     margin: 0;
     line-height: 1.7;
     font-size: 0.95rem;
     word-break: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
-  }
+}
 
-  .profile-stats {
+.profile-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 2rem;
+  gap: 2rem;
     margin-top: 0.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border-color, #e5e7eb);
-  }
+}
 
-  .stat-item {
-    display: flex;
-    flex-direction: column;
+.stat-item {
+  display: flex;
+  flex-direction: column;
     gap: 0.5rem;
     min-width: 0; /* 允许收缩 */
-  }
+}
 
-  .stat-value {
+.stat-value {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--primary-color, #2563eb);
@@ -445,7 +445,7 @@
     align-items: center;
     justify-content: center;
     font-size: 2.5rem;
-    font-weight: 600;
+  font-weight: 600;
     border: 3px solid var(--border-color, #e5e7eb);
   }
 
@@ -476,7 +476,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0;
-    color: var(--text-primary);
+  color: var(--text-primary);
     word-break: break-word;
     overflow-wrap: break-word;
     line-height: 1.2;
@@ -569,11 +569,11 @@
     text-overflow: ellipsis;
     line-height: 1.2;
     max-width: 100%;
-  }
+}
 
-  .stat-label {
+.stat-label {
     font-size: 0.875rem;
-    color: var(--text-secondary);
+  color: var(--text-secondary);
     font-weight: 500;
     text-align: center;
     word-break: break-word;
@@ -621,13 +621,13 @@
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
+}
 
-  .profile-section-title {
+.profile-section-title {
     font-size: 1.25rem;
     font-weight: 700;
     margin-bottom: 1.25rem;
-    color: var(--text-primary);
+  color: var(--text-primary);
     padding-bottom: 0.75rem;
     border-bottom: 2px solid var(--border-color, #e5e7eb);
   }

@@ -28,31 +28,45 @@ const EditProfileModal = ({ user, onClose, onUpdate }) => {
     if (user) {
       // 检查用户名修改限制
       if (user.usernameUpdatedAt) {
-        const lastUpdate = new Date(user.usernameUpdatedAt)
-        const now = new Date()
-        const daysSinceUpdate = Math.floor((now - lastUpdate) / (1000 * 60 * 60 * 24))
-        const daysRemaining = 30 - daysSinceUpdate
-        setUsernameUpdateInfo({
-          canModify: daysRemaining <= 0,
-          daysRemaining: daysRemaining > 0 ? daysRemaining : 0,
-        })
+        try {
+          const lastUpdate = new Date(user.usernameUpdatedAt)
+          const now = new Date()
+          const daysSinceUpdate = Math.floor((now - lastUpdate) / (1000 * 60 * 60 * 24))
+          const daysRemaining = 30 - daysSinceUpdate
+          setUsernameUpdateInfo({
+            canModify: daysRemaining <= 0,
+            daysRemaining: daysRemaining > 0 ? daysRemaining : 0,
+          })
+        } catch (error) {
+          console.error('Error calculating username update info:', error)
+          setUsernameUpdateInfo({ canModify: true, daysRemaining: null })
+        }
       } else {
         setUsernameUpdateInfo({ canModify: true, daysRemaining: null })
       }
 
       // 检查称号修改限制
       if (user.tagUpdatedAt) {
-        const lastUpdate = new Date(user.tagUpdatedAt)
-        const now = new Date()
-        const daysSinceUpdate = Math.floor((now - lastUpdate) / (1000 * 60 * 60 * 24))
-        const daysRemaining = 30 - daysSinceUpdate
-        setTagUpdateInfo({
-          canModify: daysRemaining <= 0,
-          daysRemaining: daysRemaining > 0 ? daysRemaining : 0,
-        })
+        try {
+          const lastUpdate = new Date(user.tagUpdatedAt)
+          const now = new Date()
+          const daysSinceUpdate = Math.floor((now - lastUpdate) / (1000 * 60 * 60 * 24))
+          const daysRemaining = 30 - daysSinceUpdate
+          setTagUpdateInfo({
+            canModify: daysRemaining <= 0,
+            daysRemaining: daysRemaining > 0 ? daysRemaining : 0,
+          })
+        } catch (error) {
+          console.error('Error calculating tag update info:', error)
+          setTagUpdateInfo({ canModify: true, daysRemaining: null })
+        }
       } else {
         setTagUpdateInfo({ canModify: true, daysRemaining: null })
       }
+    } else {
+      // 如果 user 为 null，重置状态
+      setUsernameUpdateInfo(null)
+      setTagUpdateInfo(null)
     }
   }, [user])
 
@@ -306,7 +320,7 @@ const EditProfileModal = ({ user, onClose, onUpdate }) => {
               disabled={!usernameUpdateInfo?.canModify}
               className={`username-input ${!usernameUpdateInfo?.canModify ? 'disabled' : ''}`}
             />
-            {!usernameUpdateInfo?.canModify && usernameUpdateInfo?.daysRemaining !== null && (
+            {usernameUpdateInfo && !usernameUpdateInfo.canModify && usernameUpdateInfo.daysRemaining !== null && (
               <div className="update-limit-hint">
                 {t('profile.edit.usernameLimit').replace('{days}', usernameUpdateInfo.daysRemaining)}
               </div>
@@ -329,7 +343,7 @@ const EditProfileModal = ({ user, onClose, onUpdate }) => {
             <div className="tag-character-count">
               {tag.length}/20
             </div>
-            {!tagUpdateInfo?.canModify && tagUpdateInfo?.daysRemaining !== null && (
+            {tagUpdateInfo && !tagUpdateInfo.canModify && tagUpdateInfo.daysRemaining !== null && (
               <div className="update-limit-hint">
                 {t('profile.edit.tagLimit').replace('{days}', tagUpdateInfo.daysRemaining)}
               </div>

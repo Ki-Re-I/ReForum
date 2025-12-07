@@ -186,14 +186,25 @@ psql -h localhost -p 5432 -U postgres -d reforum -f backend/migrations/add_user_
 
 ## 验证迁移结果
 
-执行迁移后，可以使用以下 SQL 验证：
+执行迁移后，可以使用以下 SQL 验证迁移是否成功。
+
+### 使用 Docker 执行验证（推荐）
+
+在服务器上执行以下命令：
+
+```bash
+# 进入数据库容器执行 SQL 查询
+docker exec -it reforum-db-1 psql -U HuangWeiLong -d forum_db
+```
+
+然后在 PostgreSQL 命令行中执行以下 SQL：
 
 ```sql
 -- 检查 users 表是否包含新字段
 SELECT column_name, data_type, column_default 
 FROM information_schema.columns 
 WHERE table_name = 'users' 
-AND column_name IN ('exp', 'username_updated_at', 'tag_updated_at');
+AND column_name IN ('tag', 'exp', 'username_updated_at', 'tag_updated_at');
 
 -- 检查视图是否存在
 SELECT table_name, table_type 
@@ -204,7 +215,24 @@ WHERE table_name = 'user_received_likes';
 SELECT indexname 
 FROM pg_indexes 
 WHERE tablename = 'users' 
-AND indexname = 'idx_users_exp';
+AND indexname IN ('idx_users_exp', 'idx_users_tag_unique');
+```
+
+执行完成后，输入 `\q` 退出 PostgreSQL 命令行。
+
+### 或者直接执行单条查询
+
+也可以直接在服务器命令行执行单条查询：
+
+```bash
+# 检查新字段
+docker exec -it reforum-db-1 psql -U HuangWeiLong -d forum_db -c "SELECT column_name, data_type, column_default FROM information_schema.columns WHERE table_name = 'users' AND column_name IN ('tag', 'exp', 'username_updated_at', 'tag_updated_at');"
+
+# 检查视图
+docker exec -it reforum-db-1 psql -U HuangWeiLong -d forum_db -c "SELECT table_name, table_type FROM information_schema.tables WHERE table_name = 'user_received_likes';"
+
+# 检查索引
+docker exec -it reforum-db-1 psql -U HuangWeiLong -d forum_db -c "SELECT indexname FROM pg_indexes WHERE tablename = 'users' AND indexname IN ('idx_users_exp', 'idx_users_tag_unique');"
 ```
 
 ## 回滚方案

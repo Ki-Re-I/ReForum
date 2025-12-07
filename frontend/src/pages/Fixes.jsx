@@ -9,6 +9,166 @@ import './Fixes.css'
 
 export const fixes = [
   {
+    date: '2025-12-08',
+    version: '1.9.2',
+    issue: 34,
+    translations: {
+      zh: {
+        title: '经验值条显示不正确',
+        description:
+          '修复当数据库修改用户等级后，用户资料页面的经验值条仍然显示旧经验值的问题，确保经验值从服务器实时获取。',
+        details: [
+          '修改 getUserExp 函数优先使用用户对象中的 exp，而不是从 localStorage 读取',
+          '修复 UserProfile 组件中的经验值获取逻辑，确保正确显示用户等级和经验值',
+          '70级用户现在正确显示满级状态（100%进度条）',
+          '经验值从服务器实时获取，不再使用本地缓存',
+        ],
+      },
+      en: {
+        title: 'Experience Progress Bar Display Incorrect',
+        description:
+          'Fixed the issue where the experience progress bar still displayed old experience values after modifying user level in database, ensuring experience values are fetched in real-time from server.',
+        details: [
+          'Modified getUserExp function to prioritize exp from user object instead of reading from localStorage',
+          'Fixed experience value retrieval logic in UserProfile component to correctly display user level and exp',
+          'Level 70 users now correctly display max level status (100% progress bar)',
+          'Experience values are fetched in real-time from server, no longer using local cache',
+        ],
+      },
+      ja: {
+        title: '経験値プログレスバーの表示が正しくない',
+        description:
+          'データベースでユーザーレベルを変更した後、ユーザープロフィールページの経験値プログレスバーが古い経験値を表示し続ける問題を修正し、経験値をサーバーからリアルタイムで取得するようにしました。',
+        details: [
+          'getUserExp 関数を修正し、localStorage から読み取るのではなく、ユーザーオブジェクトの exp を優先的に使用',
+          'UserProfile コンポーネントの経験値取得ロジックを修正し、ユーザーレベルと経験値を正しく表示',
+          '70レベルのユーザーは、満レベル状態（100%プログレスバー）を正しく表示',
+          '経験値はサーバーからリアルタイムで取得され、ローカルキャッシュを使用しない',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-08',
+    version: '1.9.2',
+    issue: 33,
+    translations: {
+      zh: {
+        title: '帖子中作者等级不更新',
+        description:
+          '修复当数据库修改用户等级后，已发布帖子中显示的作者等级没有更新的问题，确保帖子中的作者信息实时更新。',
+        details: [
+          '后端 Post 模型在查询帖子时包含作者的 exp 和 tag 字段',
+          '添加向后兼容性处理，数据库迁移未执行时自动回退到基本查询',
+          '修复 PostCard 和 PostDetail 组件，确保正确显示作者等级',
+          '使用帖子作者的经验值，而不是当前登录用户的经验值',
+        ],
+      },
+      en: {
+        title: 'Author Level Not Updating in Posts',
+        description:
+          'Fixed the issue where author level displayed in published posts did not update after modifying user level in database, ensuring author information in posts updates in real-time.',
+        details: [
+          'Backend Post model now includes author exp and tag fields when querying posts',
+          'Added backward compatibility handling, automatically fallback to basic queries when database migration not executed',
+          'Fixed PostCard and PostDetail components to correctly display author level',
+          'Use post author experience value instead of current logged-in user experience value',
+        ],
+      },
+      ja: {
+        title: '投稿内の作成者レベルが更新されない',
+        description:
+          'データベースでユーザーレベルを変更した後、公開された投稿に表示される作成者レベルが更新されない問題を修正し、投稿内の作成者情報がリアルタイムで更新されるようにしました。',
+        details: [
+          'バックエンド Post モデルが投稿をクエリする際に、作成者の exp と tag フィールドを含める',
+          '後方互換性処理を追加し、データベース移行が実行されていない場合に基本クエリに自動的にフォールバック',
+          'PostCard と PostDetail コンポーネントを修正し、作成者レベルを正しく表示',
+          '現在ログインしているユーザーの経験値ではなく、投稿作成者の経験値を使用',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-07',
+    version: '1.9.1',
+    issue: 32,
+    translations: {
+      zh: {
+        title: '编辑资料弹窗中访问 null 对象的 daysRemaining 属性导致错误',
+        description:
+          '修复点击编辑资料按钮时出现的 "Cannot read properties of null (reading \'daysRemaining\')" 错误。',
+        details: [
+          '在访问 daysRemaining 属性前添加对象存在性检查',
+          '在 useEffect 中添加错误处理，确保计算失败时设置默认值',
+          '当用户数据为 null 时，重置状态为 null',
+          '确保编辑资料弹窗正常显示和功能正常',
+        ],
+      },
+      en: {
+        title: 'Error Accessing daysRemaining Property of Null Object in Edit Profile Modal',
+        description:
+          'Fixed the "Cannot read properties of null (reading \'daysRemaining\')" error when clicking the edit profile button.',
+        details: [
+          'Added object existence check before accessing daysRemaining property',
+          'Added error handling in useEffect to set default values when calculation fails',
+          'Reset state to null when user data is null',
+          'Ensured edit profile modal displays and functions correctly',
+        ],
+      },
+      ja: {
+        title: 'プロフィール編集モーダルで null オブジェクトの daysRemaining プロパティにアクセスする際のエラー',
+        description:
+          'プロフィール編集ボタンをクリックした際に発生する "Cannot read properties of null (reading \'daysRemaining\')" エラーを修正しました。',
+        details: [
+          'daysRemaining プロパティにアクセスする前にオブジェクトの存在チェックを追加',
+          'useEffect にエラーハンドリングを追加し、計算が失敗した場合にデフォルト値を設定',
+          'ユーザーデータが null の場合、状態を null にリセット',
+          'プロフィール編集モーダルが正常に表示され、機能することを保証',
+        ],
+      },
+    },
+  },
+  {
+    date: '2025-12-07',
+    version: '1.9.1',
+    issue: 31,
+    translations: {
+      zh: {
+        title: '登录后刷新页面自动退出登录和用户资料显示"用户不存在"',
+        description:
+          '修复登录后刷新页面自动退出登录的问题，以及登录后点击"我的资料"显示"用户不存在"的错误。',
+        details: [
+          '修复 startsWith 方法调用错误，确保 id 和 token 在调用前转换为字符串',
+          '修改错误处理逻辑，只有 401/403 错误才清除登录状态，500 错误不清除',
+          '后端添加向后兼容性，数据库迁移未执行时自动回退到基本查询',
+          '修复用户资料查询失败的问题，确保即使数据库迁移未执行也能正常显示',
+        ],
+      },
+      en: {
+        title: 'Auto Logout After Page Refresh and "User Not Found" Error',
+        description:
+          'Fixed the issue where users are automatically logged out after page refresh, and the "User not found" error when accessing profile page.',
+        details: [
+          'Fixed startsWith method call error by converting id and token to strings before calling',
+          'Modified error handling logic to only clear login state on 401/403 errors, not on 500 errors',
+          'Added backward compatibility to backend, automatically fallback to basic queries when database migration not executed',
+          'Fixed user profile query failure, ensuring normal display even when database migration not executed',
+        ],
+      },
+      ja: {
+        title: 'ページリフレッシュ後の自動ログアウトと「ユーザーが見つかりません」エラー',
+        description:
+          'ページリフレッシュ後に自動的にログアウトされる問題と、プロフィールページにアクセスした際の「ユーザーが見つかりません」エラーを修正しました。',
+        details: [
+          'startsWith メソッド呼び出しエラーを修正し、呼び出し前に id と token を文字列に変換',
+          'エラー処理ロジックを変更し、401/403 エラーのみでログイン状態をクリア、500 エラーではクリアしない',
+          'バックエンドに後方互換性を追加し、データベース移行が実行されていない場合に基本クエリに自動的にフォールバック',
+          'ユーザープロフィールクエリの失敗を修正し、データベース移行が実行されていなくても正常に表示されることを保証',
+        ],
+      },
+    },
+  },
+  {
     date: '2025-12-07',
     version: '1.9.0',
     issue: 30,

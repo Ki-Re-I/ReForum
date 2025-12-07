@@ -1,6 +1,6 @@
 {
   "name": "reforum-backend",
-  "version": "1.9.0",
+  "version": "1.9.2",
   "description": "论坛系统后端 API",
   "main": "app.js",
   "type": "module",

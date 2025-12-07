@@ -60,14 +60,25 @@ export const updateTask = (taskType) => {
 }
 
 // 获取用户经验值
-export const getUserExp = () => {
+export const getUserExp = (user = null) => {
+  // 如果传入了用户对象，优先使用用户对象中的 exp
+  if (user && (user.exp !== undefined && user.exp !== null)) {
+    // 如果是测试用户，并且用户对象中有exp，则使用用户对象中的exp
+    if (user.id?.startsWith('test-user-') || user.id === 'test-user-001') {
+      return user.exp
+    }
+    // 如果是正常用户，也使用用户对象中的exp（从服务器获取的）
+    return user.exp
+  }
+  
+  // 如果没有传入用户对象或用户对象中没有exp，从localStorage读取
   const stored = localStorage.getItem(EXP_STORAGE_KEY)
   // 如果是测试用户，返回70级经验值
   const token = localStorage.getItem('token')
   if (token?.startsWith('test-token-')) {
-    const user = JSON.parse(localStorage.getItem('user') || '{}')
-    if (user.exp) {
-      return user.exp
+    const testUser = JSON.parse(localStorage.getItem('user') || '{}')
+    if (testUser.exp !== undefined && testUser.exp !== null) {
+      return testUser.exp
     }
     // 如果没有exp字段，设置70级经验值
     const exp70 = 15000

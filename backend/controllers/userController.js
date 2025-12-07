@@ -42,13 +42,13 @@ class UserController {
       // 检查用户名修改限制（30天）- 只有在字段存在时才检查
       if (username !== undefined && username !== currentUser.username) {
         if (currentUser.username_updated_at !== undefined && currentUser.username_updated_at !== null) {
-          const usernameCheck = User.canModifyUsernameOrTag(currentUser.username_updated_at);
-          if (!usernameCheck.canModify) {
-            return res.status(400).json({
-              error: 'USERNAME_UPDATE_LIMIT',
-              message: `用户名只能每30天修改一次，还需等待 ${usernameCheck.daysRemaining} 天`,
-              daysRemaining: usernameCheck.daysRemaining,
-            });
+        const usernameCheck = User.canModifyUsernameOrTag(currentUser.username_updated_at);
+        if (!usernameCheck.canModify) {
+          return res.status(400).json({
+            error: 'USERNAME_UPDATE_LIMIT',
+            message: `用户名只能每30天修改一次，还需等待 ${usernameCheck.daysRemaining} 天`,
+            daysRemaining: usernameCheck.daysRemaining,
+          });
           }
         }
 
@@ -65,13 +65,13 @@ class UserController {
       // 检查称号修改限制（30天）- 只有在字段存在时才检查
       if (tag !== undefined && tag !== currentUser.tag) {
         if (currentUser.tag_updated_at !== undefined && currentUser.tag_updated_at !== null) {
-          const tagCheck = User.canModifyUsernameOrTag(currentUser.tag_updated_at);
-          if (!tagCheck.canModify) {
-            return res.status(400).json({
-              error: 'TAG_UPDATE_LIMIT',
-              message: `称号只能每30天修改一次，还需等待 ${tagCheck.daysRemaining} 天`,
-              daysRemaining: tagCheck.daysRemaining,
-            });
+        const tagCheck = User.canModifyUsernameOrTag(currentUser.tag_updated_at);
+        if (!tagCheck.canModify) {
+          return res.status(400).json({
+            error: 'TAG_UPDATE_LIMIT',
+            message: `称号只能每30天修改一次，还需等待 ${tagCheck.daysRemaining} 天`,
+            daysRemaining: tagCheck.daysRemaining,
+          });
           }
         }
 

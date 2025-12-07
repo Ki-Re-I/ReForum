@@ -30,6 +30,49 @@ const changelogCopy = {
 
 const updates = [
   {
+    date: '2025-12-08',
+    version: '1.9.2',
+    type: 'fix',
+    translations: {
+      zh: {
+        title: '帖子作者等级和经验值显示修复',
+        description:
+          '修复帖子中作者等级不更新和经验值条显示不正确的问题，确保用户等级和经验值从服务器实时获取并正确显示。',
+        details: [
+          '修复帖子中作者等级不更新问题：后端Post模型在查询帖子时包含作者的exp和tag字段',
+          '添加向后兼容性处理，数据库迁移未执行时自动回退到基本查询',
+          '修复经验值条显示不正确问题：修改getUserExp函数优先使用用户对象中的exp',
+          '修复PostCard和PostDetail组件，确保正确显示作者等级和经验值',
+          '70级用户现在正确显示满级状态（100%进度条）',
+        ],
+      },
+      en: {
+        title: 'Post Author Level and Experience Display Fix',
+        description:
+          'Fixed issues where author level in posts did not update and experience progress bar displayed incorrectly, ensuring user level and experience values are fetched in real-time from server and displayed correctly.',
+        details: [
+          'Fixed author level not updating in posts: Backend Post model now includes author exp and tag fields when querying posts',
+          'Added backward compatibility handling, automatically fallback to basic queries when database migration not executed',
+          'Fixed experience progress bar display issue: Modified getUserExp function to prioritize exp from user object',
+          'Fixed PostCard and PostDetail components to correctly display author level and experience values',
+          'Level 70 users now correctly display max level status (100% progress bar)',
+        ],
+      },
+      ja: {
+        title: '投稿作成者レベルと経験値表示の修正',
+        description:
+          '投稿内の作成者レベルが更新されない問題と経験値プログレスバーの表示が正しくない問題を修正し、ユーザーレベルと経験値がサーバーからリアルタイムで取得され、正しく表示されるようにしました。',
+        details: [
+          '投稿内の作成者レベルが更新されない問題を修正：バックエンドPostモデルが投稿をクエリする際に作成者のexpとtagフィールドを含める',
+          '後方互換性処理を追加し、データベース移行が実行されていない場合に基本クエリに自動的にフォールバック',
+          '経験値プログレスバーの表示が正しくない問題を修正：getUserExp関数を修正し、ユーザーオブジェクトのexpを優先的に使用',
+          'PostCardとPostDetailコンポーネントを修正し、作成者レベルと経験値を正しく表示',
+          '70レベルのユーザーは、満レベル状態（100%プログレスバー）を正しく表示',
+        ],
+      },
+    },
+  },
+  {
     date: '2025-12-07',
     version: '1.9.0',
     type: 'update',

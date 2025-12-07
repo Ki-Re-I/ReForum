@@ -8,7 +8,7 @@ import { FaComment, FaHeart, FaRegHeart } from 'react-icons/fa'
 import CommentList from '../components/CommentList'
 import { useLanguage } from '../context/LanguageContext'
 import { isOfficialTag, getOfficialTagText } from '../utils/tagUtils'
-import { getUserExp, updateTask } from '../utils/dailyTasks'
+import { updateTask } from '../utils/dailyTasks'
 import LevelBadge from '../components/LevelBadge'
 import './PostDetail.css'
 
@@ -178,15 +178,21 @@ const PostDetail = () => {
               </>
             )}
             <div className="post-author-wrapper">
-              <Link to={`/user/${post.author?.id}`} className="post-author">
-                {post.author?.username || '匿名用户'}
-              </Link>
+            <Link to={`/user/${post.author?.id}`} className="post-author">
+              {post.author?.username || '匿名用户'}
+            </Link>
               {post.author?.tag && (
                 <span 
                   className={`post-author-tag ${isOfficialTag(post.author.tag) ? 'official-tag' : ''}`}
                 >
                   {isOfficialTag(post.author.tag) ? getOfficialTagText(t) : post.author.tag}
                 </span>
+              )}
+              {post.author?.id && (
+                <LevelBadge 
+                  exp={post.author?.exp ?? 0} 
+                  size="small" 
+                />
               )}
             </div>
             <span className="post-separator">•</span>

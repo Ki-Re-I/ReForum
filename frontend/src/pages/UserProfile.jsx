@@ -259,18 +259,18 @@ const UserProfile = () => {
     <div className="user-profile">
       <div className="profile-header">
         <div className="profile-avatar-section">
-          <div className="profile-avatar">
-            {user.avatar ? (
-              <img src={user.avatar} alt={user.username} />
-            ) : (
-              <div className="avatar-placeholder">
-                {user.username?.charAt(0).toUpperCase()}
-              </div>
-            )}
+        <div className="profile-avatar">
+          {user.avatar ? (
+            <img src={user.avatar} alt={user.username} />
+          ) : (
+            <div className="avatar-placeholder">
+              {user.username?.charAt(0).toUpperCase()}
+            </div>
+          )}
           </div>
           <div className="profile-level-row">
             {(() => {
-              const userExp = user.exp || getUserExp()
+              const userExp = getUserExp(user)
               return <LevelBadge exp={userExp} size="large" />
             })()}
           </div>
@@ -278,7 +278,7 @@ const UserProfile = () => {
         <div className="profile-info">
           <div className="profile-username-row">
             <div className="profile-username-wrapper">
-              <h1 className="profile-username">{user.username}</h1>
+          <h1 className="profile-username">{user.username}</h1>
               {user.tag && (
                 <span 
                   className={`profile-tag ${isOfficialTag(user.tag) ? 'official-tag' : ''}`}
@@ -301,10 +301,7 @@ const UserProfile = () => {
           {user.bio && <p className="profile-bio">{user.bio}</p>}
         </div>
         <div className="profile-exp-section">
-          {(() => {
-            const userExp = user.exp || getUserExp()
-            return <ExpProgressBar user={user} />
-          })()}
+          <ExpProgressBar user={user} />
         </div>
       </div>
 
