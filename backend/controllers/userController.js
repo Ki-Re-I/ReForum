@@ -28,9 +28,66 @@ class UserController {
   static async updateProfile(req, res) {
     try {
       const userId = req.userId;
-      const { avatar, bio } = req.body;
+      const { avatar, bio, username, tag } = req.body;
 
-      const updatedUser = await User.update(userId, { avatar, bio });
+      // 获取当前用户信息
+      const currentUser = await User.findById(userId);
+      if (!currentUser) {
+        return res.status(404).json({
+          error: 'USER_NOT_FOUND',
+          message: '用户不存在',
+        });
+      }
+
+      // 检查用户名修改限制（30天）- 只有在字段存在时才检查
+      if (username !== undefined && username !== currentUser.username) {
+        if (currentUser.username_updated_at !== undefined && currentUser.username_updated_at !== null) {
+        const usernameCheck = User.canModifyUsernameOrTag(currentUser.username_updated_at);
+        if (!usernameCheck.canModify) {
+          return res.status(400).json({
+            error: 'USERNAME_UPDATE_LIMIT',
+            message: `用户名只能每30天修改一次，还需等待 ${usernameCheck.daysRemaining} 天`,
+            daysRemaining: usernameCheck.daysRemaining,
+          });
+          }
+        }
+
+        // 检查用户名是否已被使用
+        const existingUser = await User.findByUsername(username);
+        if (existingUser && existingUser.id !== userId) {
+          return res.status(400).json({
+            error: 'USERNAME_EXISTS',
+            message: '该用户名已被使用',
+          });
+        }
+      }
+
+      // 检查称号修改限制（30天）- 只有在字段存在时才检查
+      if (tag !== undefined && tag !== currentUser.tag) {
+        if (currentUser.tag_updated_at !== undefined && currentUser.tag_updated_at !== null) {
+        const tagCheck = User.canModifyUsernameOrTag(currentUser.tag_updated_at);
+        if (!tagCheck.canModify) {
+          return res.status(400).json({
+            error: 'TAG_UPDATE_LIMIT',
+            message: `称号只能每30天修改一次，还需等待 ${tagCheck.daysRemaining} 天`,
+            daysRemaining: tagCheck.daysRemaining,
+          });
+          }
+        }
+
+        // 检查称号是否已被使用（如果提供了非空 tag）
+        if (tag && tag.trim() !== '') {
+          const existingUser = await User.findByTag(tag);
+          if (existingUser && existingUser.id !== userId) {
+            return res.status(400).json({
+              error: 'TAG_EXISTS',
+              message: '该称号已被使用',
+            });
+          }
+        }
+      }
+
+      const updatedUser = await User.update(userId, { avatar, bio, username, tag });
       
       if (!updatedUser) {
         return res.status(404).json({
@@ -47,9 +104,14 @@ class UserController {
         email: updatedUser.email,
         avatar: updatedUser.avatar,
         bio: updatedUser.bio,
+        tag: updatedUser.tag,
+        exp: parseInt(updatedUser.exp) || 0,
         joinDate: updatedUser.join_date,
         postCount: parseInt(stats.post_count) || 0,
         commentCount: parseInt(stats.comment_count) || 0,
+        receivedLikes: parseInt(stats.received_likes) || 0,
+        usernameUpdatedAt: updatedUser.username_updated_at,
+        tagUpdatedAt: updatedUser.tag_updated_at,
       };
 
       return res.status(200).json(userProfile);
@@ -80,9 +142,12 @@ class UserController {
         username: publicProfile.username,
         avatar: publicProfile.avatar,
         bio: publicProfile.bio,
+        tag: publicProfile.tag,
+        exp: parseInt(publicProfile.exp) || 0,
         joinDate: publicProfile.join_date,
         postCount: parseInt(publicProfile.post_count) || 0,
         commentCount: parseInt(publicProfile.comment_count) || 0,
+        receivedLikes: parseInt(publicProfile.received_likes) || 0,
       });
     } catch (error) {
       console.error('获取公开用户资料错误:', error);

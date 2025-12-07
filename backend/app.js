@@ -13,6 +13,7 @@ import commentRoutes from './routes/comments.js';
 import categoryRoutes from './routes/categories.js';
 import tagRoutes from './routes/tags.js';
 import uploadRoutes from './routes/upload.js';
+import notificationRoutes from './routes/notifications.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -22,6 +23,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// 信任代理（用于正确获取客户端真实IP地址）
+app.set('trust proxy', true);
 
 // 安全中间件（允许跨域加载资源，如图片）
 app.use(helmet({
@@ -45,14 +49,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 速率限制
+// 速率限制 - 放宽限制以避免正常使用时的误拦截
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 分钟
-  max: 100, // 限制每个 IP 15 分钟内最多 100 个请求
+  max: 500, // 限制每个 IP 15 分钟内最多 500 个请求（从100增加到500）
   message: {
     error: 'TOO_MANY_REQUESTS',
     message: '请求过于频繁，请稍后再试',
   },
+  standardHeaders: true, // 返回速率限制信息到 `RateLimit-*` 头
+  legacyHeaders: false, // 禁用 `X-RateLimit-*` 头
 });
 app.use('/api/', limiter);
 
@@ -83,6 +89,7 @@ app.use('/api', commentRoutes); // 评论路由：/api/posts/:postId/comments �
 app.use('/api/categories', categoryRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // 404 处理
 app.use((req, res) => {

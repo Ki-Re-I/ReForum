@@ -1,0 +1,133 @@
+.stats-accordion {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+}
+
+.stats-accordion-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 0;
+}
+
+.stats-accordion-header:hover {
+  color: var(--primary-color, #2563eb);
+}
+
+.stats-accordion-header:focus {
+  outline: 2px solid var(--primary-color, #2563eb);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.stats-accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stats-accordion-header svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.stats-accordion-header:hover svg {
+  color: var(--primary-color, #2563eb);
+}
+
+.stats-accordion-content {
+  padding: 1.25rem 0 0 0;
+  background: transparent;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color, #2563eb);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  max-width: 100%;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-align: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.4;
+  white-space: normal;
+  width: 100%;
+}
+
+/* 移动端样式 */
+@media (max-width: 768px) {
+  .stats-accordion-header {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .stats-accordion-content {
+    padding: 0.875rem;
+  }
+
+  .stats-grid {
+    gap: 1.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.8125rem;
+  }
+}
+

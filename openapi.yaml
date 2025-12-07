@@ -24,6 +24,8 @@ tags:
     description: 版块和标签管理
   - name: 文件上传
     description: 图片上传功能
+  - name: 通知管理
+    description: 用户通知相关功能
 
 paths:
   # ==================== 用户认证 ====================
@@ -155,6 +157,154 @@ paths:
           description: 登出成功
         '401':
           description: 未授权访问
+
+  # ==================== 通知管理 ====================
+  /notifications:
+    get:
+      tags: [通知管理]
+      summary: 获取通知列表
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: unreadOnly
+          in: query
+          description: 是否只获取未读通知
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: 成功获取通知列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: 未授权访问
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /notifications/unread-count:
+    get:
+      tags: [通知管理]
+      summary: 获取未读通知数量
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: 成功获取未读数量
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 5
+        '401':
+          description: 未授权访问
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /notifications/{notificationId}/read:
+    put:
+      tags: [通知管理]
+      summary: 标记通知为已读
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 标记成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '401':
+          description: 未授权访问
+        '404':
+          description: 通知不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /notifications/read-all:
+    put:
+      tags: [通知管理]
+      summary: 标记所有通知为已读
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: 标记成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "已标记所有通知为已读"
+                  count:
+                    type: integer
+                    example: 10
+        '401':
+          description: 未授权访问
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /notifications/{notificationId}:
+    delete:
+      tags: [通知管理]
+      summary: 删除通知
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "通知已删除"
+        '401':
+          description: 未授权访问
+        '404':
+          description: 通知不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ==================== 用户资料 ====================
   /users/profile:
@@ -752,6 +902,16 @@ components:
           type: string
           description: 个人简介
           example: "这是一个示例用户简介"
+        tag:
+          type: string
+          description: 用户标签/称号
+          maxLength: 20
+          example: "全栈工程师"
+        exp:
+          type: integer
+          description: 用户经验值，用于等级系统
+          example: 150
+          default: 0
         joinDate:
           type: string
           format: date-time
@@ -762,6 +922,22 @@ components:
         commentCount:
           type: integer
           example: 156
+        receivedLikes:
+          type: integer
+          description: 用户收到的总点赞数（所有帖子获得的点赞）
+          example: 125
+        usernameUpdatedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: 用户名最后修改时间，用于30天修改限制
+          example: "2023-01-15T10:30:00Z"
+        tagUpdatedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: 称号最后修改时间，用于30天修改限制
+          example: "2023-01-15T10:30:00Z"
 
     PublicUserProfile:
       type: object
@@ -774,6 +950,14 @@ components:
           type: string
         bio:
           type: string
+        tag:
+          type: string
+          description: 用户标签/称号
+          maxLength: 20
+        exp:
+          type: integer
+          description: 用户经验值，用于等级系统
+          default: 0
         joinDate:
           type: string
           format: date-time
@@ -781,15 +965,30 @@ components:
           type: integer
         commentCount:
           type: integer
+        receivedLikes:
+          type: integer
+          description: 用户收到的总点赞数（所有帖子获得的点赞）
 
     UpdateProfileRequest:
       type: object
       properties:
         avatar:
           type: string
+          description: 头像URL
         bio:
           type: string
           maxLength: 200
+          description: 个人简介
+        username:
+          type: string
+          minLength: 3
+          maxLength: 20
+          pattern: '^[a-zA-Z0-9_]+$'
+          description: 用户名（30天内只能修改一次）
+        tag:
+          type: string
+          maxLength: 20
+          description: 用户标签/称号（30天内只能修改一次）
 
     # ==================== 帖子相关 ====================
     CreatePostRequest:
@@ -957,6 +1156,59 @@ components:
         postCount:
           type: integer
           example: 250
+
+    # ==================== 通知相关 ====================
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 2
+        type:
+          type: string
+          enum: [new_post]
+          example: "new_post"
+        title:
+          type: string
+          example: "用户名 发布了新帖子"
+        content:
+          type: string
+          nullable: true
+          example: "帖子标题"
+        related_post_id:
+          type: integer
+          nullable: true
+          example: 123
+        related_user_id:
+          type: integer
+          nullable: true
+          example: 1
+        post_title:
+          type: string
+          nullable: true
+          example: "帖子标题"
+        related_username:
+          type: string
+          nullable: true
+          example: "username"
+        related_user_avatar:
+          type: string
+          nullable: true
+          example: "/avatars/default.jpg"
+        is_read:
+          type: boolean
+          example: false
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-12-02T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-12-02T10:30:00Z"
 
     # ==================== 通用结构 ====================
     Pagination:

@@ -1,12 +1,13 @@
 {
   "name": "reforum-backend",
-  "version": "1.0.0",
+  "version": "1.9.4",
   "description": "论坛系统后端 API",
   "main": "app.js",
   "type": "module",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "check": "node scripts/check-backend.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

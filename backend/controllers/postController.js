@@ -1,11 +1,13 @@
 import Post from '../models/Post.js';
 import Category from '../models/Category.js';
+import Notification from '../models/Notification.js';
+import EmailService from '../services/emailService.js';
 
 class PostController {
   // 获取帖子列表
   static async getPosts(req, res) {
     try {
-      const { page = 1, limit = 20, sort = 'time', category, tag, author, search } = req.query;
+      const { page = 1, limit = 20, sort = 'time', category, tag, author, search, date } = req.query;
 
       const result = await Post.findAll({
         page: parseInt(page),
@@ -15,6 +17,7 @@ class PostController {
         tag,
         author: author ? parseInt(author) : undefined,
         search: search ? search.trim() : undefined,
+        date: date || undefined,
       });
 
       // 格式化帖子数据
@@ -41,7 +44,19 @@ class PostController {
     try {
       const { postId } = req.params;
       const userId = req.userId || null; // 可能为 undefined，转换为 null
-      const ipAddress = req.ip || req.connection.remoteAddress || null;
+      
+      // 改进IP地址获取逻辑
+      let ipAddress = null;
+      if (req.ip) {
+        ipAddress = req.ip;
+      } else if (req.headers['x-forwarded-for']) {
+        // 从代理头获取真实IP（取第一个IP）
+        ipAddress = req.headers['x-forwarded-for'].split(',')[0].trim();
+      } else if (req.connection && req.connection.remoteAddress) {
+        ipAddress = req.connection.remoteAddress;
+      } else if (req.socket && req.socket.remoteAddress) {
+        ipAddress = req.socket.remoteAddress;
+      }
 
       const post = await Post.findById(parseInt(postId));
 
@@ -53,7 +68,12 @@ class PostController {
       }
 
       // 增加浏览量（去重：同一用户或同一IP在24小时内只计算一次）
-      await Post.incrementViewCount(parseInt(postId), userId, ipAddress);
+      try {
+        await Post.incrementViewCount(parseInt(postId), userId, ipAddress);
+      } catch (viewError) {
+        // 浏览量增加失败不应该影响帖子详情获取
+        console.error('增加浏览量失败:', viewError);
+      }
 
       // 重新获取帖子以获取最新的浏览量
       const updatedPost = await Post.findById(parseInt(postId));
@@ -121,10 +141,50 @@ class PostController {
         [post.id]
       );
 
+      // 获取需要邮件通知的用户
+      const recipientResult = await query(
+        `SELECT username, email 
+         FROM users 
+         WHERE id != $1 AND email IS NOT NULL AND email <> ''`,
+        [userId]
+      );
+
       const formattedPost = await Post.formatPostDetail({
         ...post,
         tags: tagsResult.rows,
       }, userId);
+
+      // 异步创建通知（不阻塞响应）
+      // 获取作者信息
+      const authorResult = await query(
+        'SELECT username FROM users WHERE id = $1',
+        [userId]
+      );
+      const authorUsername = authorResult.rows[0]?.username || '用户';
+
+      // 为所有其他用户创建新帖子通知
+      Notification.createNewPostNotifications(
+        post.id,
+        userId,
+        authorUsername,
+        title
+      ).catch(err => {
+        console.error('创建通知失败:', err);
+        console.error('错误详情:', err.message);
+        console.error('错误堆栈:', err.stack);
+        // 通知创建失败不影响帖子创建
+      });
+
+      // 异步站外邮件通知
+      EmailService.sendNewPostNotificationEmails({
+        recipients: recipientResult.rows,
+        postTitle: title,
+        postId: post.id,
+        authorUsername,
+        excerpt,
+      }).catch(err => {
+        console.error('发送站外新帖邮件失败:', err);
+      });
 
       return res.status(201).json(formattedPost);
     } catch (error) {

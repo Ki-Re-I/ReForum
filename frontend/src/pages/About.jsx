@@ -1,44 +1,88 @@
 import React from 'react'
-import { FaInfoCircle } from 'react-icons/fa'
+import { useLanguage } from '../context/LanguageContext'
 import './About.css'
 
+const aboutContent = {
+  zh: {
+    title: '关于我们',
+    sections: [
+      {
+        heading: '欢迎来到 REForum',
+        body: '一个交流分享的社区',
+      },
+      {
+        heading: '为什么想造这么一个网站',
+        body: '因为想造一个',
+      },
+      {
+        heading: '与我们共建',
+        body: '如果你想的话',
+        cta: '前往联系我们',
+      },
+    ],
+  },
+  en: {
+    title: 'About Us',
+    sections: [
+      {
+        heading: 'Welcome to REForum',
+        body: 'A community for sharing and discussion',
+      },
+      {
+        heading: 'Why We Built This Website',
+        body: 'Because we wanted to build one',
+      },
+      {
+        heading: 'Build With Us',
+        body: 'If you want to',
+        cta: 'Go to Contact Page',
+      },
+    ],
+  },
+  ja: {
+    title: '私たちについて',
+    sections: [
+      {
+        heading: 'REForum へようこそ',
+        body: '共有と議論のためのコミュニティ',
+      },
+      {
+        heading: 'なぜこのウェブサイトを作ったのか',
+        body: '作りたかったから',
+      },
+      {
+        heading: '一緒に作りましょう',
+        body: 'もしあなたが望むなら',
+        cta: 'お問い合わせページへ',
+      },
+    ],
+  },
+}
+
 const About = () => {
+  const { language } = useLanguage()
+  const copy = aboutContent[language] || aboutContent.zh
+
   return (
     <div className="about-page">
-      <div className="about-container">
-        <div className="about-header">
-          <FaInfoCircle className="about-icon" />
-          <h1>关于我们</h1>
-        </div>
+      <div className="about-header">
+        <h1>{copy.title}</h1>
+      </div>
 
-        <div className="about-content">
-          <section className="about-section">
-            <h2>欢迎来到 REForum</h2>
-            <p>
-              REForum 是一个现代化的社区论坛平台，致力于为用户提供优质的交流体验。
-              我们相信每个人都有独特的观点和想法值得分享，REForum 就是这样一个让思想碰撞、
-              让知识传播的平台。
-            </p>
+      <div className="about-content">
+        {copy.sections.map((section, index) => (
+          <section className="about-section" key={section.heading}>
+            <h2>{section.heading}</h2>
+            <p>{section.body}</p>
+            {section.cta && (
+              <div className="contact-button-container">
+                <a href="/contact" className="contact-button">
+                  {section.cta}
+                </a>
+              </div>
+            )}
           </section>
-
-          <section className="about-section">
-            <h2>初衷</h2>
-            <p>
-              构建一个开放、友好、有价值的社区平台，让每个人都能在这里找到归属感，
-              分享知识，结交朋友，共同成长。
-            </p>
-          </section>
-
-          <section className="about-section">
-            <h2>加入我们</h2>
-            <p>
-              如果你有任何建议、问题或想要参与社区建设，欢迎通过以下方式与我们取得联系。
-            </p>
-            <div className="contact-button-container">
-              <a href="/contact" className="contact-button">联系我们</a>
-            </div>
-          </section>
-        </div>
+        ))}
       </div>
     </div>
   )

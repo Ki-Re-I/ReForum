@@ -1,0 +1,316 @@
+.inbox-container {
+  position: relative;
+}
+
+.inbox-button {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0.625rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  border-radius: var(--radius-md);
+  gap: 0.4rem;
+}
+
+.inbox-button:hover {
+  color: var(--primary-color);
+  background-color: var(--hover-background);
+}
+
+.inbox-button.with-label {
+  width: 100%;
+  justify-content: flex-start;
+  background: var(--button-gray);
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 0.65rem 0.85rem;
+}
+
+.inbox-button-label {
+  font-size: 0.9rem;
+  flex: 1;
+  text-align: left;
+}
+
+.inbox-badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background-color: var(--error-color);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--radius-full);
+  min-width: 1.25rem;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.inbox-badge.inline {
+  position: static;
+  margin-left: auto;
+}
+
+.inbox-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: var(--dropdown-background);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 360px;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.inbox-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.inbox-mark-all-read {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s;
+}
+
+.inbox-mark-all-read:hover {
+  background-color: var(--hover-background);
+}
+
+.inbox-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inbox-close {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--radius-md);
+}
+
+.inbox-close:hover {
+  background: var(--hover-background);
+  color: var(--primary-color);
+}
+
+.inbox-list {
+  overflow-y: auto;
+  max-height: 400px;
+  flex: 1;
+}
+
+.inbox-empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.inbox-skeleton {
+  padding: 0.5rem 0;
+}
+
+.inbox-item-skeleton {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.inbox-item-skeleton:last-child {
+  border-bottom: none;
+}
+
+/* Skeleton 动画样式 */
+.inbox-skeleton .skeleton-line {
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.15),
+    rgba(148, 163, 184, 0.35),
+    rgba(148, 163, 184, 0.15)
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.inbox-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.inbox-item:hover {
+  background-color: var(--hover-background);
+}
+
+.inbox-item.unread {
+  background-color: var(--background-alt);
+}
+
+.inbox-item.unread::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--primary-color);
+}
+
+.inbox-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.inbox-item-title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+.inbox-item-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.375rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inbox-item-time {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.inbox-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.inbox-item-mark-read {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 0.75rem;
+}
+
+.inbox-item-mark-read:hover {
+  color: var(--text-primary);
+  background-color: var(--hover-background);
+}
+
+/* 滚动条样式 */
+.inbox-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.inbox-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.inbox-list::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 3px;
+}
+
+.inbox-list::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-tertiary);
+}
+
+.inbox-overlay {
+    position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  z-index: 1300;
+  }
+  
+.inbox-modal {
+  width: min(420px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  }
+  
+.inbox-modal .inbox-dropdown {
+  position: relative;
+  top: auto;
+  right: auto;
+  left: auto;
+  width: 100%;
+  max-height: 100%;
+}
+

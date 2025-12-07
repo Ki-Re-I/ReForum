@@ -1,0 +1,92 @@
+.intro-loader {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1.5rem;
+  /* 直接使用主题背景色，让加载页与整体基调一致 */
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+.intro-loader__title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.intro-loader__title-mark {
+  color: var(--secondary-color);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.intro-loader__ring {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.intro-loader__svg {
+  width: 128px;
+  height: 128px;
+  transform: rotate(-90deg);
+}
+
+.intro-loader__track {
+  fill: none;
+  stroke: rgb(148 163 184 / 0.2);
+  stroke-width: 12;
+}
+
+.intro-loader__progress {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  /* 去掉发光阴影，避免出现灰色方块轮廓 */
+  filter: none;
+  transition: stroke-dashoffset 0.35s ease;
+}
+
+.intro-loader__value {
+  position: absolute;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--primary-dark, var(--primary-color));
+}
+
+.intro-loader__label {
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--primary-color);
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .intro-loader__ring {
+    width: 110px;
+    height: 110px;
+  }
+
+  .intro-loader__svg {
+    width: 110px;
+    height: 110px;
+  }
+
+  .intro-loader__label {
+    letter-spacing: 0.24em;
+  }
+}
+
+

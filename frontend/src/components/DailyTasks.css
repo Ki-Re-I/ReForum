@@ -1,0 +1,123 @@
+.daily-tasks {
+  background: var(--card-background, #ffffff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.tasks-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.tasks-progress {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: var(--background-alt, #f9fafb);
+  transition: all 0.2s;
+}
+
+.task-item.completed {
+  background: var(--success-background, #f0fdf4);
+  border: 1px solid var(--success-color, #10b981);
+}
+
+.task-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.task-checkmark {
+  color: var(--success-color, #10b981);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.task-label {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.task-item.completed .task-label {
+  color: var(--success-color, #10b981);
+  font-weight: 600;
+}
+
+.task-exp {
+  font-size: 0.875rem;
+  color: var(--primary-color, #2563eb);
+  font-weight: 600;
+}
+
+.task-item.completed .task-exp {
+  color: var(--success-color, #10b981);
+}
+
+.tasks-completed-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: var(--success-background, #f0fdf4);
+  border: 1px solid var(--success-color, #10b981);
+  border-radius: 8px;
+  text-align: center;
+  color: var(--success-color, #10b981);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* 移动端样式 */
+@media (max-width: 768px) {
+  .daily-tasks {
+    padding: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .tasks-title {
+    font-size: 1rem;
+  }
+
+  .task-item {
+    padding: 0.625rem;
+  }
+
+  .task-label {
+    font-size: 0.875rem;
+  }
+
+  .task-exp {
+    font-size: 0.8125rem;
+  }
+}
+

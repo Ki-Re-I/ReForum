@@ -6,6 +6,7 @@ backend/target/
 # Build outputs
 frontend/dist/
 frontend/build/
+frontend/dev-dist/
 backend/target/
 
 # Environment variables

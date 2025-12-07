@@ -1,0 +1,37 @@
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  user-select: none;
+}
+
+.level-badge-small {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 10px;
+}
+
+.level-badge-normal {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+}
+
+.level-badge-large {
+  font-size: 0.875rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 14px;
+}
+
+.level-max {
+  /* 动画由JavaScript控制，不需要CSS动画 */
+}
+

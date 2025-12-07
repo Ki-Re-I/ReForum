@@ -5,10 +5,12 @@ import zhCN from 'date-fns/locale/zh-CN'
 import { useAuth } from '../context/AuthContext'
 import { commentAPI } from '../services/api'
 import { FaReply } from 'react-icons/fa'
+import { useLanguage } from '../context/LanguageContext'
 import './CommentList.css'
 
 const CommentList = ({ comments, onUpdate, depth = 0, maxDepth = 1, postId }) => {
   const { isAuthenticated } = useAuth()
+  const { t } = useLanguage()
   const [replyingTo, setReplyingTo] = useState(null)
   const [replyText, setReplyText] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -23,7 +25,7 @@ const CommentList = ({ comments, onUpdate, depth = 0, maxDepth = 1, postId }) =>
         locale: zhCN,
       })
     } catch {
-      return '未知时间'
+      return t('comment.unknownTime')
     }
   }
 
@@ -45,7 +47,7 @@ const CommentList = ({ comments, onUpdate, depth = 0, maxDepth = 1, postId }) =>
   }
 
   if (!comments || comments.length === 0) {
-    return <div className="comments-empty">暂无评论</div>
+    return <div className="comments-empty">{t('comment.empty')}</div>
   }
 
   return (
@@ -56,10 +58,10 @@ const CommentList = ({ comments, onUpdate, depth = 0, maxDepth = 1, postId }) =>
             <div className="comment-header">
               {comment.author?.id ? (
                 <Link to={`/user/${comment.author.id}`} className="comment-author">
-                  {comment.author.username || '匿名用户'}
+                  {comment.author.username || t('comment.anonymous')}
                 </Link>
               ) : (
-                <span className="comment-author">匿名用户</span>
+                <span className="comment-author">{t('comment.anonymous')}</span>
               )}
               <span className="comment-separator">•</span>
               <span className="comment-time">{formatDate(comment.createdAt)}</span>
@@ -77,14 +79,13 @@ const CommentList = ({ comments, onUpdate, depth = 0, maxDepth = 1, postId }) =>
                     setReplyingTo(replyingTo === comment.id ? null : comment.id)
                   }
                 >
-                  <FaReply /> 回复
+                  <FaReply /> {t('comment.reply')}
                 </button>
               )}
-              {isAuthenticated && !canReply && (
-                <span className="comment-depth-limit">别套娃了</span>
-              )}
               {comment.likeCount > 0 && (
-                <span className="comment-like-count">{comment.likeCount} 点赞</span>
+                <span className="comment-like-count">
+                  {comment.likeCount} {t('comment.likesSuffix')}
+                </span>
               )}
             </div>
 
@@ -96,7 +97,7 @@ const CommentList = ({ comments, onUpdate, depth = 0, maxDepth = 1, postId }) =>
                 <textarea
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="写下你的回复..."
+                  placeholder={t('comment.replyPlaceholder')}
                   rows={3}
                   className="comment-reply-textarea"
                 />
@@ -109,14 +110,14 @@ const CommentList = ({ comments, onUpdate, depth = 0, maxDepth = 1, postId }) =>
                     }}
                     className="comment-reply-cancel"
                   >
-                    取消
+                    {t('comment.cancel')}
                   </button>
                   <button
                     type="submit"
                     disabled={!replyText.trim() || submitting}
                     className="comment-reply-submit"
                   >
-                    {submitting ? '发布中...' : '发布回复'}
+                    {submitting ? t('comment.submitting') : t('comment.submit')}
                   </button>
                 </div>
               </form>

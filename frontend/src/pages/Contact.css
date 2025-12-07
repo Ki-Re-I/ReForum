@@ -1,58 +1,38 @@
 .contact-page {
   flex: 1;
-  max-width: 1000px;
-}
-
-.contact-container {
-  background-color: var(--card-background);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  box-shadow: var(--shadow-sm);
+  max-width: 800px;
+  padding: 2rem 0;
 }
 
 .contact-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid var(--border-color);
-}
-
-.contact-icon {
-  font-size: 2rem;
-  color: var(--primary-color);
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 2rem;
 }
 
 .contact-header h1 {
-  margin: 0;
   font-size: 2rem;
-  color: var(--text-primary);
   font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
 }
 
-.contact-content {
-  display: flex;
-  flex-direction: column;
+.contact-intro {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
 }
 
 .contributors-section {
   width: 100%;
 }
 
-.contributors-section h2 {
-  margin: 0 0 0.75rem 0;
+.contributors-title {
   font-size: 1.5rem;
-  color: var(--text-primary);
   font-weight: 600;
-}
-
-.section-description {
-  margin: 0 0 2rem 0;
-  color: var(--text-secondary);
-  font-size: 1rem;
-  line-height: 1.6;
+  color: var(--text-primary);
+  margin: 0 0 1.5rem 0;
 }
 
 .contributors-grid {
@@ -62,7 +42,7 @@
 }
 
 .contributor-card {
-  background-color: var(--background-alt);
+  background-color: var(--card-background);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 2rem;
@@ -175,16 +155,22 @@
 }
 
 @media (max-width: 768px) {
-  .contact-container {
-    padding: 1.5rem;
+  .contact-page {
+    padding: 1.5rem 0;
+  }
+
+  .contact-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
   }
 
   .contact-header h1 {
     font-size: 1.75rem;
   }
 
-  .contributors-section h2 {
+  .contributors-title {
     font-size: 1.25rem;
+    margin-bottom: 1.25rem;
   }
 
   .contributors-grid {

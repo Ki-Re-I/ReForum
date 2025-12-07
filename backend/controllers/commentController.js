@@ -71,7 +71,7 @@ class CommentController {
         if (depth >= 1) {
           return res.status(400).json({
             error: 'MAX_DEPTH_REACHED',
-            message: '别套娃了',
+            message: '操作失败',
           });
         }
       }
@@ -143,7 +143,7 @@ class CommentController {
       if (depth >= 1) {
         return res.status(400).json({
           error: 'MAX_DEPTH_REACHED',
-          message: '别套娃了',
+          message: '操作失败',
         });
       }
 

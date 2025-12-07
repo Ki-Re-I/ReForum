@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { postAPI, categoryAPI } from '../services/api'
 import ImageUpload from '../components/ImageUpload'
+import { useLanguage } from '../context/LanguageContext'
+import { updateTask } from '../utils/dailyTasks'
 import './CreatePost.css'
 
 const CreatePost = () => {
@@ -17,7 +19,9 @@ const CreatePost = () => {
   })
   const [images, setImages] = useState([])
   const [error, setError] = useState('')
+  const [errorKey, setErrorKey] = useState(null) // 存储错误键而不是翻译后的文本
   const [submitting, setSubmitting] = useState(false)
+  const { t, getCategoryName } = useLanguage()
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -48,7 +52,7 @@ const CreatePost = () => {
     setError('')
 
     if (!formData.title || !formData.content || !formData.categoryId) {
-      setError('请填写所有必填字段')
+      setError(t('create.errorRequired'))
       return
     }
 
@@ -83,16 +87,24 @@ const CreatePost = () => {
 
       // 验证 categoryId
       if (isNaN(postData.categoryId) || postData.categoryId <= 0) {
-        setError('请选择有效的版块')
+        setError(t('create.errorCategory'))
         setSubmitting(false)
         return
       }
 
       const response = await postAPI.createPost(postData)
+      
+      // 更新每日任务：发布帖子
+      updateTask('post')
+      
+      // 触发自定义事件，通知标签组件有新帖子创建
+      window.dispatchEvent(new CustomEvent('postCreated', { 
+        detail: { postId: response.data.id, tags: postData.tags } 
+      }))
+      
       navigate(`/post/${response.data.id}`)
     } catch (error) {
-      console.error('发布帖子错误:', error)
-      let errorMessage = '发布失败，请检查输入信息'
+      console.error('Failed to create post:', error)
       
       if (error.response?.data) {
         // 处理验证错误
@@ -100,13 +112,23 @@ const CreatePost = () => {
           const details = error.response.data.details
             .map(d => d.message || d)
             .join('; ')
-          errorMessage = `验证失败: ${details}`
+          // 存储验证错误详情
+          setError(`${t('create.errorValidationPrefix')}${details}`)
+          setErrorKey(null)
         } else if (error.response.data.message) {
-          errorMessage = error.response.data.message
+          // 后端返回的错误消息直接显示
+          setError(error.response.data.message)
+          setErrorKey(null)
+        } else {
+          // 使用默认错误键
+          setErrorKey('create.errorSubmit')
+          setError('')
         }
+      } else {
+        // 使用默认错误键
+        setErrorKey('create.errorSubmit')
+        setError('')
       }
-      
-      setError(errorMessage)
     } finally {
       setSubmitting(false)
     }
@@ -119,13 +141,17 @@ const CreatePost = () => {
   return (
     <div className="create-post">
       <div className="create-post-card">
-        <h1 className="create-post-title">发布新帖子</h1>
+        <h1 className="create-post-title">{t('create.title')}</h1>
 
-        {error && <div className="create-post-error">{error}</div>}
+        {(error || errorKey) && (
+          <div className="create-post-error">
+            {errorKey ? t(errorKey) : error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="create-post-form">
           <div className="form-group">
-            <label htmlFor="title">标题 *</label>
+            <label htmlFor="title">{t('create.fieldTitle')}</label>
             <input
               type="text"
               id="title"
@@ -135,13 +161,13 @@ const CreatePost = () => {
               required
               minLength={5}
               maxLength={200}
-              placeholder="请输入帖子标题（5-200个字符）"
+              placeholder={t('create.placeholderTitle')}
               className="form-input"
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="categoryId">版块 *</label>
+            <label htmlFor="categoryId">{t('create.fieldCategory')}</label>
             <select
               id="categoryId"
               name="categoryId"
@@ -150,17 +176,17 @@ const CreatePost = () => {
               required
               className="form-select"
             >
-              <option value="">请选择版块</option>
+              <option value="">{t('create.fieldCategory')}</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
-                  {category.name}
+                  {getCategoryName(category.name)}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="content">内容 *</label>
+            <label htmlFor="content">{t('create.fieldContent')}</label>
             <textarea
               id="content"
               name="content"
@@ -169,7 +195,7 @@ const CreatePost = () => {
               required
               minLength={10}
               rows={10}
-              placeholder="请输入帖子内容（至少10个字符）"
+              placeholder={t('create.placeholderContent')}
               className="form-textarea"
             />
           </div>
@@ -183,18 +209,18 @@ const CreatePost = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="tags">标签（可选）</label>
+            <label htmlFor="tags">{t('create.fieldTags')}</label>
             <input
               type="text"
               id="tags"
               name="tags"
               value={formData.tags}
               onChange={handleChange}
-              placeholder="用逗号分隔多个标签，例如：技术,编程,Python"
+              placeholder={t('create.placeholderTags')}
               className="form-input"
             />
             <small className="form-hint">
-              标签之间用逗号分隔
+              {t('create.tagsHint')}
             </small>
           </div>
 
@@ -204,14 +230,14 @@ const CreatePost = () => {
               onClick={() => navigate(-1)}
               className="cancel-button"
             >
-              取消
+              {t('create.cancel')}
             </button>
             <button
               type="submit"
               disabled={submitting}
               className="submit-button"
             >
-              {submitting ? '发布中...' : '发布'}
+              {submitting ? t('create.submitting') : t('create.submit')}
             </button>
           </div>
         </form>

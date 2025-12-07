@@ -6,11 +6,16 @@ import { useAuth } from '../context/AuthContext'
 import { postAPI, commentAPI } from '../services/api'
 import { FaComment, FaHeart, FaRegHeart } from 'react-icons/fa'
 import CommentList from '../components/CommentList'
+import { useLanguage } from '../context/LanguageContext'
+import { isOfficialTag, getOfficialTagText } from '../utils/tagUtils'
+import { updateTask } from '../utils/dailyTasks'
+import LevelBadge from '../components/LevelBadge'
 import './PostDetail.css'
 
 const PostDetail = () => {
   const { postId } = useParams()
   const { isAuthenticated, user } = useAuth()
+  const { t, getCategoryName } = useLanguage()
   const [post, setPost] = useState(null)
   const [comments, setComments] = useState([])
   const [loading, setLoading] = useState(true)
@@ -56,7 +61,7 @@ const PostDetail = () => {
 
   const handleLike = async () => {
     if (!isAuthenticated) {
-      alert('请先登录')
+      alert(t('post.needLogin'))
       return
     }
     if (liking) return
@@ -72,9 +77,9 @@ const PostDetail = () => {
     } catch (error) {
       console.error('Failed to toggle like:', error)
       if (error.response?.status === 401) {
-        alert('请先登录')
+        alert(t('post.needLogin'))
       } else {
-        alert('操作失败，请重试')
+        alert(t('post.actionFailed'))
       }
     } finally {
       setLiking(false)
@@ -98,6 +103,10 @@ const PostDetail = () => {
     try {
       await commentAPI.createComment(postId, { content: commentText })
       setCommentText('')
+      
+      // 更新每日任务：评论
+      updateTask('comment')
+      
       // 重新获取评论和帖子数据
       await Promise.all([fetchComments(), fetchPost()])
     } catch (error) {
@@ -119,7 +128,38 @@ const PostDetail = () => {
   }
 
   if (loading) {
-    return <div className="post-detail-loading">加载中...</div>
+    return (
+      <div className="post-detail">
+        <article className="post-detail-card post-detail-skeleton">
+          <div className="post-skeleton-header">
+            <div className="skeleton-line skeleton-line-sm" />
+            <div className="skeleton-line skeleton-line-sm" />
+          </div>
+          <div className="skeleton-line skeleton-line-lg" />
+          <div className="skeleton-line skeleton-line-md" />
+          <div className="skeleton-line skeleton-line-md skeleton-line-fade" />
+          <div className="skeleton-line skeleton-line-md skeleton-line-fade" style={{ marginTop: '1rem' }} />
+          <div className="post-skeleton-footer">
+            <div className="skeleton-line skeleton-line-sm" style={{ width: '80px' }} />
+            <div className="skeleton-line skeleton-line-sm" style={{ width: '100px' }} />
+          </div>
+        </article>
+        <div className="comment-form-skeleton">
+          <div className="skeleton-line skeleton-line-md" style={{ width: '100%', height: '100px', borderRadius: '8px', marginBottom: '0.75rem' }} />
+          <div className="skeleton-line skeleton-line-sm" style={{ width: '120px', height: '36px', borderRadius: '6px' }} />
+        </div>
+        <div className="comments-skeleton">
+          <div className="skeleton-line skeleton-line-md" style={{ width: '150px', height: '1.5rem', marginBottom: '1.5rem' }} />
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="comment-skeleton-item">
+              <div className="skeleton-line skeleton-line-sm" style={{ width: '100px', marginBottom: '0.5rem' }} />
+              <div className="skeleton-line skeleton-line-md" style={{ width: '100%', marginBottom: '0.25rem' }} />
+              <div className="skeleton-line skeleton-line-md skeleton-line-fade" style={{ width: '80%' }} />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   if (!post) {
@@ -133,13 +173,28 @@ const PostDetail = () => {
           <div className="post-header">
             {post.category && (
               <>
-                <span className="post-category">{post.category.name}</span>
+                <span className="post-category">{getCategoryName(post.category.name)}</span>
                 <span className="post-separator">•</span>
               </>
             )}
+            <div className="post-author-wrapper">
             <Link to={`/user/${post.author?.id}`} className="post-author">
               {post.author?.username || '匿名用户'}
             </Link>
+              {post.author?.tag && (
+                <span 
+                  className={`post-author-tag ${isOfficialTag(post.author.tag) ? 'official-tag' : ''}`}
+                >
+                  {isOfficialTag(post.author.tag) ? getOfficialTagText(t) : post.author.tag}
+                </span>
+              )}
+              {post.author?.id && (
+                <LevelBadge 
+                  exp={post.author?.exp ?? 0} 
+                  size="small" 
+                />
+              )}
+            </div>
             <span className="post-separator">•</span>
             <span className="post-time">{formatDate(post.createdAt)}</span>
           </div>
@@ -190,7 +245,7 @@ const PostDetail = () => {
                     <div key={index} className="post-image-container">
                       <img 
                         src={imageUrl} 
-                        alt={alt || '帖子图片'} 
+                        alt={alt || t('post.imageAlt')} 
                         className="post-image"
                         loading="lazy"
                       />
@@ -212,18 +267,28 @@ const PostDetail = () => {
                 className={`post-action like-button ${liked ? 'liked' : ''}`}
                 onClick={handleLike}
                 disabled={liking || !isAuthenticated}
-                title={isAuthenticated ? (liked ? '取消点赞' : '点赞') : '请先登录'}
+                title={
+                  isAuthenticated
+                    ? liked
+                      ? t('post.actionUnlike')
+                      : t('post.actionLike')
+                    : t('post.needLogin')
+                }
               >
                 {liked ? <FaHeart /> : <FaRegHeart />}
                 <span>{post.likeCount || 0}</span>
               </button>
               <div className="post-action">
                 <FaComment />
-                <span>{post.commentCount || 0} 条评论</span>
+                <span>
+                  {post.commentCount || 0} {t('post.commentCountSuffix')}
+                </span>
               </div>
             </div>
             <div className="post-stats">
-              <span>{post.viewCount || 0} 次浏览</span>
+              <span>
+                {post.viewCount || 0} {t('post.viewSuffix')}
+              </span>
             </div>
           </div>
 
@@ -249,7 +314,7 @@ const PostDetail = () => {
             <textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder="写下你的评论..."
+              placeholder={t('post.commentPlaceholder')}
               rows={4}
               className="comment-textarea"
             />
@@ -259,19 +324,25 @@ const PostDetail = () => {
                 disabled={!commentText.trim() || submitting}
                 className="comment-submit-button"
               >
-                {submitting ? '发布中...' : '发布评论'}
+                {submitting ? t('post.commentSubmitting') : t('post.commentSubmit')}
               </button>
             </div>
           </form>
         </div>
       ) : (
         <div className="comment-login-prompt">
-          <p>请<a href="/login">登录</a>后发表评论</p>
+          <p>
+            {t('post.loginToComment')}
+            <a href="/login">{t('post.loginLink')}</a>
+            {t('post.loginSuffix')}
+          </p>
         </div>
       )}
 
       <div className="comments-section">
-        <h2 className="comments-title">评论 ({post.commentCount || 0})</h2>
+        <h2 className="comments-title">
+          {t('post.commentsTitle')} ({post.commentCount || 0})
+        </h2>
         <CommentList comments={comments} onUpdate={fetchComments} postId={postId} />
       </div>
     </div>

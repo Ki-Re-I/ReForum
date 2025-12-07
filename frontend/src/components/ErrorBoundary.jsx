@@ -1,6 +1,7 @@
 import React from 'react'
+import { useLanguage } from '../context/LanguageContext'
 
-class ErrorBoundary extends React.Component {
+class ErrorBoundaryClass extends React.Component {
   constructor(props) {
     super(props)
     this.state = { hasError: false, error: null }
@@ -16,44 +17,54 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      return (
-        <div style={{
-          padding: '2rem',
-          textAlign: 'center',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#f5f5f5'
-        }}>
-          <h1 style={{ color: '#333', marginBottom: '1rem' }}>出现错误</h1>
-          <p style={{ color: '#666', marginBottom: '2rem' }}>
-            {this.state.error?.message || '页面加载时出现错误'}
-          </p>
-          <button
-            onClick={() => {
-              this.setState({ hasError: false, error: null })
-              window.location.reload()
-            }}
-            style={{
-              padding: '0.75rem 1.5rem',
-              backgroundColor: '#0079d3',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '1rem'
-            }}
-          >
-            刷新页面
-          </button>
-        </div>
-      )
+      return <ErrorDisplay error={this.state.error} t={this.props.t} />
     }
 
     return this.props.children
   }
+}
+
+// 错误显示组件（使用函数组件以使用 hook）
+const ErrorDisplay = ({ error, t }) => {
+  return (
+    <div style={{
+      padding: '2rem',
+      textAlign: 'center',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#f5f5f5'
+    }}>
+      <h1 style={{ color: '#333', marginBottom: '1rem' }}>{t('error.occurred')}</h1>
+      <p style={{ color: '#666', marginBottom: '2rem' }}>
+        {error?.message || t('error.pageLoadError')}
+      </p>
+      <button
+        onClick={() => {
+          window.location.reload()
+        }}
+        style={{
+          padding: '0.75rem 1.5rem',
+          backgroundColor: '#0079d3',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '1rem'
+        }}
+      >
+        {t('error.refreshPage')}
+      </button>
+    </div>
+  )
+}
+
+// 包装组件以使用 hook
+const ErrorBoundary = ({ children }) => {
+  const { t } = useLanguage()
+  return <ErrorBoundaryClass t={t}>{children}</ErrorBoundaryClass>
 }
 
 export default ErrorBoundary

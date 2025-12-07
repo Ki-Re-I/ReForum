@@ -3,18 +3,45 @@ import { query, getClient } from '../config/database.js';
 class Post {
   // 根据 ID 查找帖子
   static async findById(id) {
-    const result = await query(
-      `SELECT p.*, 
-              u.id as author_id, u.username as author_username, u.avatar as author_avatar,
-              c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
-              (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
-       FROM posts p
-       LEFT JOIN users u ON p.author_id = u.id
-       LEFT JOIN categories c ON p.category_id = c.id
-       WHERE p.id = $1`,
-      [id]
-    );
-    return result.rows[0] || null;
+    try {
+      const result = await query(
+        `SELECT p.*, 
+                u.id as author_id, u.username as author_username, u.avatar as author_avatar,
+                u.exp as author_exp, u.tag as author_tag,
+                c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
+                (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+         FROM posts p
+         LEFT JOIN users u ON p.author_id = u.id
+         LEFT JOIN categories c ON p.category_id = c.id
+         WHERE p.id = $1`,
+        [id]
+      );
+      return result.rows[0] || null;
+    } catch (error) {
+      // 如果新字段不存在（数据库迁移未执行），回退到基本查询
+      if (error.code === '42703' || error.message.includes('column') || error.message.includes('does not exist')) {
+        console.warn('作者 exp 或 tag 字段不存在，使用向后兼容查询:', error.message);
+        const result = await query(
+          `SELECT p.*, 
+                  u.id as author_id, u.username as author_username, u.avatar as author_avatar,
+                  c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
+                  (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+           FROM posts p
+           LEFT JOIN users u ON p.author_id = u.id
+           LEFT JOIN categories c ON p.category_id = c.id
+           WHERE p.id = $1`,
+          [id]
+        );
+        const post = result.rows[0] || null;
+        if (post) {
+          // 为缺失的字段设置默认值
+          post.author_exp = 0;
+          post.author_tag = null;
+        }
+        return post;
+      }
+      throw error;
+    }
   }
 
   // 创建帖子
@@ -145,8 +172,8 @@ class Post {
     return result.rows[0] || null;
   }
 
-  // 获取帖子列表（分页、排序、筛选、搜索）
-  static async findAll({ page = 1, limit = 20, sort = 'time', category, tag, author, search }) {
+  // 获取帖子列表（分页、排序、筛选、搜索、按日期过滤）
+  static async findAll({ page = 1, limit = 20, sort = 'time', category, tag, author, search, date }) {
     const offset = (page - 1) * limit;
     let orderBy = 'p.created_at DESC';
     
@@ -191,6 +218,15 @@ class Post {
       paramCount++;
     }
 
+    // 按日期过滤（前端传入 YYYY-MM-DD，按「本地日期」匹配 created_at）
+    // 注意：前端使用本地时区生成日期键（例如 Asia/Shanghai），
+    // 这里通过 AT TIME ZONE 将数据库中的时间转换到相同时区再取 date，
+    // 避免出现「10 月 1 日被当成 9 月 30 日」的时区偏移问题。
+    if (date) {
+      whereClause += ` AND DATE(p.created_at AT TIME ZONE 'Asia/Shanghai') = $${paramCount++}`;
+      params.push(date);
+    }
+
     params.push(limit, offset);
 
     const baseFromClause = `
@@ -199,17 +235,45 @@ class Post {
        LEFT JOIN categories c ON p.category_id = c.id
     `;
 
-    const result = await query(
-      `SELECT p.*,
-              u.id as author_id, u.username as author_username, u.avatar as author_avatar,
-              c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
-              (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
-       ${baseFromClause}
-       ${whereClause}
-       ORDER BY ${orderBy}
-       LIMIT $${paramCount++} OFFSET $${paramCount++}`,
-      params
-    );
+    let result;
+    try {
+      result = await query(
+        `SELECT p.*,
+                u.id as author_id, u.username as author_username, u.avatar as author_avatar,
+                u.exp as author_exp, u.tag as author_tag,
+                c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
+                (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+         ${baseFromClause}
+         ${whereClause}
+         ORDER BY ${orderBy}
+         LIMIT $${paramCount++} OFFSET $${paramCount++}`,
+        params
+      );
+    } catch (error) {
+      // 如果新字段不存在（数据库迁移未执行），回退到基本查询
+      if (error.code === '42703' || error.message.includes('column') || error.message.includes('does not exist')) {
+        console.warn('作者 exp 或 tag 字段不存在，使用向后兼容查询:', error.message);
+        result = await query(
+          `SELECT p.*,
+                  u.id as author_id, u.username as author_username, u.avatar as author_avatar,
+                  c.id as category_id, c.name as category_name, c.description as category_description, c.color as category_color,
+                  (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count
+           ${baseFromClause}
+           ${whereClause}
+           ORDER BY ${orderBy}
+           LIMIT $${paramCount++} OFFSET $${paramCount++}`,
+          params
+        );
+        // 为缺失的字段设置默认值
+        result.rows = result.rows.map(post => ({
+          ...post,
+          author_exp: 0,
+          author_tag: null,
+        }));
+      } else {
+        throw error;
+      }
+    }
 
     // 获取总数
     const countResult = await query(
@@ -252,13 +316,15 @@ class Post {
     try {
       await client.query('BEGIN');
 
-      // 检查是否已经浏览过
+      // 检查是否已经浏览过（24小时内）
       let hasViewed = false;
 
       if (userId) {
-        // 已登录用户：检查用户是否已经浏览过
+        // 已登录用户：检查用户在24小时内是否已经浏览过
         const userViewResult = await client.query(
-          'SELECT id FROM post_views WHERE post_id = $1 AND user_id = $2',
+          `SELECT id FROM post_views 
+           WHERE post_id = $1 AND user_id = $2
+           AND viewed_at > NOW() - INTERVAL '24 hours'`,
           [id, userId]
         );
         hasViewed = userViewResult.rows.length > 0;
@@ -271,24 +337,33 @@ class Post {
           [id, ipAddress]
         );
         hasViewed = ipViewResult.rows.length > 0;
+      } else {
+        // 既没有userId也没有ipAddress，无法去重，直接增加浏览量
+        // 这种情况应该很少见，但为了确保浏览量能增加，我们仍然增加计数
+        await client.query('UPDATE posts SET view_count = view_count + 1 WHERE id = $1', [id]);
+        await client.query('COMMIT');
+        return;
       }
 
-      // 如果没有浏览过，增加浏览量并记录
+      // 如果没有在24小时内浏览过，增加浏览量并记录
       if (!hasViewed) {
-        // 增加浏览量
+        // 先增加浏览量
         await client.query('UPDATE posts SET view_count = view_count + 1 WHERE id = $1', [id]);
         
-        // 记录浏览历史
+        // 然后记录浏览历史
         try {
           if (userId) {
-            // 已登录用户：使用 user_id 唯一约束
+            // 已登录用户：插入浏览记录
             await client.query(
               `INSERT INTO post_views (post_id, user_id, ip_address) 
-               VALUES ($1, $2, $3)`,
+               VALUES ($1, $2, $3)
+               ON CONFLICT (post_id, user_id) WHERE user_id IS NOT NULL
+               DO UPDATE SET viewed_at = NOW()`,
               [id, userId, ipAddress]
             );
           } else if (ipAddress) {
-            // 未登录用户：直接插入（已在上面检查过24小时内是否浏览过）
+            // 未登录用户：插入浏览记录
+            // 注意：这里可能会有并发问题，但数据库的唯一约束会处理
             await client.query(
               `INSERT INTO post_views (post_id, user_id, ip_address) 
                VALUES ($1, NULL, $2)`,
@@ -296,9 +371,15 @@ class Post {
             );
           }
         } catch (insertError) {
-          // 如果插入失败（可能是并发导致的唯一约束冲突），忽略错误
-          // 因为我们已经检查过，这种情况很少发生
-          if (!insertError.code || insertError.code !== '23505') {
+          // 如果插入失败（可能是并发导致的唯一约束冲突）
+          // 检查是否是唯一约束冲突
+          if (insertError.code === '23505') {
+            // 唯一约束冲突：说明在检查和插入之间，另一个请求已经插入了记录
+            // 这是正常的并发情况，我们不需要回滚，因为浏览量已经增加了
+            console.log(`浏览记录插入冲突（并发请求）: post_id=${id}, user_id=${userId}, ip=${ipAddress}`);
+          } else {
+            // 其他错误，回滚并抛出
+            await client.query('ROLLBACK');
             throw insertError;
           }
         }
@@ -307,6 +388,7 @@ class Post {
       await client.query('COMMIT');
     } catch (error) {
       await client.query('ROLLBACK');
+      console.error('增加浏览量错误:', error);
       throw error;
     } finally {
       client.release();
@@ -398,6 +480,8 @@ class Post {
         id: post.author_id,
         username: post.author_username,
         avatar: post.author_avatar,
+        exp: post.author_exp !== undefined ? post.author_exp : 0, // 添加经验值，如果不存在则默认为0
+        tag: post.author_tag !== undefined ? post.author_tag : null, // 添加称号，如果不存在则默认为null
       },
       category: {
         id: post.category_id,

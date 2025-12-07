@@ -1,0 +1,117 @@
+.language-switcher {
+  position: fixed;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 1200;
+}
+
+.language-switcher__toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background-color: #ffffff;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
+  transition: all 0.2s ease;
+}
+
+.language-switcher__toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.38);
+}
+
+.language-switcher__menu {
+  position: absolute;
+  left: 0.25rem;
+  bottom: 3.2rem;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.4rem;
+  pointer-events: none;
+}
+
+.language-switcher__option {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background-color: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 0.85rem;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(8px) scale(0.85);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
+  pointer-events: none;
+}
+
+.language-switcher__option:hover {
+  color: #ffffff;
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  transform: translateY(0) scale(1.05);
+  box-shadow: 0 14px 32px rgba(37, 99, 235, 0.55);
+}
+
+.language-switcher__option.is-active {
+  background: linear-gradient(135deg, #6366f1, #22d3ee);
+  color: white;
+  box-shadow: 0 0 18px rgba(79, 70, 229, 0.4);
+}
+
+.language-switcher__symbol {
+  pointer-events: none;
+}
+
+/* 当菜单打开时，显示选项并应用从下往上的动画 */
+.language-switcher.is-open .language-switcher__option {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.language-switcher.is-open .language-switcher__option--1 {
+  transition-delay: 0.05s;
+}
+
+.language-switcher.is-open .language-switcher__option--2 {
+  transition-delay: 0.1s;
+}
+
+.language-switcher.is-open .language-switcher__option--3 {
+  transition-delay: 0.15s;
+}
+
+:root.theme-dark .language-switcher__toggle {
+  background-color: var(--card-background);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+@media (max-width: 768px) {
+  .language-switcher {
+    left: 1rem;
+    bottom: 1rem;
+  }
+
+  .language-switcher__toggle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .language-switcher__option {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+}
+

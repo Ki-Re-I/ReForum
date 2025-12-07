@@ -1,15 +1,24 @@
 # 重新部署指南
-
-## 📋 部署步骤
-
 ### 在服务器上执行以下命令：
 
 ```bash
 # 1. 进入项目目录
 cd /opt/ReForum
 
+git fetch origin
+
+git checkout v1.6.2
+
 # 2. 拉取最新代码
 git pull origin master
+
+git pull origin v1.5.8
+
+git pull origin v1.6.2
+
+git pull origin v1.7.0
+
+git pull origin v1.8.0
 
 # 3. 停止现有容器
 docker-compose down
@@ -17,8 +26,12 @@ docker-compose down
 # 4. 重新构建镜像（不使用缓存，确保使用最新代码）
 docker-compose build --no-cache
 
+docker-compose build --no-cache frontend
+
 # 5. 启动容器
 docker-compose up -d
+
+docker-compose up -d frontend
 
 # 6. 查看容器状态
 docker-compose ps
