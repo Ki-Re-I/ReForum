@@ -36,8 +36,8 @@ docker-compose logs --tail=50 frontend
 # 8. 给构建镜像打标签（便于溯源）
 # 获取当前最新提交短哈希
 GIT_HASH=$(git rev-parse --short HEAD)
-docker tag reforum_frontend:latest reforum_frontend:v1.9.5-${GIT_HASH}
-docker tag reforum_backend:latest reforum_backend:v1.9.5-${GIT_HASH}
+docker tag reforum-frontend:latest reforum-frontend:v1.9.5-${GIT_HASH}
+docker tag reforum-backend:latest reforum-backend:v1.9.5-${GIT_HASH}
 docker images | grep reforum
 ```
 
